@@ -69,8 +69,8 @@ class TypingTutor:
 
                 
         """
-
         self.pygame = pg
+        self.pygame.mixer.pre_init(22050, -16,  2, 512)
         
         self.pygame.init()
 
@@ -157,6 +157,7 @@ class TypingTutor:
                                   ["stint", "stone", "notes", "nest"]]
 
         self.pygame.mixer.init()
+        self.sound_fire = pygame.mixer.Sound("onfire.wav")
         self.sound_keytype = pygame.mixer.Sound("type.wav")
         self.sound_correct = pygame.mixer.Sound("correct.wav")
         self.sound_word = pygame.mixer.Sound("word.wav")
@@ -375,9 +376,7 @@ class TypingTutor:
                 self.number_prompts_answered += 1
                 self.streak += 1
                 if self.streak == 5:
-                    self.streak = self.streak
-                    # SOUND: "You're on fire!"
-                    # TIME: WAIT
+                    self.sound_fire.play()
                 self.attempts = 0
                 self.check_level()
                 self.update_and_respond(True)
