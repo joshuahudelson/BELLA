@@ -71,16 +71,21 @@ class TypingTutor:
         """
 
         self.pygame = pg
+        
         self.pygame.init()
+
         self.gameDisplay = self.pygame.display.set_mode((800, 600))
         self.clock = self.pygame.time.Clock()
         self.font = self.pygame.font.SysFont(None, 80)
 
-        self.bg = self.pygame.image.load("woodbg.jpg")
+        self.bg = self.pygame.image.load("English_braille_sample.jpg")
 
         self.pygame.display.set_caption('Typing Tutor')
         self.white, self.black, self.red, self.blue = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 0, 255)
+        self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
+
+        #-----
 
         self.alphabet = 'etaoinshrdlcumwfgypbvkjxqz'
 
@@ -115,6 +120,8 @@ class TypingTutor:
         self.word_prompt = ""
 
         self.intro_done = False
+
+        self.streak = 0
 
         self.letter_to_key_combo = {
             'a':'OOXOOO',
@@ -224,33 +231,39 @@ class TypingTutor:
         """ Write the current letter prompt to the screen.
         """
         
-        text = self.font.render(self.current_prompt, True, self.blue)
+        text = self.font.render(self.current_prompt, True, self.black)
         self.gameDisplay.blit(text, (390, 100))
 
     def display_word_prompt(self):
         """ Write the current word prompt to the screen.
         """
         
-        text = self.font.render(self.word_prompt, True, self.blue)
+        text = self.font.render(self.word_prompt, True, self.black)
         self.gameDisplay.blit(text, (350, 50))
 
 
     def display_response(self):
         """ Draw the keys to the screen
         """
+        if self.attempts < 3:
+            self.response = 'OOOOOO'
+        else:
+            self.response = self.response # just a place-holder, remove later.
+            # SOUND: "HERE'S A HINT"
+            # TIME: WAIT WHILE SOUND PLAYS
+            # VIBRATE: SELF.RESPONSE
         
         for i in range(len(self.response)):
             if self.response[i] == 'X':
-                color = self.yellow
+                color = self.gray1
             elif self.response[i] == 'O':
-                color = self.light_blue
+                color = self.gray2
             if i > 2:
                 xpos = (50 + 40 + (i*110))
             else:
                 xpos = (50 + (i*110))
-
             position = (xpos, 300, 100, 150) 
-            self.draw_single_button(self.blue, position)
+            self.draw_single_button(self.black, position)
             position_small = (xpos+20, 320, 60, 110)
             self.draw_single_button(color, position_small)
             
@@ -275,6 +288,11 @@ class TypingTutor:
         if temp_flag:
             self.level += 1
             self.sound_levelup.play()
+            # TIME: WAIT
+            # SOUND: "Nice work, You're now at level ____"
+            # TIME: WAIT
+            # SOUND: "__level__"
+            # TIME: WAIT
             self.letters_right = np.ones(26)
             print("Level up!")
 
@@ -287,7 +305,8 @@ class TypingTutor:
         """
         
         if self.number_prompts_answered > 5:
-            if randint(0, 1):
+            tossup = randint(0, 3)
+            if tossup == 3:
                 self.game_state = "testing_word"
                 self.switch_to_word()
                 return(True)
@@ -300,7 +319,8 @@ class TypingTutor:
     def switch_to_word(self):
         """ Switch the current prompt to a word.
         """
-        
+        # SOUND: "Let's try a word!"
+        # TIME: WAIT
         self.current_prompt = None
         self.get_new_word_prompt()
         self.number_prompts_answered = 0
@@ -332,9 +352,10 @@ class TypingTutor:
         """
         
         if self.intro_done == False:
-            self.time_to_wait = 200
             self.intro_done = True
-        
+            # SOUND: "Hi there.  Press space-bar when you're ready to start playing."
+            # TIME: WAIT...
+            self.time_to_wait = 0
         else:
             if self.input_letter == 'space':
                 self.switch_to_letter()
@@ -352,12 +373,23 @@ class TypingTutor:
             if self.input_letter == self.current_prompt:
                 self.sound_correct.play()
                 self.number_prompts_answered += 1
+                self.streak += 1
+                if self.streak == 5:
+                    self.streak = self.streak
+                    # SOUND: "You're on fire!"
+                    # TIME: WAIT
                 self.attempts = 0
                 self.check_level()
                 self.update_and_respond(True)
                 if self.word_or_not() == False:
                     self.get_new_prompt()
+                tossup2 = randint(0, 4)
+                if tossup2 == 4:
+                    tossup2 = tossup2 # Place-holder, remove later
+                    # SOUND: "Great job!"
+                    # TIME: WAIT
             else:
+                self.streak = 0
                 self.sound_wrong.play()
                 self.pygame.time.wait(100)
                 self.attempts += 1
