@@ -166,9 +166,6 @@ class TypingTutor:
         self.sound_keytype = pygame.mixer.Sound("type.wav")
         self.sound_keytype_length = int(self.sound_keytype.get_length() * 1000)
         
-        self.sound_correct = pygame.mixer.Sound("correct.wav")
-        self.sound_correct_length = int(self.sound_correct.get_length() * 1000)
-        
         self.sound_word = pygame.mixer.Sound("word.wav")
         self.sound_word_length = int(self.sound_word.get_length() * 1000)
         
@@ -177,6 +174,21 @@ class TypingTutor:
         
         self.sound_levelup = pygame.mixer.Sound("levelup.wav")
         self.sound_levelup_length = int(self.sound_levelup.get_length() * 1000)
+
+        self.sound_correct_one = pygame.mixer.Sound("correct_one.wav")
+        self.sound_correct_two = pygame.mixer.Sound("correct_two.wav")
+        self.sound_correct_three = pygame.mixer.Sound("correct_three.wav")
+        self.sound_correct_four = pygame.mixer.Sound("correct_four.wav")
+        self.sound_correct_five = pygame.mixer.Sound("correct_five.wav")
+        self.sound_correct_six = pygame.mixer.Sound("correct_six.wav")
+
+        self.list_correct_sounds = [self.sound_correct_one,
+                                    self.sound_correct_two,
+                                    self.sound_correct_three,
+                                    self.sound_correct_four,
+                                    self.sound_correct_five,
+                                    self.sound_correct_six]
+
 
         #-----VOICE:
 
@@ -304,7 +316,7 @@ class TypingTutor:
             self.response = 'OOOOOO'
         elif self.key_was_pressed:
             self.voice_hint.play()
-            self.time_to_wait += int(self.voice_hint_length)
+            self.time_to_wait += self.voice_hint_length
             # VIBRATE: SELF.RESPONSE
         for i in range(len(self.response)):
             if self.response[i] == 'X':
@@ -342,7 +354,7 @@ class TypingTutor:
         if temp_flag:
             self.sound_levelup.play()
             self.voice_nice.play()
-            self.time_to_wait += int(self.voice_nice_length)
+            self.time_to_wait += self.voice_nice_length
             self.letters_right = np.ones(26) # change this so it doesn't reset all?
             self.level += 1
             print("Level up!")
@@ -405,7 +417,7 @@ class TypingTutor:
         if self.intro_done == False:
             self.intro_done = True
             self.voice_press.play()
-            self.time_to_wait += int(self.voice_press_length)
+            self.time_to_wait += self.voice_press_length
         else:
             if self.input_letter == 'space':
                 self.switch_to_letter()
@@ -421,7 +433,8 @@ class TypingTutor:
         
         if self.input_letter != None:
             if self.input_letter == self.current_prompt:
-                self.sound_correct.play()
+                temp_sound = choice(self.list_correct_sounds)
+                temp_sound.play()
                 self.number_prompts_answered += 1
                 self.streak += 1
                 if self.streak == 5:
