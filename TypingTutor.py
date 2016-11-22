@@ -157,12 +157,67 @@ class TypingTutor:
                                   ["stint", "stone", "notes", "nest"]]
 
         self.pygame.mixer.init()
+
+        #-----SFX:
+        
         self.sound_fire = pygame.mixer.Sound("onfire.wav")
+        self.sound_fire_length = int(self.sound_fire.get_length() * 1000)
+
         self.sound_keytype = pygame.mixer.Sound("type.wav")
+        self.sound_keytype_length = int(self.sound_keytype.get_length() * 1000)
+        
         self.sound_correct = pygame.mixer.Sound("correct.wav")
+        self.sound_correct_length = int(self.sound_correct.get_length() * 1000)
+        
         self.sound_word = pygame.mixer.Sound("word.wav")
+        self.sound_word_length = int(self.sound_word.get_length() * 1000)
+        
         self.sound_wrong = pygame.mixer.Sound("wrong.wav")
+        self.sound_wrong_length = int(self.sound_wrong.get_length() * 1000)
+        
         self.sound_levelup = pygame.mixer.Sound("levelup.wav")
+        self.sound_levelup_length = int(self.sound_levelup.get_length() * 1000)
+
+        #-----VOICE:
+
+        self.voice_fantastic = pygame.mixer.Sound("fantastic_you_got.wav")
+        self.voice_fantastic_length = int(self.voice_fantastic.get_length() * 1000)
+
+        self.voice_great = pygame.mixer.Sound("great_job.wav")
+        self.voice_great_length = int(self.voice_great.get_length() * 1000)
+
+        self.voice_nice = pygame.mixer.Sound("nice_work.wav")
+        self.voice_nice_length = int(self.voice_nice.get_length() * 1000)
+
+        self.voice_try = pygame.mixer.Sound("try_a_word.wav")
+        self.voice_try_length = int(self.voice_try.get_length() * 1000)
+
+        self.voice_inarow = pygame.mixer.Sound("in_a_row.wav")
+        self.voice_inarow_length = int(self.voice_inarow.get_length() * 1000)
+
+        self.voice_hint = pygame.mixer.Sound("oops_hint.wav")
+        self.voice_hint_length = int(self.voice_hint.get_length() * 1000)
+
+        self.voice_press = pygame.mixer.Sound("press_spacebar.wav")
+        self.voice_press_length = int(self.voice_press.get_length() * 1000)
+
+        self.voice_five = pygame.mixer.Sound("five.wav")
+        self.voice_five_length = int(self.voice_five.get_length() * 1000)
+
+        self.voice_ten = pygame.mixer.Sound("ten.wav")
+        self.voice_ten_length = int(self.voice_ten.get_length() * 1000)
+
+        self.voice_twenty = pygame.mixer.Sound("twenty.wav")
+        self.voice_twenty_length = int(self.voice_twenty.get_length() * 1000)
+
+        self.voice_thirty = pygame.mixer.Sound("thirty.wav")
+        self.voice_thirty_length = int(self.voice_thirty.get_length() * 1000)
+
+        self.voice_forty = pygame.mixer.Sound("forty.wav")
+        self.voice_forty_length = int(self.voice_forty.get_length() * 1000)
+
+        self.voice_fifty = pygame.mixer.Sound("fifty.wav")
+        self.voice_fifty_length = int(self.voice_fifty.get_length() * 1000)
 
 
     def get_letters_for_level(self):
@@ -225,7 +280,6 @@ class TypingTutor:
                 if self.letters_right[temp_index] < 0:
                     self.letters_right[temp_index] = 0
                 self.response = self.letter_to_key_combo[self.current_prompt]
-                self.time_to_wait = 400
                 
 
     def display_letter_prompt(self):
@@ -246,17 +300,15 @@ class TypingTutor:
     def display_response(self):
         """ Draw the keys to the screen
         """
-        if self.attempts < 3:
+        if self.attempts < 2:
             self.response = 'OOOOOO'
-        else:
-            self.response = self.response # just a place-holder, remove later.
-            # SOUND: "HERE'S A HINT"
-            # TIME: WAIT WHILE SOUND PLAYS
+        elif self.key_was_pressed:
+            self.voice_hint.play()
+            self.time_to_wait += int(self.voice_hint_length)
             # VIBRATE: SELF.RESPONSE
-        
         for i in range(len(self.response)):
             if self.response[i] == 'X':
-                color = self.gray1
+                color = self.light_blue
             elif self.response[i] == 'O':
                 color = self.gray2
             if i > 2:
@@ -282,19 +334,17 @@ class TypingTutor:
         """
         
         temp_flag = True
+        
         for i in range(len(self.letters_in_play)):
             if self.letters_right[i] < self.max_right:
                 temp_flag = False
 
         if temp_flag:
-            self.level += 1
             self.sound_levelup.play()
-            # TIME: WAIT
-            # SOUND: "Nice work, You're now at level ____"
-            # TIME: WAIT
-            # SOUND: "__level__"
-            # TIME: WAIT
-            self.letters_right = np.ones(26)
+            self.voice_nice.play()
+            self.time_to_wait += int(self.voice_nice_length)
+            self.letters_right = np.ones(26) # change this so it doesn't reset all?
+            self.level += 1
             print("Level up!")
 
         print(self.letters_right[:len(self.letters_in_play)])
@@ -320,8 +370,8 @@ class TypingTutor:
     def switch_to_word(self):
         """ Switch the current prompt to a word.
         """
-        # SOUND: "Let's try a word!"
-        # TIME: WAIT
+        self.voice_try.play()
+        self.time_to_wait += self.voice_try_length
         self.current_prompt = None
         self.get_new_word_prompt()
         self.number_prompts_answered = 0
@@ -354,9 +404,8 @@ class TypingTutor:
         
         if self.intro_done == False:
             self.intro_done = True
-            # SOUND: "Hi there.  Press space-bar when you're ready to start playing."
-            # TIME: WAIT...
-            self.time_to_wait = 0
+            self.voice_press.play()
+            self.time_to_wait += int(self.voice_press_length)
         else:
             if self.input_letter == 'space':
                 self.switch_to_letter()
@@ -382,11 +431,9 @@ class TypingTutor:
                 self.update_and_respond(True)
                 if self.word_or_not() == False:
                     self.get_new_prompt()
-                tossup2 = randint(0, 4)
-                if tossup2 == 4:
-                    tossup2 = tossup2 # Place-holder, remove later
-                    # SOUND: "Great job!"
-                    # TIME: WAIT
+                tossup2 = randint(0, 10)
+                if tossup2 == 10:
+                    self.voice_great.play()
             else:
                 self.streak = 0
                 self.sound_wrong.play()
@@ -432,7 +479,7 @@ class TypingTutor:
         for event in self.pygame.event.get():
             if event.type == self.pygame.KEYDOWN:
                 self.input_letter = self.pygame.key.name(event.key)
-                self.key_was_pressed = True # Can I get rid of this?
+                self.key_was_pressed = True
                 self.sound_keytype.play()
 
         if self.game_state == "introduction":
