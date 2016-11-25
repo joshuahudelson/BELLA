@@ -3,12 +3,26 @@ import numpy as np
 import pygame as pg
 import time as tempo
 import pygame.mixer
+import keyboard
+
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
+####### MODIFIED 11/24/16 FOR BRAILLECADE########
 
 
 class TypingTutor:
 
     def __init__(self, starting_level=0):
         """
+
+            self.braille_keyboard: keyboard object that handels serial
+                IO with braillecade device
+                
             self.alphabet: list of letters to be tested on,
                 in order of english-language frequency.
 
@@ -69,18 +83,19 @@ class TypingTutor:
 
                 
         """
+        #---Keyboard
+        self.braille_keyboard = keyboard.keyboard()
+        self.braille_keyboard.test_coms() #automatically finds keyboard
+
+        #---PyGame
         self.pygame = pg
         self.pygame.mixer.pre_init(22050, -16,  2, 512)
         
         self.pygame.init()
 
-        self.SCREEN_WIDTH = 800
-        self.SCREEN_HEIGHT = 600
-
-        self.gameDisplay = self.pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.gameDisplay = self.pygame.display.set_mode((800, 600))
         self.clock = self.pygame.time.Clock()
         self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
 
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
 
@@ -91,7 +106,7 @@ class TypingTutor:
 
         #-----
 
-        self.alphabet = 'etaoinshrdlcumwfgypbvkjxqz'
+        self.alphabet = 'etaoinshrdlcumwfgypbvkjxqzX'
 
         self.letters_right = np.ones(len(self.alphabet))
 
@@ -126,7 +141,6 @@ class TypingTutor:
         self.intro_done = False
 
         self.streak = 0
-        self.career_points = 0
 
         self.letter_to_key_combo = {
             'a':'OOXOOO',
@@ -302,35 +316,20 @@ class TypingTutor:
     def display_letter_prompt(self):
         """ Write the current letter prompt to the screen.
         """
-
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
+        
         text = self.font.render(self.current_prompt, True, self.black)
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-
+        self.gameDisplay.blit(text, (390, 100))
 
     def display_word_prompt(self):
         """ Write the current word prompt to the screen.
         """
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(self.word_prompt, True, self.black)
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-
-
-    def display_status_box(self):
-        """ Write the current word prompt to the screen.
-        """
         
-        text = self.font_small.render("Level: " + str(self.level), True, self.black, self.gray1)
-        text2 = self.font_small.render("Points: " + str(self.career_points), True, self.black, self.gray1)
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
-        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
+        text = self.font.render(self.word_prompt, True, self.black)
+        self.gameDisplay.blit(text, (350, 50))
 
 
     def display_response(self):
-        """ Draw the keys to the screen
+        """ Draw the ke5ys to the screen
         """
         if self.attempts < 2:
             self.response = 'OOOOOO'
@@ -338,6 +337,7 @@ class TypingTutor:
             self.voice_hint.play()
             self.time_to_wait += self.voice_hint_length
             # VIBRATE: SELF.RESPONSE
+            self.braille_keyboard.vibrate_letter(self.current_prompt)
         for i in range(len(self.response)):
             if self.response[i] == 'X':
                 color = self.light_blue
@@ -473,10 +473,8 @@ class TypingTutor:
                 self.pygame.time.wait(100)
                 self.attempts += 1
                 self.update_and_respond(False)
-                
         self.display_letter_prompt()
         self.display_response()
-        self.display_status_box()
 
 
     def test_word(self):
@@ -498,10 +496,9 @@ class TypingTutor:
                 self.word_prompt = ""
                 self.word_string = ""
                 self.switch_to_letter()
-                
+
         self.display_word_prompt()
         self.display_response()
-        self.display_status_box()
 
 
     def iterate(self):
@@ -513,10 +510,21 @@ class TypingTutor:
         self.gameDisplay.blit(self.bg, (0,0))
 
         for event in self.pygame.event.get():
-            if event.type == self.pygame.KEYDOWN:
-                self.input_letter = self.pygame.key.name(event.key)
-                self.key_was_pressed = True
-                self.sound_keytype.play()
+            if event.type == self.pygame.QUIT:                                       # if the window "x" has been pressed quit the game
+                    self.quitGame = True
+        self.braille_keyboard.request_buttons()  # get button presses from keyboard
+
+        if self.braille_keyboard.last_letter != None:  # if button was pressed
+            self.input_letter = self.braille_keyboard.last_letter
+            self.key_was_pressed = True
+            self.sound_keytype.play()
+
+
+            
+##            if event.type == self.pygame.KEYDOWN:
+##                self.input_letter = self.pygame.key.name(event.key)
+##                self.key_was_pressed = True
+##                self.sound_keytype.play()
 
         if self.game_state == "introduction":
             self.introduction()
