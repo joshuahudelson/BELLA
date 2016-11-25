@@ -74,9 +74,13 @@ class TypingTutor:
         
         self.pygame.init()
 
-        self.gameDisplay = self.pygame.display.set_mode((800, 600))
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
+
+        self.gameDisplay = self.pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.clock = self.pygame.time.Clock()
         self.font = self.pygame.font.SysFont(None, 80)
+        self.font_small = self.pygame.font.SysFont(None, 40)
 
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
 
@@ -122,6 +126,7 @@ class TypingTutor:
         self.intro_done = False
 
         self.streak = 0
+        self.career_points = 0
 
         self.letter_to_key_combo = {
             'a':'OOXOOO',
@@ -297,16 +302,31 @@ class TypingTutor:
     def display_letter_prompt(self):
         """ Write the current letter prompt to the screen.
         """
-        
+
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
         text = self.font.render(self.current_prompt, True, self.black)
-        self.gameDisplay.blit(text, (390, 100))
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
 
     def display_word_prompt(self):
         """ Write the current word prompt to the screen.
         """
-        
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
         text = self.font.render(self.word_prompt, True, self.black)
-        self.gameDisplay.blit(text, (350, 50))
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
+
+    def display_status_box(self):
+        """ Write the current word prompt to the screen.
+        """
+        
+        text = self.font_small.render("Level: " + str(self.level), True, self.black, self.gray1)
+        text2 = self.font_small.render("Points: " + str(self.career_points), True, self.black, self.gray1)
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
+        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
 
 
     def display_response(self):
@@ -453,8 +473,10 @@ class TypingTutor:
                 self.pygame.time.wait(100)
                 self.attempts += 1
                 self.update_and_respond(False)
+                
         self.display_letter_prompt()
         self.display_response()
+        self.display_status_box()
 
 
     def test_word(self):
@@ -476,9 +498,10 @@ class TypingTutor:
                 self.word_prompt = ""
                 self.word_string = ""
                 self.switch_to_letter()
-
+                
         self.display_word_prompt()
         self.display_response()
+        self.display_status_box()
 
 
     def iterate(self):
