@@ -3,7 +3,7 @@ import numpy as np
 import pygame as pg
 import time as tempo
 import pygame.mixer
-import keyboard
+#import keyboard
 
 ####### MODIFIED 11/24/16 FOR BRAILLECADE########
 ####### MODIFIED 11/24/16 FOR BRAILLECADE########
@@ -84,8 +84,8 @@ class TypingTutor:
                 
         """
         #---Keyboard
-        self.braille_keyboard = keyboard.keyboard()
-        self.braille_keyboard.test_coms() #automatically finds keyboard
+#        self.braille_keyboard = keyboard.keyboard()
+#        self.braille_keyboard.test_coms() #automatically finds keyboard
 
         #---PyGame
         self.pygame = pg
@@ -93,10 +93,14 @@ class TypingTutor:
         
         self.pygame.init()
 
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
+
         self.gameDisplay = self.pygame.display.set_mode((800, 600))
         self.clock = self.pygame.time.Clock()
         self.font = self.pygame.font.SysFont(None, 80)
-
+        self.font_small = self.pygame.font.SysFont(None, 40)
+ 
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
 
         self.pygame.display.set_caption('Typing Tutor')
@@ -141,7 +145,9 @@ class TypingTutor:
         self.intro_done = False
 
         self.streak = 0
-
+        self.career_points = 0
+         
+        # can just set this equal to the one from keyboard module: letter_to_chord?
         self.letter_to_key_combo = {
             'a':'OOXOOO',
             'b':'OXXOOO',
@@ -170,6 +176,7 @@ class TypingTutor:
             'y':'XOXXXX',
             'z':'XOXOXX'}
 
+
         self.list_word_prompts = [["tea","eat", "at", "ate", "tee", "tata", ],
                                   ["tie", "it", "at"],
                                   ["tine", "tint", "net", "ten", "ant", "tan", ],
@@ -177,82 +184,65 @@ class TypingTutor:
 
         self.pygame.mixer.init()
 
-        #-----SFX:
+#--- SFX
+        self.sfx_list = ['onfire.wav', 'type.wav', 'word.wav', 'wrong.wav',
+                         'levelup.wav']
+
+        self.sfx_dict = {}
         
-        self.sound_fire = pygame.mixer.Sound("onfire.wav")
-        self.sound_fire_length = int(self.sound_fire.get_length() * 1000)
+        for sound in self.sfx_list:
+            temp_sound = pygame.mixer.Sound(sound)
+            self.sfx_dict[sound] = {'sound':temp_sound,
+                                    'length':int(temp_sound.get_length() * 1000)
+                                    }
 
-        self.sound_keytype = pygame.mixer.Sound("type.wav")
-        self.sound_keytype_length = int(self.sound_keytype.get_length() * 1000)
-        
-        self.sound_word = pygame.mixer.Sound("word.wav")
-        self.sound_word_length = int(self.sound_word.get_length() * 1000)
-        
-        self.sound_wrong = pygame.mixer.Sound("wrong.wav")
-        self.sound_wrong_length = int(self.sound_wrong.get_length() * 1000)
-        
-        self.sound_levelup = pygame.mixer.Sound("levelup.wav")
-        self.sound_levelup_length = int(self.sound_levelup.get_length() * 1000)
+#--- CORRECT
+        self.correct_list = ['correct_one.wav', 'correct_two.wav',
+                         'correct_three.wav', 'correct_four.wav', 'correct_five.wav',
+                         'correct_six.wav']
 
-        self.sound_correct_one = pygame.mixer.Sound("correct_one.wav")
-        self.sound_correct_two = pygame.mixer.Sound("correct_two.wav")
-        self.sound_correct_three = pygame.mixer.Sound("correct_three.wav")
-        self.sound_correct_four = pygame.mixer.Sound("correct_four.wav")
-        self.sound_correct_five = pygame.mixer.Sound("correct_five.wav")
-        self.sound_correct_six = pygame.mixer.Sound("correct_six.wav")
+        self.correct_dict = {}
 
-        self.list_correct_sounds = [self.sound_correct_one,
-                                    self.sound_correct_two,
-                                    self.sound_correct_three,
-                                    self.sound_correct_four,
-                                    self.sound_correct_five,
-                                    self.sound_correct_six]
+        for correct in self.correct_list:
+            temp_correct = pygame.mixer.Sound(correct)
+            self.correct_dict[correct] = {'correct':temp_correct,
+                                          'length':int(temp_correct.get_length() * 1000)}
+
+#--- VOICE
+        self.voice_list = ["fantastic_you_got.wav", "great_job.wav", "nice_work.wav",
+                           "try_a_word.wav", "in_a_row.wav", "oops_hint.wav",
+                           "press_spacebar.wav", "five.wav", "ten.wav", "twenty.wav",
+                           "thirty.wav", "forty.wav", "fifty.wav"]
+
+        self.voice_dict = {}
+
+        for voice in self.voice_list:
+            temp_voice = pygame.mixer.Sound(voice)
+            self.voice_dict[voice] = {'voice':temp_voice,
+                                      'length':int(temp_voice.get_length()* 1000)}
 
 
-        #-----VOICE:
 
-        self.voice_fantastic = pygame.mixer.Sound("fantastic_you_got.wav")
-        self.voice_fantastic_length = int(self.voice_fantastic.get_length() * 1000)
+    def play_sound(self, sound, wait=False):
+        self.sfx_dict[sound]['sound'].play()
+        if wait:
+            self.pygame.time.wait(self.sfx_dict[sound]['length'])
 
-        self.voice_great = pygame.mixer.Sound("great_job.wav")
-        self.voice_great_length = int(self.voice_great.get_length() * 1000)
 
-        self.voice_nice = pygame.mixer.Sound("nice_work.wav")
-        self.voice_nice_length = int(self.voice_nice.get_length() * 1000)
+    def play_correct(self, correct, wait=False):
+        self.correct_dict[correct]['correct'].play()
+        if wait:
+            self.pygame.time.wait(self.correct_dict[correct]['length'])
 
-        self.voice_try = pygame.mixer.Sound("try_a_word.wav")
-        self.voice_try_length = int(self.voice_try.get_length() * 1000)
 
-        self.voice_inarow = pygame.mixer.Sound("in_a_row.wav")
-        self.voice_inarow_length = int(self.voice_inarow.get_length() * 1000)
-
-        self.voice_hint = pygame.mixer.Sound("oops_hint.wav")
-        self.voice_hint_length = int(self.voice_hint.get_length() * 1000)
-
-        self.voice_press = pygame.mixer.Sound("press_spacebar.wav")
-        self.voice_press_length = int(self.voice_press.get_length() * 1000)
-
-        self.voice_five = pygame.mixer.Sound("five.wav")
-        self.voice_five_length = int(self.voice_five.get_length() * 1000)
-
-        self.voice_ten = pygame.mixer.Sound("ten.wav")
-        self.voice_ten_length = int(self.voice_ten.get_length() * 1000)
-
-        self.voice_twenty = pygame.mixer.Sound("twenty.wav")
-        self.voice_twenty_length = int(self.voice_twenty.get_length() * 1000)
-
-        self.voice_thirty = pygame.mixer.Sound("thirty.wav")
-        self.voice_thirty_length = int(self.voice_thirty.get_length() * 1000)
-
-        self.voice_forty = pygame.mixer.Sound("forty.wav")
-        self.voice_forty_length = int(self.voice_forty.get_length() * 1000)
-
-        self.voice_fifty = pygame.mixer.Sound("fifty.wav")
-        self.voice_fifty_length = int(self.voice_fifty.get_length() * 1000)
+    def play_voice(self, voice, wait=False):
+        self.voice_dict[voice]['voice'].play()
+        if wait:
+            self.pygame.time.wait(self.voice_dict[voice]['length'])
 
 
     def get_letters_for_level(self):
-        """ Get retrieve all the letters to be tested at the current level.
+        """ Get all the letters to be tested at the current level.
         """
         
         self.letters_in_play = self.alphabet[:(2 + self.level)]
@@ -316,16 +306,31 @@ class TypingTutor:
     def display_letter_prompt(self):
         """ Write the current letter prompt to the screen.
         """
-        
+
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
         text = self.font.render(self.current_prompt, True, self.black)
-        self.gameDisplay.blit(text, (390, 100))
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
 
     def display_word_prompt(self):
         """ Write the current word prompt to the screen.
         """
-        
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
         text = self.font.render(self.word_prompt, True, self.black)
-        self.gameDisplay.blit(text, (350, 50))
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
+
+    def display_status_box(self):
+        """ Write the current word prompt to the screen.
+        """
+        
+        text = self.font_small.render("Level: " + str(self.level), True, self.black, self.gray1)
+        text2 = self.font_small.render("Points: " + str(self.career_points), True, self.black, self.gray1)
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
+        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
 
 
     def display_response(self):
@@ -334,10 +339,9 @@ class TypingTutor:
         if self.attempts < 2:
             self.response = 'OOOOOO'
         elif self.key_was_pressed:
-            self.voice_hint.play()
-            self.time_to_wait += self.voice_hint_length
+            self.play_voice('oops_hint.wav')
             # VIBRATE: SELF.RESPONSE
-            self.braille_keyboard.vibrate_letter(self.current_prompt)
+            #self.braille_keyboard.vibrate_letter(self.current_prompt)
         for i in range(len(self.response)):
             if self.response[i] == 'X':
                 color = self.light_blue
@@ -372,10 +376,8 @@ class TypingTutor:
                 temp_flag = False
 
         if temp_flag:
-            self.sound_levelup.play()
-            self.voice_nice.play()
-            self.time_to_wait += self.voice_nice_length
-            self.letters_right = np.ones(26) # change this so it doesn't reset all?
+            self.play_sound('levelup.wav')
+            self.play_voice('nice_work.wav')
             self.level += 1
             print("Level up!")
 
@@ -402,8 +404,7 @@ class TypingTutor:
     def switch_to_word(self):
         """ Switch the current prompt to a word.
         """
-        self.voice_try.play()
-        self.time_to_wait += self.voice_try_length
+        self.play_voice('try_a_word.wav')
         self.current_prompt = None
         self.get_new_word_prompt()
         self.number_prompts_answered = 0
@@ -436,8 +437,7 @@ class TypingTutor:
         
         if self.intro_done == False:
             self.intro_done = True
-            self.voice_press.play()
-            self.time_to_wait += self.voice_press_length
+            self.play_voice('press_spacebar.wav')
         else:
             if self.input_letter == 'space':
                 self.switch_to_letter()
@@ -453,12 +453,11 @@ class TypingTutor:
         
         if self.input_letter != None:
             if self.input_letter == self.current_prompt:
-                temp_sound = choice(self.list_correct_sounds)
-                temp_sound.play()
+                self.play_correct(choice(self.correct_list))
                 self.number_prompts_answered += 1
                 self.streak += 1
                 if self.streak == 5:
-                    self.sound_fire.play()
+                    self.play_sound('onfire.wav')
                 self.attempts = 0
                 self.check_level()
                 self.update_and_respond(True)
@@ -466,15 +465,17 @@ class TypingTutor:
                     self.get_new_prompt()
                 tossup2 = randint(0, 10)
                 if tossup2 == 10:
-                    self.voice_great.play()
+                    self.play_voice('great_job.wav')
             else:
                 self.streak = 0
-                self.sound_wrong.play()
+                self.play_sound('wrong.wav')
                 self.pygame.time.wait(100)
                 self.attempts += 1
                 self.update_and_respond(False)
+                
         self.display_letter_prompt()
         self.display_response()
+        self.display_status_box()
 
 
     def test_word(self):
@@ -485,13 +486,13 @@ class TypingTutor:
             self.word_string += self.input_letter
         elif self.input_letter == 'space' or len(self.word_string) > len(self.word_prompt):
             if self.word_string == self.word_prompt:
-                self.sound_word.play()
+                self.play_sound('word.wav')
                 self.number_words_correct += 1
                 self.word_prompt = ""
                 self.word_string = ""
                 self.switch_to_letter()
             else:
-                self.sound_wrong.play()
+                self.play_sound('wrong.wav')
                 self.pygame.time.wait(100)
                 self.word_prompt = ""
                 self.word_string = ""
@@ -499,6 +500,7 @@ class TypingTutor:
 
         self.display_word_prompt()
         self.display_response()
+        self.display_status_box()
 
 
     def iterate(self):
@@ -510,21 +512,19 @@ class TypingTutor:
         self.gameDisplay.blit(self.bg, (0,0))
 
         for event in self.pygame.event.get():
-            if event.type == self.pygame.QUIT:                                       # if the window "x" has been pressed quit the game
+            if event.type == self.pygame.QUIT: # if the window "x" has been pressed quit the game
                     self.quitGame = True
-        self.braille_keyboard.request_buttons()  # get button presses from keyboard
-
-        if self.braille_keyboard.last_letter != None:  # if button was pressed
-            self.input_letter = self.braille_keyboard.last_letter
-            self.key_was_pressed = True
-            self.sound_keytype.play()
-
-
+                    
+#self.braille_keyboard.request_buttons()  # get button presses from keyboard
+#            if self.braille_keyboard.last_letter != None:  # if button was pressed
+#                self.input_letter = self.braille_keyboard.last_letter
+#                self.key_was_pressed = True
+#                self.play_sound('type.wav')
             
-##            if event.type == self.pygame.KEYDOWN:
-##                self.input_letter = self.pygame.key.name(event.key)
-##                self.key_was_pressed = True
-##                self.sound_keytype.play()
+            if event.type == self.pygame.KEYDOWN:
+                self.input_letter = self.pygame.key.name(event.key)
+                self.key_was_pressed = True
+                self.play_sound('type.wav')
 
         if self.game_state == "introduction":
             self.introduction()
