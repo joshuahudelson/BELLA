@@ -53,69 +53,34 @@ class keyboard:
                 '000000': None,
                 }
 
-    ##    letter2vib = {
-    ##                'a': 1, 
-    ##                'b': 3, 
-    ##                'c': 9,
-    ##                'd': 25,
-    ##                'e': 17,
-    ##                'f': 11,
-    ##                'g': 27,
-    ##                'h': 19,
-    ##                'i': 10,
-    ##                'j': 26,
-    ##                'k': 5,
-    ##                'l': 7,
-    ##                'm': 13,
-    ##                'n': 29,
-    ##                'o': 21,
-    ##                'p': 15,
-    ##                'q': 31,
-    ##                'r': 23,
-    ##                's': 14,
-    ##                't': 30,
-    ##                'u': 37,
-    ##                'v': 39,
-    ##                'w': 58,
-    ##                'x': 45,
-    ##                'y': 61,
-    ##                'z': 53
-    ##                }
-
-        vib1 = 1
-        vib2 = 2
-        vib3 = 4
-        vib4 = 8
-        vib5 = 16
-        vib6 = 32
-
-        self.letter2vib = {
-                'a':[vib1],
-                'b':[vib1,vib2],
-                'c':[vib1,vib4],
-                'd':[vib1,vib4,vib5],
-                'e':[vib1,vib5],
-                'f':[vib1,vib2,vib4],
-                'g':[vib1,vib2,vib4,vib5],
-                'h':[vib1,vib2,vib5],
-                'i':[vib2,vib4],
-                'j':[vib2,vib4,vib5],
-                'k':[vib1,vib3],
-                'l':[vib1,vib2,vib3],
-                'm':[vib1,vib3,vib4],
-                'n':[vib1,vib3,vib4,vib5],
-                'o':[vib1,vib3,vib5],
-                'p':[vib1,vib2,vib3,vib4],
-                'q':[vib1,vib2,vib3,vib4,vib5],
-                'r':[vib1,vib2,vib3,vib5],
-                's':[vib2,vib3,vib4],
-                't':[vib2,vib3,vib4,vib5],
-                'u':[vib1,vib3,vib6],
-                'v':[vib1,vib2,vib3,vib6],
-                'w':[vib2,vib4,vib5,vib6],
-                'x':[vib1,vib3,vib4,vib6],
-                'y':[vib1,vib3,vib4,vib5,vib6],
-                'z':[vib1,vib3,vib5,vib6],
+        #previous dictionary mapped keys visually but key one is in the LSB position
+        self.letter_to_chord = {
+                'a':'000001',
+                'b':'000011', 
+                'c':'001001',
+                'd':'011001',
+                'e':'010001',
+                'f':'001011',
+                'g':'011011',
+                'h':'010011',
+                'i':'001010',
+                'j':'011010',
+                'k':'000101',
+                'l':'000111',
+                'm':'001101',
+                'n':'011101',
+                'o':'010101',
+                'p':'001111',
+                'q':'011111',
+                'r':'010111',
+                's':'001110',
+                't':'011110',
+                'u':'100101',
+                'v':'100111',
+                'w':'111010',
+                'x':'101101',
+                'y':'111101',
+                'z':'110101',
                 }
 
     
@@ -185,12 +150,24 @@ class keyboard:
         self.ser.write(b'0')
         self.ser.write(b'\r')
 
-    def vibrate_letter(self,letter):
-        for vib in self.letter2vib.get(letter):
-            self._vibrate_key(vib)
-            print(vib)
-            time.sleep(.05)
-            self.ser.reset_input_buffer()  #vibrating causes noise with the input buffer not sure why need to figure this out.
-            
+    def vibrate_letter(self, letter, sim=False):
+        counter = 0
+        if sim:
+            value = 0 
+            for key in self.letter_to_chord[letter][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    value = value + vib
+                counter += 1
+            self._vibrate_key(value)
+        else:
+            for key in self.letter_to_chord[letter][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    self._vibrate_key(vib)
+                    print(vib)
+                    time.sleep(.05)
+                    self.ser.reset_input_buffer() 
+                counter += 1
         
     
