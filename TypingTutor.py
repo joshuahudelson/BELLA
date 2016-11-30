@@ -3,16 +3,9 @@ import numpy as np
 import pygame as pg
 import time as tempo
 import pygame.mixer
-#import keyboard
-
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
-####### MODIFIED 11/24/16 FOR BRAILLECADE########
+#----------- Noah Version -------
+import keyboard
+#--------------------------------
 
 
 class TypingTutor:
@@ -83,10 +76,11 @@ class TypingTutor:
 
                 
         """
+#----------- Noah Version -------
         #---Keyboard
-#        self.braille_keyboard = keyboard.keyboard()
-#        self.braille_keyboard.test_coms() #automatically finds keyboard
-
+        self.braille_keyboard = keyboard.keyboard()
+        self.braille_keyboard.test_coms() #automatically finds keyboard
+#--------------------------------
         #---PyGame
         self.pygame = pg
         self.pygame.mixer.pre_init(22050, -16,  2, 512)
@@ -147,7 +141,10 @@ class TypingTutor:
         self.streak = 0
         self.career_points = 0
          
-        # can just set this equal to the one from keyboard module: letter_to_chord?
+        # can just set this equal to the one from keyboard module: ?
+        # A: I don't think so these map the keys visually.  Here the letter 'd' is keys 1,4,and 5
+        # which is the 3rd, 4th, and 5th character in the string.  When building the hardware 
+        # I mapped the keys 1,2,...,6 to they bits in a byte.  Here 'd' would be 011001 = 25
         self.letter_to_key_combo = {
             'a':'OOXOOO',
             'b':'OXXOOO',
@@ -339,9 +336,10 @@ class TypingTutor:
         if self.attempts < 2:
             self.response = 'OOOOOO'
         elif self.key_was_pressed:
-            self.play_voice('oops_hint.wav')
-            # VIBRATE: SELF.RESPONSE
-            #self.braille_keyboard.vibrate_letter(self.current_prompt)
+            self.play_voice('oops_hint.wav',wait=True)
+#-----------------Noah Version------------            
+            self.braille_keyboard.vibrate_letter(self.current_prompt)
+#-----------------------------------------            
         for i in range(len(self.response)):
             if self.response[i] == 'X':
                 color = self.light_blue
@@ -514,18 +512,20 @@ class TypingTutor:
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT: # if the window "x" has been pressed quit the game
                     self.quitGame = True
-                    
-#self.braille_keyboard.request_buttons()  # get button presses from keyboard
-#            if self.braille_keyboard.last_letter != None:  # if button was pressed
-#                self.input_letter = self.braille_keyboard.last_letter
-#                self.key_was_pressed = True
-#                self.play_sound('type.wav')
-            
-            if event.type == self.pygame.KEYDOWN:
-                self.input_letter = self.pygame.key.name(event.key)
-                self.key_was_pressed = True
-                self.play_sound('type.wav')
+#------------- Noah Version ----------                     
+        self.braille_keyboard.request_buttons()  # get button presses from keyboard
+        if self.braille_keyboard.last_letter != None:  # if button was pressed
+            self.input_letter = self.braille_keyboard.last_letter
+            self.key_was_pressed = True
+            self.play_sound('type.wav')
+#--------------------------------------
 
+#------------- Josh Version ----------         
+##            if event.type == self.pygame.KEYDOWN:
+##                self.input_letter = self.pygame.key.name(event.key)
+##                self.key_was_pressed = True
+##                self.play_sound('type.wav')
+#-------------------------------------
         if self.game_state == "introduction":
             self.introduction()
 
