@@ -35,7 +35,7 @@ class keyboard:
                 '001010': 'i',
                 '011010': 'j',
                 '000101': 'k',
-                '000111': 'l',
+                '000111': 'l', 
                 '001101': 'm',
                 '011101': 'n',
                 '010101': 'o',
@@ -53,7 +53,7 @@ class keyboard:
                 '000000': None,
                 }
 
-        #previous dictionary mapped keys visually but key one is in the LSB position
+    #previous dictionary mapped keys visually but key one is in the LSB position
         self.letter_to_chord = {
                 'a':'000001',
                 'b':'000011', 
@@ -81,6 +81,7 @@ class keyboard:
                 'x':'101101',
                 'y':'111101',
                 'z':'110101',
+                'space':'000000',
                 }
 
     
@@ -113,8 +114,8 @@ class keyboard:
                     print('Braillecade Found')
                     self.com_port = i
                     break
-                    self.ser.close
-                    print("Braillecade not found")
+                self.ser.close
+                print("Braillecade not found")
 
     def request_buttons(self):
         self.ser.write(b'b')
@@ -131,7 +132,7 @@ class keyboard:
                 self.last_button = 19 - self.last_button_state[12:32].index('1')
             except:
                 self.last_button = None
-        return self.last_button_state , self.last_button
+       # return self.last_button_state , self.last_button
         
     def request_card(self):
         self.ser.write(b'c')
@@ -171,3 +172,4 @@ class keyboard:
                 counter += 1
         
     
+
