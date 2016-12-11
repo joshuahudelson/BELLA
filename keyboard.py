@@ -35,7 +35,7 @@ class keyboard:
                 '001010': 'i',
                 '011010': 'j',
                 '000101': 'k',
-                '000111': 'l',
+                '000111': 'l', 
                 '001101': 'm',
                 '011101': 'n',
                 '010101': 'o',
@@ -53,33 +53,36 @@ class keyboard:
                 '000000': None,
                 }
 
+    #previous dictionary mapped keys visually but key one is in the LSB position
         self.letter_to_chord = {
-                'a':'OOXOOO',
-                'b':'OXXOOO',
-                'c':'OOXXOO',
-                'd':'OOXXXO',
-                'e':'OOXOXO',
-                'f':'OXXXOO',
-                'g':'OXXXXO',
-                'h':'OXXOXO',
-                'i':'OXOXOO',
-                'j':'OXOXXO',
-                'k':'XOXOOO',
-                'l':'XXXOOO',
-                'm':'XOXXOO',
-                'n':'XOXXXO',
-                'o':'XOXOXO',
-                'p':'XXXXOO',
-                'q':'XXXXXO',
-                'r':'XXXOXO',
-                's':'XXOXOO',
-                't':'XXOXXO',
-                'u':'XOXOOX',
-                'v':'XXXOOX',
-                'w':'OXOXXX',
-                'x':'XOXXOX',
-                'y':'XOXXXX',
-                'z':'XOXOXX'}
+                'a':'000001',
+                'b':'000011', 
+                'c':'001001',
+                'd':'011001',
+                'e':'010001',
+                'f':'001011',
+                'g':'011011',
+                'h':'010011',
+                'i':'001010',
+                'j':'011010',
+                'k':'000101',
+                'l':'000111',
+                'm':'001101',
+                'n':'011101',
+                'o':'010101',
+                'p':'001111',
+                'q':'011111',
+                'r':'010111',
+                's':'001110',
+                't':'011110',
+                'u':'100101',
+                'v':'100111',
+                'w':'111010',
+                'x':'101101',
+                'y':'111101',
+                'z':'110101',
+                'space':'000000',
+                }
 
     
     def list_coms(self):
@@ -111,8 +114,8 @@ class keyboard:
                     print('Braillecade Found')
                     self.com_port = i
                     break
-                    self.ser.close
-                    print("Braillecade not found")
+                self.ser.close
+                print("Braillecade not found")
 
     def request_buttons(self):
         self.ser.write(b'b')
@@ -129,7 +132,7 @@ class keyboard:
                 self.last_button = 19 - self.last_button_state[12:32].index('1')
             except:
                 self.last_button = None
-        return self.last_button_state , self.last_button
+       # return self.last_button_state , self.last_button
         
     def request_card(self):
         self.ser.write(b'c')
@@ -148,15 +151,25 @@ class keyboard:
         self.ser.write(b'0')
         self.ser.write(b'\r')
 
-    def vibrate_letter(self,letter):
+    def vibrate_letter(self, letter, sim=False):
         counter = 0
-        for key in self.letter_to_chord[letter]:
-            if key == 'X':
-                vib = pow(2, counter)
-                self._vibrate_key(vib)
-                print(vib)
-                time.sleep(.05)
-                self.ser.reset_input_buffer()  #vibrating causes noise with the input buffer not sure why need to figure this out.
-            counter += 1
+        if sim:
+            value = 0 
+            for key in self.letter_to_chord[letter][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    value = value + vib
+                counter += 1
+            self._vibrate_key(value)
+        else:
+            for key in self.letter_to_chord[letter][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    self._vibrate_key(vib)
+                    print(vib)
+                    time.sleep(.05)
+                    self.ser.reset_input_buffer() 
+                counter += 1
         
     
+
