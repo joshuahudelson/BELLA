@@ -13,11 +13,6 @@ class keyboard:
     
     self.card_str:
     
-    
-    
-    
-
-
     """
     def __init__(self):
     
