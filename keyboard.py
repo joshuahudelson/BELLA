@@ -119,8 +119,12 @@ class keyboard:
         if self.ser.inWaiting() > 0:
             self.last_button_state = format(int.from_bytes(self.ser.readline(),'little'),'032b')
             self.last_chord = self.last_button_state[2:8]
-            print("button state = {}".format(self.last_button_state))
+#            print("button state = {}".format(self.last_button_state))
             self.last_letter = self.alphabet.get(self.last_chord,'X')
+            if self.last_button_state[0] == '1':
+                self.last_letter = 'newline'
+            if self.last_button_state[1] == '1':
+                self.last_letter = 'backspace'
             if self.last_button_state[8] == '1':
                 self.last_letter = 'space'
             try:

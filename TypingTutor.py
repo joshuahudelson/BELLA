@@ -83,8 +83,7 @@ class TypingTutor:
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
         self.pygame.display.set_caption('Typing Tutor')
 
-        self.braille_keyboard = gametools['keyboard'].keyboard() # do I need to instantiate?  Or can't I just pass the previous one?
-        self.braille_keyboard.test_coms()    # automatically finds keyboard
+        self.braille_keyboard = gametools['keyboard']
                 
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
@@ -139,14 +138,14 @@ class TypingTutor:
 
 #---SOUNDS---
         
-        self.alpha = self.sounds.sounds('alphabet')
+        self.alpha = self.sounds.sounds('alphabet', self.pygame)
         
         self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
                                      'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)}
         
-        self.sfx = self.sounds.sounds('sfx')
-        self.correct = self.sounds.sounds('correct')
-        self.voice = self.sounds.sounds('voice')
+        self.sfx = self.sounds.sounds('sfx', self.pygame)
+        self.correct = self.sounds.sounds('correct', self.pygame)
+        self.voice = self.sounds.sounds('voice', self.pygame)
 
 
 #---CENTRAL FUNCTIONS---
@@ -158,7 +157,11 @@ class TypingTutor:
 
         self.reset_variables()
 
-        self.input_letter = input_letter
+        if ((input_letter == 'newline') | (input_letter == 'backspace')):
+            self.input_letter = None
+        else:
+            self.input_letter = input_letter
+
         self.key_was_pressed = key_was_pressed
 
         if self.input_letter != None:
@@ -205,8 +208,8 @@ class TypingTutor:
                 self.letter_is_wrong()
 
         self.display_letter_prompt()
-        self.draw_buttons()
         self.display_status_box()
+        self.draw_buttons()
 
 
     def test_word(self):
@@ -316,6 +319,8 @@ class TypingTutor:
         """
         
         self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
+        self.pygame.display.update()
+        self.pygame.time.wait(500)
         self.play_voice('oops_hint', wait=True)
         self.braille_keyboard.vibrate_letter(self.letter_prompt)
 
@@ -483,21 +488,24 @@ class TypingTutor:
         """ Draw all six buttons to the screen.
             Color depends on input code.
         """
+
+        key_order = [3, 4, 5, 2, 1, 0]
         
         for i in range(len(keys)):
-            if keys[i] == '1':
+            if keys[key_order[i]] == '1':
                 color = self.light_blue
-            elif keys[i] == '0':
+            elif keys[key_order[i]] == '0':
                 color = self.gray2
-                
+            
             if i > 2:
                 xpos = (50 + 40 + (i*110))
             else:
                 xpos = (50 + (i*110))
 
-            position = (xpos, 300, 100, 150) 
-            self.draw_single_button(self.black, position)
+            position = (xpos, 300, 100, 150)
             position_small = (xpos+20, 320, 60, 110)
+
+            self.draw_single_button(self.black, position)
             self.draw_single_button(color, position_small)
 
     

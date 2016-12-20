@@ -1,16 +1,17 @@
 from TypingTutor import TypingTutor
+from Etudes import Etudes
 from Menu import Menu
 import numpy
-import keyboard
+from keyboard import keyboard
 import pygame
 import sounds
 
 pygame.mixer.pre_init(22050, -16,  2, 512)
 
 pygame.init()
+pygame.mixer.init()
 
-
-braille_keyboard = keyboard.keyboard()
+braille_keyboard = keyboard()
 braille_keyboard.test_coms()    # automatically finds keyboard
 
 clock = pygame.time.Clock()
@@ -27,12 +28,15 @@ gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 gametools = {'pygame':pygame,
              'numpy':numpy,
              'sounds':sounds,
-             'keyboard':keyboard,
+             'keyboard':braille_keyboard,
              'display':gameDisplay}
 
 game_choice = "Menu"
+
 typing_tutor_initialized = False
 menu_initialized = False
+etudes_initialized = False
+
 selection = None
 
 while(True):
@@ -43,8 +47,9 @@ while(True):
 
     braille_keyboard.request_buttons()  # get button presses from keyboard
 
-    if braille_keyboard.last_letter!=None :  # if button was pressed
+    if braille_keyboard.last_letter != None :  # if button was pressed
         input_letter = braille_keyboard.last_letter
+        print(input_letter)
         key_was_pressed = True
     else:
         input_letter = None
@@ -69,4 +74,12 @@ while(True):
         else:
             Typing_Tutor = TypingTutor(gametools)
             typing_tutor_initialized = True
+
+    if game_choice == "Etudes":
+        if etudes_initialized:
+            Etudes_Game.iterate(input_letter)
+            clock.tick(200)
+        else:
+            Etudes_Game = Etudes(gametools)
+            etudes_initialized = True
 

@@ -1,14 +1,11 @@
 import os
 from os.path import join
 from subprocess import call
-import pygame
 
-pygame = pygame
-pygame.mixer.pre_init(22050, -16,  2, 512)
-pygame.mixer.init()
 
 class sounds:
-    def __init__(self,dirName):
+    def __init__(self, dirName, pygame):
+        self.pygame = pygame
         print('initializing') 
         self.orgDir = os.getcwd()
         self.dirName = dirName

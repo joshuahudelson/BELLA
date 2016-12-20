@@ -15,8 +15,7 @@ class Menu:
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
         self.pygame.display.set_caption('Typing Tutor')
 
-        self.braille_keyboard = gametools['keyboard'].keyboard() # do I need to instantiate?  Or can't I just pass the previous one?
-        self.braille_keyboard.test_coms()    # automatically finds keyboard
+        self.braille_keyboard = gametools['keyboard']
                 
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
@@ -38,12 +37,12 @@ class Menu:
         self.display_options()
         self.pygame.display.update()
 
-        if self.input_letter == 'right':
+        if self.input_letter == 'newline':
             self.option_tracker += 1
             return None
-        elif self.input_letter == 'left':
-            return None
+        elif self.input_letter == 'backspace':
             self.option_tracker -= 1
+            return None
         elif self.input_letter == 'space':
             return self.options_list[self.selection]
         else:
