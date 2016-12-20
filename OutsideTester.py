@@ -37,8 +37,6 @@ test_instance = TypingTutor(gametools)
 
 while(True):
 
-    input_letter = None
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT: # if the window "x" has been pressed quit the game
             quitGame = True
@@ -49,6 +47,7 @@ while(True):
         input_letter = braille_keyboard.last_letter
         key_was_pressed = True
     else:
+        input_letter = None
         key_was_pressed = False
     
     test_instance.iterate(input_letter, key_was_pressed)

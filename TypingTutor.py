@@ -6,84 +6,89 @@ class TypingTutor:
     def __init__(self, gametools, starting_level=0):
         """
 
-            self.braille_keyboard: object that handles serial
-                IO with the physical keyboard
-                
-            self.alphabet: list of letters to be tested on,
-                in order of english-language frequency.
+        self.alphabet: list, letters to be tested, in order.
+        
+        self.list_word_prompts: list, words to be tested.
+        
+        self.letters_correct: list, int between 0 and self.max_correct.
 
-            self.letters_wrong/right: list keeping track of
-                how many times player got that letter wrong
-                and right.  Can't be wrong more than five
-                times.
+        self.max_correct: int, maximum number of times letter must be
+                          answered corectly to advance a level.
 
-            self.ratios: list of ratios of self.letters_wrong/right
-                for each letter.  Must be above some amount
-                for player to advance to next level.
+        self.game_state: string; introduction, test_leter, test_word,
+                                 or announcement.
 
-            self.game_state: string keeping track of whether
-                game is in introduction, testing a letter, or
-                testing a word.
+        self.level: int, the current player's level.
 
-            self.level: the current level the play is at.
+        self.zero_level_letters: int, the number of letters to be
+                                 tested when the level is zero.
 
-            self.letters_in_play: list of the letters being
-                tested.  Determined by self.level.
+        self.letters_in_play: string, the letters currently being
+                              tested.
 
-            self.letter_prompt: the current letter being tested.
+        self.letter_prompt: string, the current single-letter
+                             prompt.
+        
+        self.previous_prompt: string, the previous single-letter
+                               prompt.
 
-            self.previous_prompt: the prompt from the previous attempt;
-                used to rule out the possibility of testing the same
-                letter twice in a row.
+        self.key_was_pressed: boolean, True if a key was pressed
+                               on this iteration.        
 
-            self.game_in_play: boolean, keeps the object's game loop
-                running.
+        self.input_letter: string, the letter most recently typed.
 
-            self.key_was_pressed: boolean, if key is pressed, cause
-                delay at the end of the function so that player has
-                time to see the response.
+        self.total_attempted_letters_answered: int, total number of attempted
+                                     answers.
+                                     
+        self.letters_answered_correctly: int, number of attempts that were
+                              successful.
 
-            self.attempts: int, how many times the player has attempted
-                to respond to a single prompt.
+        self.letter_streak: int, length of most recent series of
+                            all-correct letter answers.
 
-            self.score: int, not sure yet how it will be computed.
+        self.career_streak: int, longest streak of this game.
+        
+        self.letter_attempts_before_word: int, tallies answered letters;
+                                          helps switch to word if above some #.
+                                          
+        self.letter_attempts_before_hint: int, tallies incorrect responses;
+                                          gives hint if above some #.
+                                          
+        self.total_words_answered: int, total number of words answered.
+        
+        self.words_answered_correctly: int, number of words answered
+                                       correctly.
+                                       
+        self.word_streak: int, length of most recent series of all-correct
+                           word answers.
 
-            self.input_letter: string, the letter the player has
-                pressed on the keyboard.
+        self.word_string: string, the concatenated player input when
+                          answering a word.
+                          
+        self.word_prompt: string, the word to be answered.
 
-            self.number_prompts_answered: int, after a certain
-                number of prompts, game switches once to prompting
-                a full word
-
-            self.number_words_correct: int, number of word-prompts
-                answered correctly
-
-            self.response: string that gets posted to screen after
-                player responds to a prompt.
-
-            self.list_word_prompts: a list of lists of words to
-                test per level.
-
+        self.intro_done: boolean, has the introduction sound been played?
                 
         """
 
 #---META-GAME STUFF---
 
-        self.SCREEN_WIDTH = 800
-        self.SCREEN_HEIGHT = 600
-
-        self.braille_keyboard = gametools['keyboard'].keyboard() # do I need to instantiate?  Or can't I just pass the previous one?
-        self.braille_keyboard.test_coms()    # automatically finds keyboard
-
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
+
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
+        self.bg = self.pygame.image.load("English_braille_sample.jpg")
+        self.pygame.display.set_caption('Typing Tutor')
+
+        self.braille_keyboard = gametools['keyboard'].keyboard() # do I need to instantiate?  Or can't I just pass the previous one?
+        self.braille_keyboard.test_coms()    # automatically finds keyboard
                 
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
-        self.bg = self.pygame.image.load("English_braille_sample.jpg")
-        self.pygame.display.set_caption('Typing Tutor')
+        
         self.white, self.black, self.red, self.blue = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 0, 255)
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
@@ -91,11 +96,17 @@ class TypingTutor:
 #---GAME VARIABLES---
 
         self.alphabet = 'etaoinshrdlcumwfgypbvkjxqzX'
+
+        self.list_word_prompts = [["tea","eat", "at", "ate", "tee", "tata", ],
+                                  ["tie", "it", "at"],
+                                  ["tine", "tint", "net", "ten", "ant", "tan", ],
+                                  ["stint", "stone", "notes", "nest"]]
+        
         self.letters_correct = self.np.ones(len(self.alphabet))
 
         self.game_state = 'introduction'
         self.level = starting_level
-        self.max_right = 6
+        self.max_correct = 6
 
         self.zero_level_letters = 3
 
@@ -103,19 +114,16 @@ class TypingTutor:
         self.letter_prompt = None
         self.previous_prompt = None
 
-        self.game_in_play = True
-
         self.key_was_pressed = False
-        self.time_to_wait = 0
         
-
         self.input_letter = None
 
-        self.attempts_for_this_letter = 0
-
-        self.total_letters_answered = 0
+        self.total_attempted_letters_answered = 0
         self.letters_answered_correctly = 0
+        
         self.letter_streak = 0
+        self.career_streak = 0
+        
         self.letter_attempts_before_word = 0
         self.letter_attempts_before_hint = 0
 
@@ -123,23 +131,11 @@ class TypingTutor:
         self.words_answered_correctly = 0
         self.word_streak = 0
 
-        self.score = 0  # make this a property
-
-
-        self.response = 'OOOOOO'
-
         self.word_string = ""
         self.word_prompt = ""
 
         self.intro_done = False
 
-        self.streak = 0
-        self.career_points = 0
-
-        self.list_word_prompts = [["tea","eat", "at", "ate", "tee", "tata", ],
-                                  ["tie", "it", "at"],
-                                  ["tine", "tint", "net", "ten", "ant", "tan", ],
-                                  ["stint", "stone", "notes", "nest"]]
 
 #---SOUNDS---
         
@@ -153,7 +149,7 @@ class TypingTutor:
         self.voice = self.sounds.sounds('voice')
 
 
-#---MAJOR FUNCTIONS---
+#---CENTRAL FUNCTIONS---
 
 
     def iterate(self, input_letter=None, key_was_pressed=None):
@@ -181,12 +177,10 @@ class TypingTutor:
 
         self.pygame.display.update()
 
-        self.pygame.time.wait(self.time_to_wait)
-
 
     def introduction(self):
-        """ Under construction: add introductory speech,
-            music, and instructions.
+        """ Plays instructions and waits for space-bar
+            to be pressed.
         """
         
         if self.intro_done == False:
@@ -201,7 +195,7 @@ class TypingTutor:
 
 
     def test_letter(self):
-        """ Decision tree for testing a letter.
+        """ Test users on a letter prompt.
         """
         
         if self.input_letter != None:
@@ -215,41 +209,8 @@ class TypingTutor:
         self.display_status_box()
 
 
-    def letter_is_correct(self):
-        self.total_letters_answered += 1
-        self.letters_answered_correctly += 1
-        self.letter_streak += 1
-        self.letter_attempts_before_hint = 0
-        self.letter_attempts_before_word += 1
-        
-        self.update_letter_tracking(True)
-        self.check_level()
-
-        if self.streak % 5 == 0:
-            self.play_streak_sound()
-        else:
-            self.play_correct('correct')
-
-        if self.letter_attempts_before_word > 3:
-            self.gamble_switch_to_word()
-        else:
-            self.get_new_letter()
-
-
-    def letter_is_wrong(self):
-        self.total_letters_answered += 1
-        self.letter_streak = 0
-        self.letter_attempts_before_hint += 1
-
-        if self.letter_attempts_before_hint > 2:
-            self.give_hint()
-        
-        self.update_letter_tracking(False)
-        self.play_sfx('wrong')
-
-
     def test_word(self):
-        """ Decision tree for testing a word.
+        """ Test user on a word prompt.
         """
         
         if self.input_letter != None and self.input_letter != 'space':
@@ -263,9 +224,60 @@ class TypingTutor:
         self.display_word_prompt()
         self.draw_buttons()
         self.display_status_box()
+
+
+#---OTHER FUNCTIONS---
+
+
+    def letter_is_correct(self):
+        """ Update variables for a correclty-answered letter,
+            play response sound, and call for a new letter prompt.
+        """
         
+        self.total_attempted_letters_answered += 1
+        self.letters_answered_correctly += 1
+        self.letter_streak += 1
+        
+        if self.letter_streak > self.career_streak:
+            self.career_streak = self.letter_streak
+            
+        self.letter_attempts_before_hint = 0
+        self.letter_attempts_before_word += 1
+        
+        self.update_letter_tracking(True)
+        self.check_level()
+
+        if self.letter_streak % 5 == 0:
+            self.play_streak_sound()
+        else:
+            self.play_correct('correct')
+
+        if self.letter_attempts_before_word > 3:
+            self.gamble_switch_to_word()
+        else:
+            self.get_new_letter()
+
+
+    def letter_is_wrong(self):
+        """ Update variables for an incorrectly-answered letter,
+            play response sound, and possibly give a hint.
+        """
+        
+        self.total_attempted_letters_answered += 1
+        self.letter_streak = 0
+        self.letter_attempts_before_hint += 1
+
+        if self.letter_attempts_before_hint > 2:
+            self.give_hint()
+        
+        self.update_letter_tracking(False)
+        self.play_sfx('wrong')
+
 
     def word_is_correct(self):
+        """ Update variables for a correctly-answered word,
+            play response sound, and switch to testing letter.
+        """
         self.total_words_answered += 1
         self.words_answered_correctly += 1
         self.play_voice('nice_work', wait=True)
@@ -273,6 +285,9 @@ class TypingTutor:
 
 
     def word_is_wrong(self):
+        """ Update variables for an incorrectly-answered word,
+            play response sound, and switch to testing letter.
+        """
         self.total_words_answered += 1
         self.play_sfx('wrong')
         self.switch_to_letter()
@@ -287,8 +302,8 @@ class TypingTutor:
         
         if correct:
             self.letters_correct[temp_index] += 1
-            if self.letters_correct[temp_index] > self.max_right:
-                self.letters_correct[temp_index] = self.max_right
+            if self.letters_correct[temp_index] > self.max_correct:
+                self.letters_correct[temp_index] = self.max_correct
         else:
             self.letters_correct[temp_index] -= 1
             if self.letters_correct[temp_index] < 0:
@@ -296,22 +311,22 @@ class TypingTutor:
                 
 
     def give_hint(self):
+        """ Play response sound, show correct buttons.
+            Vibrate the correct keys for the letter prompt.  
         """
-        """
-        print(self.braille_keyboard.letter_to_chord[self.letter_prompt])
-        '''
+        
         self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
         self.play_voice('oops_hint', wait=True)
         self.braille_keyboard.vibrate_letter(self.letter_prompt)
-        '''
 
 
     def gamble_switch_to_word(self):
-        """ There is a 25 percent chance to test a word next.
+        """ Roll dice to see if a word should be tested now.
         """
-        tossup = randint(0, 3)
         
-        if tossup == 3:
+        tossup = randint(0, 4)
+        
+        if tossup == 0:
             self.game_state = "testing_word"
             self.switch_to_word()
             return(True)
@@ -320,17 +335,16 @@ class TypingTutor:
 
 
     def switch_to_word(self):
-        """ Switch the current prompt to a word.
+        """ Get a word prompt and test it.
         """
-        self.play_voice('try_a_word')
         self.letter_prompt = None
         self.get_new_word_prompt()
-        self.number_prompts_answered = 0
         self.game_state = "testing word"
-        
+        self.play_voice('try_a_word')
+
 
     def switch_to_letter(self):
-        """ Switch the current prompt to a letter.
+        """ Get a letter prompt and test it.
         """
         
         self.word_prompt = ""
@@ -340,8 +354,8 @@ class TypingTutor:
 
         
     def get_new_letter(self):
-        """ Set the letter_prompt to a letter that's currently in play and not
-            the previous letter_prompt.
+        """ Set the letter_prompt to a letter that's currently
+            in play and not the previous letter_prompt.
         """
 
         self.letters_in_play = self.alphabet[:(self.zero_level_letters + self.level)]
@@ -356,8 +370,8 @@ class TypingTutor:
 
 
     def get_new_word_prompt(self):
-        """ Randomly select a new word from the list of possible words at the current
-            level.
+        """ Randomly select a new word from the list of possible
+            words available at the current level.
         """
         
         self.word_prompt = choice(self.list_word_prompts[self.level])
@@ -371,7 +385,7 @@ class TypingTutor:
         temp_flag = True
         
         for i in range(len(self.letters_in_play)):
-            if self.letters_correct[i] < self.max_right:
+            if self.letters_correct[i] < self.max_correct:
                 temp_flag = False
 
         if temp_flag:
@@ -389,8 +403,14 @@ class TypingTutor:
         
         self.key_was_pressed = False
         self.input_letter = None
-        self.response = 'OOOOOO'
-        self.time_to_wait = 0
+
+
+    @property
+    def score(self):
+        """ Returns the score, a calculation based on
+            several variables.
+        """
+        return self.letters_answered_correctly
 
 
 #---SOUND FUNCTIONS---
@@ -453,7 +473,7 @@ class TypingTutor:
         """
         
         text = self.font_small.render("Level: " + str(self.level), True, self.black, self.gray1)
-        text2 = self.font_small.render("Points: " + str(self.career_points), True, self.black, self.gray1)
+        text2 = self.font_small.render("Points: " + str(self.score), True, self.black, self.gray1)
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
         self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
