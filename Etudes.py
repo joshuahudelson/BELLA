@@ -4,7 +4,6 @@ class Etudes:
 
     def __init__(self, gametools, starting_level=0):
 
-
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']

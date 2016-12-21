@@ -1,4 +1,5 @@
 from TypingTutor import TypingTutor
+from Search import Search
 from Etudes import Etudes
 from Menu import Menu
 import numpy
@@ -36,6 +37,7 @@ game_choice = "Menu"
 typing_tutor_initialized = False
 menu_initialized = False
 etudes_initialized = False
+search_initialized = False
 
 selection = None
 
@@ -82,4 +84,12 @@ while(True):
         else:
             Etudes_Game = Etudes(gametools)
             etudes_initialized = True
+
+    if game_choice == "Search":
+        if search_initialized:
+            Search_Game.iterate(input_letter)
+            clock.tick(200)
+        else:
+            Search_Game = Search(gametools)
+            search_initialized = True
 
