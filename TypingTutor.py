@@ -92,6 +92,10 @@ class TypingTutor:
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
+        self.list_color_schemes = {'black_white':(self.black, self.white), 'blue_red':(self.blue, self.red)}
+
+        self.color_scheme = 'black_white'
+
 #---GAME VARIABLES---
 
         self.alphabet = 'etaoinshrdlcumwfgypbvkjxqzX'

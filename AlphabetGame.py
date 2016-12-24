@@ -1,19 +1,15 @@
-from random import choice, randint
 
-class Search:
-    """ A game that prompts a player with a letter, and
-        the player finds that letter on the card and presses
-        the cursor key above it.
+class AlphabetGame:
+    """
     """
 
-    def __init__(self, gametools, starting_level=0):
-        """
-        """
+    def __init__(self, gametools, starting_game_state='introduction'):
 
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
+        self.fps = gametools['fps']
 
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
@@ -29,31 +25,24 @@ class Search:
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
+        self.card_str = None
 
-        self.game_state = 'introduction'
-        
-        self.current_input = None
+        self.game_state = starting_game_state
 
-        self.current_prompt = ''
-        
-        self.word_prompt = 'insert card'
+        self.current_button = None
 
-        self.card_str = '                    '
+        self.press_counter = 0
 
-        self.card_inserted = False
+        self.timer = 0
 
-        self.freq_dict = {}
+        self.number_of_seconds_to_wait = 3
 
-        self.search_list = []
+        self.num_prompts = 0
 
-        self.search_letter_num = 0
-        
-        self.hidden_pos = []
-
-        self.found_pos = []
+        self.max_num_prompts = 1
 
         self.intro_played = False
-        
+
 #---SOUND---
         
         self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
@@ -65,20 +54,27 @@ class Search:
         self.correct = self.sounds.sounds('correct', self.pygame)
         self.voice = self.sounds.sounds('voice', self.pygame)
 
-
-#---FUNCTIONS---
-
-    def iterate(self, input_letter):
+        self.alphabet_sounds = self.sounds.sounds('alphabet_sounds', self.pygame)
         
+
+    def iterate(self, cursor_button):
+
         self.gameDisplay.blit(self.bg, (0,0))
 
-        self.current_input = input_letter
+        self.timer += 1
+
+        if int(self.timer/float(self.fps)) > self.number_of_seconds_to_wait:
+            if self.num_prompts < self.max_num_prompts:
+                print('reminder!')
+#                self.play_instruction[self.press_counter]
 
         if self.game_state == 'introduction':
             self.introduction()
         elif self.game_state == 'game_play':
-            self.game_play()
-         
+                self.game_play(cursor_button)
+
+        print(self.timer)
+
         self.pygame.display.update()
 
 
@@ -92,79 +88,25 @@ class Search:
                 self.card_str = self.braille_keyboard.card_str
                 self.play_sfx('insert',wait=True) # we need to rename this sound effect.  Just call it beep.
                 self.game_state = 'game_play'
-                self.get_search_letters()
-                self.search_letter_num = 0
-                self.current_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.current_prompt)
-
-        self.display_word_prompt()
 
 
+    def game_play(self, cursor_button):
 
-    def game_play(self):
-        if self.braille_keyboard.last_button != None:
-            if (self.braille_keyboard.last_button in self.hidden_pos):
-                self.correct_choice()
+        if cursor_button != None:
+
+            if self.current_cursor_button != cursor_button:
+                self.current_cursor_button = cursor_button
+                self.press_counter = 0
+
+            character = self.card_str[self.current_cursor_button]
+            
+            if character != ' ':
+                self.play_sfx('wrong')
             else:
-                if(self.braille_keyboard.last_button in self.found_pos):
-                    self.play_sfx('double')
-                    self.play_voice('already_found') 
-                else:
-                    self.play_sfx('wrong')
-
-        self.display_letter_prompt()  
-
-
-    def get_search_letters(self):
-        """ Makes a histogram of the characters on the card.
-            Delete the space entry.
-            Turns it into a list sorted by frequency.
-        """
-
-        self.freq_dict = {i:self.card_str.count(i) for i in self.card_str} # can this be a temp variable?
-
-        try:
-            del self.freq_dict[' ']
-        except KeyError:
-            pass
-
-        self.search_list = sorted(self.freq_dict,key=self.freq_dict.get)
-        print(self.search_list)
-
-
-    def get_search_positions(self, letter): # Can I just make this compare on the fly?
-
-        self.hidden_pos = [pos for pos,char in enumerate(self.card_str) if char == letter]
-        print("letter = {}  positions = {}".format(letter,self.hidden_pos))
-        self.found_pos = []
-        
-        self.play_voice('find_all')
-        self.pygame.time.wait(round(self.voice.sound_dict['find_all']['length'] * .9))
-        self.play_alpha(self.current_prompt)
-        self.pygame.time.wait(round(self.alpha.sound_dict[self.current_prompt]['length'] * .75))
-        self.play_voice('_s',wait=True)
-
-
-    def correct_choice(self):
-        self.hidden_pos.remove(self.braille_keyboard.last_button)
-        self.found_pos.append(self.braille_keyboard.last_button)
-        if len(self.hidden_pos)<= 0:            
-            self.search_letter_num +=1
-            if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
-                self.play_sfx('win')
-                self.play_voice('great_job',wait=True)
-                self.game_state = 'introduction'
-                self.card_inserted = False
-                self.intro_played = False
-            else:
-                print("yay you found them all")
-                self.play_sfx('level_up')
-                self.play_voice('nice_work',wait=True)
-                self.current_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.current_prompt)
-        else:
-            self.play_correct('correct')
-                
+                self.alphabet_sounds(character + str(self.press_counter))
+                self.press_counter += 1
+            
+            
 
 #---SOUND AND DISPLAY FUNCTIONS
 
@@ -208,4 +150,5 @@ class Search:
         text = self.font.render(self.word_prompt, True, self.black)
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
 

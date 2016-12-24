@@ -2,6 +2,7 @@ from TypingTutor import TypingTutor
 from Search import Search
 from Etudes import Etudes
 from Menu import Menu
+from AlphabetGame import AlphabetGame
 import numpy
 from keyboard import keyboard
 import pygame
@@ -25,12 +26,14 @@ input_letter = None
 
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+fps = 20
 
 gametools = {'pygame':pygame,
              'numpy':numpy,
              'sounds':sounds,
              'keyboard':braille_keyboard,
-             'display':gameDisplay}
+             'display':gameDisplay,
+             'fps':fps}
 
 game_choice = "Menu"
 
@@ -38,18 +41,19 @@ typing_tutor_initialized = False
 menu_initialized = False
 etudes_initialized = False
 search_initialized = False
+alphabet_game_initialized = False
 
 selection = None
 
 while(True):
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: # if the window "x" has been pressed quit the game
+        if event.type == pygame.QUIT:
             quitGame = True
 
-    braille_keyboard.request_buttons()  # get button presses from keyboard
+    braille_keyboard.request_buttons()
 
-    if braille_keyboard.last_letter != None :  # if button was pressed
+    if braille_keyboard.last_letter != None :
         input_letter = braille_keyboard.last_letter
         print(input_letter)
         key_was_pressed = True
@@ -72,7 +76,7 @@ while(True):
     if game_choice == "Typing Tutor":
         if typing_tutor_initialized:
             Typing_Tutor.iterate(input_letter, key_was_pressed)
-            clock.tick(200)
+            clock.tick(fps)
         else:
             Typing_Tutor = TypingTutor(gametools)
             typing_tutor_initialized = True
@@ -80,7 +84,7 @@ while(True):
     if game_choice == "Etudes":
         if etudes_initialized:
             Etudes_Game.iterate(input_letter)
-            clock.tick(200)
+            clock.tick(fps)
         else:
             Etudes_Game = Etudes(gametools)
             etudes_initialized = True
@@ -88,8 +92,15 @@ while(True):
     if game_choice == "Search":
         if search_initialized:
             Search_Game.iterate(input_letter)
-            clock.tick(200)
+            clock.tick(fps)
         else:
             Search_Game = Search(gametools)
             search_initialized = True
 
+    if game_choice == "Alphabet Game":
+        if alphabet_game_initialized:
+            Alphabet_Game.iterate(input_letter)
+            clock.tick(fps)
+        else:
+            Alphabet_Game = AlphabetGame(gametools)
+            alphabet_game_initialized = True

@@ -24,7 +24,7 @@ class Menu:
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
-        self.options_list = ['Typing Tutor', 'Etudes', 'Search']
+        self.options_list = ['Typing Tutor', 'Etudes', 'Search', 'Alphabet Game']
 
         self.option_tracker = 0
 

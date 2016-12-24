@@ -1,8 +1,50 @@
 from random import choice, randint
 
 class Etudes:
+    """ A game in which the user is prompted to press vibrating
+        keys.
+    """
 
     def __init__(self, gametools, starting_level=0):
+        """
+
+            self.game_state: string, what part of the game is currently running
+
+            self.alphabet: string, the characters--in order--that will be added
+                           to the set of possible prompts as the player advances
+                           levels.
+
+            self.letters_in_play: string, the current set of characters being
+                                  prompted.
+
+            self.levels: list, the substring from self.alphabet that should be
+                         used as self.letters_in_play for each level (the index
+                         of self.levels).
+
+            self.current_level: int, the player's current level.
+
+            self.current_prompt: string, the character being prompted now.
+
+            self.responses_correct: list, a tally for each letter of self.alphabet
+                                    of how many times it has been answered correctly.
+
+            self.max_correct: int, the number of correct responses required for each
+                              letter within a level before the player can advance to
+                              the next level.
+
+            self.total_attempted_responses: int, the total number of player responses
+                                            whether correct or not.
+
+            self.num_correct_responses: int, the number of player responses that have been
+                                        correct so far.
+
+            self.response_streak: int, number of correct responses given since the most
+                                  recent incorrect response (or beginning of the game).
+
+            self.prompt_vibrated: boolean, whether self.current_prompt has vibrated the
+                                  keys yet.
+
+        """
 
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
@@ -27,11 +69,11 @@ class Etudes:
         self.game_state = 'introduction'
         self.alphabet = 'aeickbdfhjlmousgnprtvwxzqy'
         
-        self.letters_in_play = 'aetio'
+        self.letters_in_play = ''
         self.levels = [5, 14, 23, 25]
         self.current_level = 0
         
-        self.current_prompt = 'space'
+        self.current_prompt = ''
         
         self.responses_correct = self.np.ones(26)
         self.max_correct = 6
@@ -58,6 +100,11 @@ class Etudes:
 #---CENTRAL FUNCTIONS---
 
     def iterate(self, input_letter):
+        """ One iteration of the game loop.
+            Receives input and calls appropriate
+            function depending on the state of the
+            game.
+        """
 
         self.gameDisplay.blit(self.bg, (0,0))
         self.current_input = input_letter
@@ -73,6 +120,10 @@ class Etudes:
 
 
     def introduction(self):
+        """ The introduction screen of the game.
+            Waits for space bar to begin prompting.
+        """
+        
         self.display_message('Press Space')
         if self.current_input == 'space':
             self.game_state = 'play_game'
@@ -80,6 +131,12 @@ class Etudes:
 
 
     def play_game(self):
+        """ The main game-play function.
+            Vibrates the prompted character,
+            tests whether the player's input
+            is correct or not, and then calls
+            the appropriate update function.
+        """
         
         self.display_letter_prompt()
 
@@ -95,6 +152,11 @@ class Etudes:
                 
 
     def correct_response(self):
+        """ If the response is correct, update
+            the game variables accordingly and
+            get a new prompt.
+        """
+        
         self.play_correct('correct')
         self.update_points(True)
         self.check_level()
@@ -102,13 +164,20 @@ class Etudes:
 
 
     def incorrect_response(self):
+        """ If the response is incorrect, update
+            the game variables accordingly and vibrate
+            the current prompt again.
+        """
+        
         self.play_sfx('wrong')
         self.update_points(False)
         self.vibrate_buttons()
 
 
     def update_points(self, correct):
-        """
+        """ Increment or decrement the value in the list that
+            tracks responses per character.  Can't decrement
+            past 0 nor increment past self.max_correct.
         """
         
         alpha_loc = self.alphabet.index(self.current_prompt)
@@ -126,7 +195,9 @@ class Etudes:
 
 
     def check_level(self):
-        """
+        """ If all values in the list that tracks responses per
+            character are equal to self.max_correct, then the
+            player advances a level.
         """
         
         temp_flag = True
@@ -144,7 +215,8 @@ class Etudes:
 
 
     def get_new_prompt(self):
-        """
+        """ Choose a new prompt from the list of letters in
+            play, unless it's the one that has just been prompted.
         """
         
         previous_prompt = self.current_prompt
@@ -156,6 +228,9 @@ class Etudes:
 
 
     def vibrate_buttons(self):
+        """ Vibrate the buttons that correspond to the current prompt.
+        """
+        
         self.braille_keyboard.vibrate_letter(self.current_prompt, sim=True)
 
 
