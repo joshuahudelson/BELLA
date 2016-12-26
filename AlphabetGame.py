@@ -43,6 +43,14 @@ class AlphabetGame:
 
         self.intro_played = False
 
+
+        self.current_display_state = 0
+
+        self.display_names = ['black_white', 'red_blue']
+
+        self.display_states = {'black_white':{'background':self.black, 'letters':self.white},
+                               'red_blue':{'background':self.red, 'letters':self.blue}}
+
 #---SOUND---
         
         self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
@@ -57,21 +65,24 @@ class AlphabetGame:
         self.alphabet_sounds = self.sounds.sounds('alphabet_sounds', self.pygame)
         
 
+
+
     def iterate(self, cursor_button):
 
-        self.gameDisplay.blit(self.bg, (0,0))
+        self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.timer += 1
+
+        if cursor_button == 'backspace':
+            self.current_display_state = (self.current_display_state + 1) % (len(self.display_names))
 
         if int(self.timer/float(self.fps)) > self.number_of_seconds_to_wait:
             if self.num_prompts < self.max_num_prompts:
                 print('reminder!')
-#                self.play_instruction[self.press_counter]
-
         if self.game_state == 'introduction':
             self.introduction()
         elif self.game_state == 'game_play':
-                self.game_play(cursor_button)
+            self.game_play(cursor_button)
 
         print(self.timer)
 
@@ -86,7 +97,7 @@ class AlphabetGame:
             if self.braille_keyboard.last_button_state == '11111111111111111111111111111111':
                 self.braille_keyboard.request_card()
                 self.card_str = self.braille_keyboard.card_str
-                self.play_sfx('insert',wait=True) # we need to rename this sound effect.  Just call it beep.
+                self.play_sfx('cardinserted',wait=True) # we need to rename this sound effect.  Just call it beep.
                 self.game_state = 'game_play'
 
 
@@ -94,19 +105,23 @@ class AlphabetGame:
 
         if cursor_button != None:
 
-            if self.current_cursor_button != cursor_button:
-                self.current_cursor_button = cursor_button
+            if self.current_button != cursor_button:  # make own function...
+                self.current_button = cursor_button
                 self.press_counter = 0
 
-            character = self.card_str[self.current_cursor_button]
+            character = self.card_str[self.current_button]
             
-            if character != ' ':
+            if character == ' ':   # make own function...
                 self.play_sfx('wrong')
             else:
-                self.alphabet_sounds(character + str(self.press_counter))
-                self.press_counter += 1
-            
-            
+                self.play_alphabet_sound(character + str(self.press_counter))
+                self.press_counter = (self.press_counter + 1) % 3
+
+        if self.current_button == None:
+            self.display_letter_prompt(' ')
+        else:
+            self.display_letter_prompt(self.card_str[self.current_button])
+
 
 #---SOUND AND DISPLAY FUNCTIONS
 
@@ -132,22 +147,26 @@ class AlphabetGame:
         if wait:
             self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
 
+    def play_alphabet_sound(self, sound, wait=False):
+        self.alphabet_sounds.sound_dict[sound]['sound'].play()
+        if wait:
+            self.pygame.time.wait(self.alphabet_sounds.sound_dict[sound]['length'])
+
    
-    def display_letter_prompt(self):
+    def display_letter_prompt(self, prompt):
         """ Write the current letter prompt to the screen.
         """
-
-        text = self.font.render(self.current_prompt, True, self.black)
+        text = self.font.render(prompt, True, self.display_states[self.display_names[self.current_display_state]]['letters'])
         temp_width = text.get_rect().width
-        self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH / 2) - 100, 102, 200, 55))
+        self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['background'], ((self.SCREEN_WIDTH / 2) - 100, 102, 200, 55))
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width / 2), 100))
 
 
-    def display_word_prompt(self):
+    def display_word_prompt(self, prompt):
         """ Write the current word prompt to the screen.
         """
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(self.word_prompt, True, self.black)
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['letters'], ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
+        text = self.font.render(prompt, True, self.display_states[self.current_display_state][self.background])
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 

@@ -3,6 +3,7 @@ from Search import Search
 from Etudes import Etudes
 from Menu import Menu
 from AlphabetGame import AlphabetGame
+from StoryBook import StoryBook
 import numpy
 from keyboard import keyboard
 import pygame
@@ -24,16 +25,19 @@ SCREEN_HEIGHT = 600
 key_was_pressed = False
 input_letter = None
 
+serial_delay_factor = 0.5
+
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-fps = 20
+fps = 100
 
 gametools = {'pygame':pygame,
              'numpy':numpy,
              'sounds':sounds,
              'keyboard':braille_keyboard,
              'display':gameDisplay,
-             'fps':fps}
+             'fps':fps,
+             'serial_delay_factor':serial_delay_factor}
 
 game_choice = "Menu"
 
@@ -42,8 +46,12 @@ menu_initialized = False
 etudes_initialized = False
 search_initialized = False
 alphabet_game_initialized = False
+storybook_initialized = False
 
 selection = None
+
+input_letter = None
+the_input = None
 
 while(True):
 
@@ -51,19 +59,19 @@ while(True):
         if event.type == pygame.QUIT:
             quitGame = True
 
-    braille_keyboard.request_buttons()
+    input_dict = braille_keyboard.update_keyboard()
 
-    if braille_keyboard.last_letter != None :
-        input_letter = braille_keyboard.last_letter
-        print(input_letter)
-        key_was_pressed = True
-    else:
-        input_letter = None
-        key_was_pressed = False
+    input_letter = input_dict['standard']
+
+    
+    print(input_letter)
+    print(input_dict)
+
 
     if game_choice == "Menu":
         if menu_initialized:
             selection = Opening_Menu.iterate(input_letter)
+            clock.tick(fps)
             if selection != None:
                 print(selection)
                 Opening_Menu = None
@@ -104,3 +112,11 @@ while(True):
         else:
             Alphabet_Game = AlphabetGame(gametools)
             alphabet_game_initialized = True
+
+    if game_choice == "StoryBook":
+        if storybook_initialized:
+            StoryBook.iterate(input_letter, input_letter)
+            clock.tick(fps)
+        else:
+            StoryBook = StoryBook(gametools)
+            storybook_initialized = True

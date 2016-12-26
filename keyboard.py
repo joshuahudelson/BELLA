@@ -10,7 +10,6 @@ class keyboard:
 
     def __init__(self):
         """
-
             self.Ser: serial object?
 
             self.last_button_state:
@@ -22,7 +21,17 @@ class keyboard:
 
         self.ser = None
 
-        self.last_button_state = None
+
+        self.standard = None
+        self.raw = None
+        self.chord = None
+        self.letter = None
+        self.cursor_key = None
+        self.cursor_key_list = None
+        self.card_state = None
+        self.card_trigger = None
+        self.card_str = '                    '
+
 
         self.last_chord = None
 
@@ -30,9 +39,8 @@ class keyboard:
 
         self.comport = None
     
-        self.card_str = '                    '
         
-        self.alphabet = {
+        self.chord_to_letter = {
                 '000001': 'a',
                 '000011': 'b',
                 '001001': 'c',
@@ -59,6 +67,11 @@ class keyboard:
                 '101101': 'x',
                 '111101': 'y',
                 '110101': 'z',
+                '000010': 'key2',
+                '000100': 'key3',
+                '001000': 'key4',
+                '010000': 'key5',
+                '100000': 'key6',
                 '000000': None,
                 }
 
@@ -90,7 +103,13 @@ class keyboard:
                 'y':'111101',
                 'z':'110101',
                 'space':'000000',
+                'key2':'000010',
+                'key3':'000100',
+                'key4':'001000',
+                'key5':'010000',
+                'key6':'100000',
                 }
+
 
     
     def list_coms(self):
@@ -138,34 +157,65 @@ class keyboard:
         print("No comports found")
 
 
-    def request_buttons(self):
-        """ Sends request for button states to keyboard and waits
-            for response.  Formats response into a 32-bit string.  Uses
-            that string to generate a 6-bit chord.  Translates the
-            chord into a character.  Then checks to see if one of the
-            cursor buttons has been pressed.
+    def update_keyboard(self):
         """
-        
+        """
+
         self.ser.write(b'b')
         time.sleep(.1)
-        
-        if self.ser.inWaiting() > 0:
-            
-            self.last_button_state = format(int.from_bytes(self.ser.readline(),'little'),'032b')
-            self.last_chord = self.last_button_state[2:8]
-            self.last_letter = self.alphabet.get(self.last_chord,'X')
-            
-            if self.last_button_state[0] == '1':
-                self.last_letter = 'newline'
-            if self.last_button_state[1] == '1':
-                self.last_letter = 'backspace'
-            if self.last_button_state[8] == '1':
-                self.last_letter = 'space'
-            try:
-                self.last_button = 19 - self.last_button_state[12:32].index('1')
-            except:
-                self.last_button = None
 
+        if self.ser.inWaiting() > 0:
+
+            self.raw = format(int.from_bytes(self.ser.readline(),'little'),'032b')
+
+            self.card_trigger = False
+
+            if self.raw == '11111111111111111111111111111111':
+
+                self.card_trigger = True
+                
+                self.raw = '00000000000000000000000000000000'
+
+            self.chord = self.raw[2:8]
+            self.letter = self.get_letter(self.chord)
+
+            try:
+                self.cursor_key = 19 - self.raw[12:32].index('1')
+            except:
+                self.crusor_key = None
+
+            self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == 1]
+
+            if self.raw[8] == '1':
+                self.standard = 'space'
+            elif ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
+                self.standard = 'quit'
+            elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
+                self.standard = 'display'
+            elif (self.raw[0] == '1'):
+                self.standard = 'newline'
+            elif (self.raw[1] == '1'):
+                self.standard = 'backspace'
+            elif self.letter:
+                self.standard = self.letter
+            elif self.cursor_key:
+                self.standard = self.cursor_key
+            else:
+                self.standard = None
+
+        return {'raw':self.raw,
+                'card_trigger':self.card_trigger,
+                'chord':self.chord,
+                'letter':self.letter,
+                'cursor_key':self.cursor_key,
+                'cursor_keys_list':self.cursor_keys_list,
+                'standard':self.standard,
+                'card_state':self.card_state}
+
+
+    def get_letter(self, chord):
+        
+        return self.chord_to_letter.get(chord, 'error')
 
 
     def request_card(self):
@@ -181,7 +231,7 @@ class keyboard:
         return(self.card_str)
 
 
-    def _vibrate_key(self, vib, time=0.2):
+    def _vibrate_key(self, vib, sleep_time=0.2):
         """ 
         """
         
@@ -189,7 +239,7 @@ class keyboard:
         self.ser.write(str(vib).encode('ascii'))
         self.ser.write(b'\r')
         
-        time.sleep(time)
+        time.sleep(sleep_time)
 
         self.ser.write(b'v')
         self.ser.write(b'0')

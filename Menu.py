@@ -24,7 +24,7 @@ class Menu:
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
-        self.options_list = ['Typing Tutor', 'Etudes', 'Search', 'Alphabet Game']
+        self.options_list = ['Typing Tutor', 'Etudes', 'Search', 'Alphabet Game', 'StoryBook']
 
         self.option_tracker = 0
 
@@ -51,7 +51,7 @@ class Menu:
 
     def display_options(self):
         for i in range(len(self.options_list)):
-            self.display_single_option(self.options_list[i], (i * 100) + 200, i==self.selection)
+            self.display_single_option(self.options_list[i], (i * 100) + 50, i==self.selection)
 
 
     def display_single_option(self, word, location, highlight=False):
