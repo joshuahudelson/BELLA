@@ -41,75 +41,82 @@ class keyboard:
     
         
         self.chord_to_letter = {
-                '000001': 'a',
-                '000011': 'b',
-                '001001': 'c',
-                '011001': 'd',
-                '010001': 'e',
-                '001011': 'f',
-                '011011': 'g',
-                '010011': 'h',
-                '001010': 'i',
-                '011010': 'j',
-                '000101': 'k',
-                '000111': 'l', 
-                '001101': 'm',
-                '011101': 'n',
-                '010101': 'o',
-                '001111': 'p',
-                '011111': 'q',
-                '010111': 'r',
-                '001110': 's',
-                '011110': 't',
-                '100101': 'u',
-                '100111': 'v',
-                '111010': 'w',
-                '101101': 'x',
-                '111101': 'y',
-                '110101': 'z',
-                '000010': 'key2',
-                '000100': 'key3',
-                '001000': 'key4',
-                '010000': 'key5',
-                '100000': 'key6',
-                '000000': None,
-                }
+            '000001': 'a',
+            '000011': 'b',
+            '001001': 'c',
+            '011001': 'd',
+            '010001': 'e',
+            '001011': 'f',
+            '011011': 'g',
+            '010011': 'h',
+            '001010': 'i',
+            '011010': 'j',
+            '000101': 'k',
+            '000111': 'l', 
+            '001101': 'm',
+            '011101': 'n',
+            '010101': 'o',
+            '001111': 'p',
+            '011111': 'q',
+            '010111': 'r',
+            '001110': 's',
+            '011110': 't',
+            '100101': 'u',
+            '100111': 'v',
+            '111010': 'w',
+            '101101': 'x',
+            '111101': 'y',
+            '110101': 'z',
+            '000000': None,
+            }
 
         self.letter_to_chord = {
-                'a':'000001',
-                'b':'000011', 
-                'c':'001001',
-                'd':'011001',
-                'e':'010001',
-                'f':'001011',
-                'g':'011011',
-                'h':'010011',
-                'i':'001010',
-                'j':'011010',
-                'k':'000101',
-                'l':'000111',
-                'm':'001101',
-                'n':'011101',
-                'o':'010101',
-                'p':'001111',
-                'q':'011111',
-                'r':'010111',
-                's':'001110',
-                't':'011110',
-                'u':'100101',
-                'v':'100111',
-                'w':'111010',
-                'x':'101101',
-                'y':'111101',
-                'z':'110101',
-                'space':'000000',
-                'key2':'000010',
-                'key3':'000100',
-                'key4':'001000',
-                'key5':'010000',
-                'key6':'100000',
+            'a':'000001',
+            'b':'000011', 
+            'c':'001001',
+            'd':'011001',
+            'e':'010001',
+            'f':'001011',
+            'g':'011011',
+            'h':'010011',
+            'i':'001010',
+            'j':'011010',
+            'k':'000101',
+            'l':'000111',
+            'm':'001101',
+            'n':'011101',
+            'o':'010101',
+            'p':'001111',
+            'q':'011111',
+            'r':'010111',
+            's':'001110',
+            't':'011110',
+            'u':'100101',
+            'v':'100111',
+            'w':'111010',
+            'x':'101101',
+            'y':'111101',
+            'z':'110101',
+            'space':'000000',
                 }
 
+        self.chord_to_key = {
+            '000001': 'key1',
+            '000010': 'key2',
+            '000100': 'key3',
+            '001000': 'key4',
+            '010000': 'key5',
+            '100000': 'key6',
+            }
+
+        self.key_to_chord = {
+            'key1':'000001',
+            'key2':'000010',
+            'key3':'000100',
+            'key4':'001000',
+            'key5':'010000',
+            'key6':'100000',
+            }
 
     
     def list_coms(self):
@@ -172,22 +179,25 @@ class keyboard:
 
             if self.raw == '11111111111111111111111111111111':
 
+                self.request_card()
                 self.card_trigger = True
                 
                 self.raw = '00000000000000000000000000000000'
 
             self.chord = self.raw[2:8]
             self.letter = self.get_letter(self.chord)
+            self.key = self.get_key(self.chord)
 
             try:
                 self.cursor_key = 19 - self.raw[12:32].index('1')
             except:
-                self.crusor_key = None
+                self.cursor_key = None
 
             self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == 1]
 
             if self.raw[8] == '1':
                 self.standard = 'space'
+                self.letter = 'space' # is this right? space is higher priority than a letter?
             elif ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
                 self.standard = 'quit'
             elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
@@ -203,19 +213,27 @@ class keyboard:
             else:
                 self.standard = None
 
-        return {'raw':self.raw,
+        return {
+                'raw':self.raw,
                 'card_trigger':self.card_trigger,
                 'chord':self.chord,
                 'letter':self.letter,
                 'cursor_key':self.cursor_key,
                 'cursor_keys_list':self.cursor_keys_list,
                 'standard':self.standard,
-                'card_state':self.card_state}
+                'card_state':self.card_state,
+                'card_str':self.card_str,
+                'key':self.key
+                }
 
 
     def get_letter(self, chord):
         
         return self.chord_to_letter.get(chord, 'error')
+
+    def get_key(self, chord):
+
+        return self.chord_to_key.get(chord, None)
 
 
     def request_card(self):
@@ -227,8 +245,23 @@ class keyboard:
         time.sleep(.1)
         
         self.card_str = self.ser.readline().decode('ascii')[:-2]  # not sure why the last two aren't included; test to find out.
+        self.card_state = True # should this be here?
         
         return(self.card_str)
+
+
+    def vibrate_single_key(self, vib):
+
+        counter = 0
+
+        for digit in self.key_to_chord[vib][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+            if digit == '1':
+                vib = pow(2, counter)
+                self._vibrate_key(vib)
+                print(vib)
+                time.sleep(.05)
+                self.ser.reset_input_buffer() 
+            counter += 1
 
 
     def _vibrate_key(self, vib, sleep_time=0.2):

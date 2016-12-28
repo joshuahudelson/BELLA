@@ -73,10 +73,10 @@ class Etudes:
         self.levels = [5, 14, 23, 25]
         self.current_level = 0
         
-        self.current_prompt = ''
+        self.current_prompt = 'space'
         
         self.responses_correct = self.np.ones(26)
-        self.max_correct = 6
+        self.max_correct = 2
 
         self.total_attempted_responses = 0
         self.num_correct_responses = 0
@@ -99,7 +99,7 @@ class Etudes:
 
 #---CENTRAL FUNCTIONS---
 
-    def iterate(self, input_letter):
+    def iterate(self, input_dict):
         """ One iteration of the game loop.
             Receives input and calls appropriate
             function depending on the state of the
@@ -107,7 +107,7 @@ class Etudes:
         """
 
         self.gameDisplay.blit(self.bg, (0,0))
-        self.current_input = input_letter
+        self.current_input = input_dict['letter']
         self.display_status_box()
 
         if self.game_state == 'introduction':
@@ -127,6 +127,7 @@ class Etudes:
         self.display_message('Press Space')
         if self.current_input == 'space':
             self.game_state = 'play_game'
+            self.update_letters_in_play()
             self.get_new_prompt()
 
 
@@ -179,19 +180,21 @@ class Etudes:
             tracks responses per character.  Can't decrement
             past 0 nor increment past self.max_correct.
         """
-        
-        alpha_loc = self.alphabet.index(self.current_prompt)
-        
-        if correct:
-            self.responses_correct[alpha_loc] += 1
-            if self.responses_correct[alpha_loc] > self.max_correct:
-                self.responses_correct[alpha_loc] = self.max_correct
-        else:
-            self.responses_correct[alpha_loc] -= 1
-            if self.responses_correct[alpha_loc] < 0:
-                self.responses_correct[alpha_loc] = 0
+
+        if self.current_input != 'error' and self.current_input != 'space':
+
+            alpha_loc = self.alphabet.index(self.current_input)
+            
+            if correct:
+                self.responses_correct[alpha_loc] += 1
+                if self.responses_correct[alpha_loc] > self.max_correct:
+                    self.responses_correct[alpha_loc] = self.max_correct
+            else:
+                self.responses_correct[alpha_loc] -= 1
+                if self.responses_correct[alpha_loc] < 0:
+                    self.responses_correct[alpha_loc] = 0
                 
-        print(self.responses_correct[:len(self.letters_in_play)])
+        print(self.responses_correct[:self.levels[self.current_level]])
 
 
     def check_level(self):
@@ -210,7 +213,7 @@ class Etudes:
             self.current_level += 1
             if self.current_level > len(self.levels)-1:
                 self.current_level = len(self.levels)-1
-                self.letters_in_play = self.alphabet[:self.levels[self.current_level]]
+                self.update_letters_in_play
                 print("Level up")
 
 
@@ -225,6 +228,11 @@ class Etudes:
             self.current_prompt = choice(self.letters_in_play)
 
         self.prompt_vibrated = False
+
+
+    def update_letters_in_play(self):
+        
+        self.letters_in_play = self.alphabet[:self.levels[self.current_level]]
 
 
     def vibrate_buttons(self):

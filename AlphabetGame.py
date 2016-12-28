@@ -43,6 +43,7 @@ class AlphabetGame:
 
         self.intro_played = False
 
+        self.current_cursor_button = None
 
         self.current_display_state = 0
 
@@ -67,41 +68,45 @@ class AlphabetGame:
 
 
 
-    def iterate(self, cursor_button):
+    def iterate(self, input_dict):
+
+        self.current_cursor_button = input_dict['cursor_key']
 
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.timer += 1
 
-        if cursor_button == 'backspace':
+        if self.current_cursor_button == 'backspace':  # Display shift stuff... move and change
             self.current_display_state = (self.current_display_state + 1) % (len(self.display_names))
 
         if int(self.timer/float(self.fps)) > self.number_of_seconds_to_wait:
             if self.num_prompts < self.max_num_prompts:
                 print('reminder!')
+                
         if self.game_state == 'introduction':
-            self.introduction()
+            self.introduction(input_dict)
         elif self.game_state == 'game_play':
-            self.game_play(cursor_button)
+            self.game_play(self.current_cursor_button)
 
         print(self.timer)
 
         self.pygame.display.update()
 
 
-    def introduction(self):
+    def introduction(self, input_dict):
         if self.intro_played == False:
             self.play_voice('insert_card')
             self.intro_played = True
         else:
-            if self.braille_keyboard.last_button_state == '11111111111111111111111111111111':
-                self.braille_keyboard.request_card()
-                self.card_str = self.braille_keyboard.card_str
+            if input_dict['card_trigger']:
+                self.card_str = input_dict['card_str']
                 self.play_sfx('cardinserted',wait=True) # we need to rename this sound effect.  Just call it beep.
                 self.game_state = 'game_play'
 
 
     def game_play(self, cursor_button):
+
+        print(cursor_button)
 
         if cursor_button != None:
 

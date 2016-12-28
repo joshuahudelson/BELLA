@@ -22,7 +22,6 @@ clock = pygame.time.Clock()
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-key_was_pressed = False
 input_letter = None
 
 serial_delay_factor = 0.5
@@ -62,11 +61,7 @@ while(True):
     input_dict = braille_keyboard.update_keyboard()
 
     input_letter = input_dict['standard']
-
     
-    print(input_letter)
-    print(input_dict)
-
 
     if game_choice == "Menu":
         if menu_initialized:
@@ -83,7 +78,7 @@ while(True):
 
     if game_choice == "Typing Tutor":
         if typing_tutor_initialized:
-            Typing_Tutor.iterate(input_letter, key_was_pressed)
+            Typing_Tutor.iterate(input_dict)
             clock.tick(fps)
         else:
             Typing_Tutor = TypingTutor(gametools)
@@ -91,7 +86,7 @@ while(True):
 
     if game_choice == "Etudes":
         if etudes_initialized:
-            Etudes_Game.iterate(input_letter)
+            Etudes_Game.iterate(input_dict)
             clock.tick(fps)
         else:
             Etudes_Game = Etudes(gametools)
@@ -99,7 +94,7 @@ while(True):
 
     if game_choice == "Search":
         if search_initialized:
-            Search_Game.iterate(input_letter)
+            Search_Game.iterate(input_dict)
             clock.tick(fps)
         else:
             Search_Game = Search(gametools)
@@ -107,7 +102,7 @@ while(True):
 
     if game_choice == "Alphabet Game":
         if alphabet_game_initialized:
-            Alphabet_Game.iterate(input_letter)
+            Alphabet_Game.iterate(input_dict)
             clock.tick(fps)
         else:
             Alphabet_Game = AlphabetGame(gametools)
@@ -115,7 +110,7 @@ while(True):
 
     if game_choice == "StoryBook":
         if storybook_initialized:
-            StoryBook.iterate(input_letter, input_letter)
+            StoryBook.iterate(input_dict)
             clock.tick(fps)
         else:
             StoryBook = StoryBook(gametools)

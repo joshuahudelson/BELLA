@@ -30,10 +30,7 @@ class TypingTutor:
                              prompt.
         
         self.previous_prompt: string, the previous single-letter
-                               prompt.
-
-        self.key_was_pressed: boolean, True if a key was pressed
-                               on this iteration.        
+                               prompt.      
 
         self.input_letter: string, the letter most recently typed.
 
@@ -116,8 +113,6 @@ class TypingTutor:
         self.letters_in_play = ""
         self.letter_prompt = None
         self.previous_prompt = None
-
-        self.key_was_pressed = False
         
         self.input_letter = None
 
@@ -155,9 +150,13 @@ class TypingTutor:
 #---CENTRAL FUNCTIONS---
 
 
-    def iterate(self, input_letter=None, key_was_pressed=None):
+    def iterate(self, input_dictionary):
         """ A single iteration of the game loop.
         """
+
+        input_letter = input_dictionary['letter']
+
+        print(input_letter)
 
         self.reset_variables()
 
@@ -165,8 +164,6 @@ class TypingTutor:
             self.input_letter = None
         else:
             self.input_letter = input_letter
-
-        self.key_was_pressed = key_was_pressed
 
         if self.input_letter != None:
             self.play_sfx('type')
@@ -220,7 +217,7 @@ class TypingTutor:
         """ Test user on a word prompt.
         """
         
-        if self.input_letter != None and self.input_letter != 'space':
+        if self.input_letter != None and self.input_letter != 'space' and self.input_letter != 'error':
             self.word_string += self.input_letter
         elif self.input_letter == 'space' or len(self.word_string) > len(self.word_prompt):
             if self.word_string == self.word_prompt:
@@ -304,17 +301,19 @@ class TypingTutor:
         """ If the correct letter was typed, increment that letter's value
             in the list of letters_correct.  Decrement if incorrect.
         """
-        
-        temp_index = self.alphabet.index(self.input_letter)
-        
-        if correct:
-            self.letters_correct[temp_index] += 1
-            if self.letters_correct[temp_index] > self.max_correct:
-                self.letters_correct[temp_index] = self.max_correct
-        else:
-            self.letters_correct[temp_index] -= 1
-            if self.letters_correct[temp_index] < 0:
-                self.letters_correct[temp_index] = 0
+
+        if self.input_letter != 'error' and self.input_letter != 'space':
+            
+            temp_index = self.alphabet.index(self.input_letter)
+            
+            if correct:
+                self.letters_correct[temp_index] += 1
+                if self.letters_correct[temp_index] > self.max_correct:
+                    self.letters_correct[temp_index] = self.max_correct
+            else:
+                self.letters_correct[temp_index] -= 1
+                if self.letters_correct[temp_index] < 0:
+                    self.letters_correct[temp_index] = 0
                 
 
     def give_hint(self):
@@ -410,7 +409,6 @@ class TypingTutor:
         """ Reset all variables.
         """
         
-        self.key_was_pressed = False
         self.input_letter = None
 
 

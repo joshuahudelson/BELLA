@@ -32,9 +32,9 @@ class StoryBook:
 
         self.sequence_count = 0
 
-        self.sequence_triggers = ['a', 'key2', 'key3', 'key4', 'key2', 'key5', 'key6']
+        self.sequence_triggers = ['key1', 'key2', 'key3', 'key4', 'key2', 'key5', 'key6']
 
-        self.sample_names = {'a': 'bark', 'key2': 'door', 'key3': 'sniffing', 'key4': 'squeaktoy',
+        self.sample_names = {'key1': 'bark', 'key2': 'door', 'key3': 'sniffing', 'key4': 'squeaktoy',
                              'key5': 'pourfood', 'key6': 'pourwater'}
 
         self.serial_delay_factor = gametools['serial_delay_factor']
@@ -72,56 +72,60 @@ class StoryBook:
         self.alphabet_sounds = self.sounds.sounds('alphabet_sounds', self.pygame)
         
 
-    def iterate(self, input_letter, input_button):
+    def iterate(self, input_dict):
+
+        input_key = input_dict['key']
+        input_button = input_dict['cursor_key']
 
         self.frames_passed +=1
         print(self.frames_passed)
 
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
-        if input_letter == 'backspace':
+        if input_key == 'backspace':
             self.current_display_state = (self.current_display_state + 1) % (len(self.display_names))
 
         if self.game_state == 'introduction':
-            self.introduction()
+            self.introduction(input_dict)
         elif self.game_state == 'game_play':
-            self.game_play(input_letter, input_button)
+            self.game_play(input_key, input_button)
 
 
-    def introduction(self):
+    def introduction(self, input_dict):
         if self.intro_played == False:
             self.play_voice('insert_card', True)
             self.intro_played = True
         else:
-            if self.braille_keyboard.last_button_state == '11111111111111111111111111111111':
-                self.braille_keyboard.request_card()
-                self.card_str = self.braille_keyboard.card_str
+            if input_dict['card_state'] == True:
+                self.card_str = input_dict['card_str']
                 self.make_sound_dicts()
-                self.play_sfx('cardinserted',wait=True) # we need to rename this sound effect.  Just call it beep.
+                self.play_sfx('cardinserted',wait=True)
                 self.game_state = 'game_play'
                 self.play_sequence('seq1')
                 self.frames_passed = 0
 
 
-    def game_play(self, input_letter, input_button):
+    def game_play(self, input_key, input_button):
 
-        if self.sequence_count > len(self.sequence_triggers) - 1:
-            self.sequence_count = len(self.sequence_triggers) -1
+#        if self.sequence_count > len(self.sequence_triggers) - 1:
+#            self.sequence_count = len(self.sequence_triggers) -1
 
         if self.frames_passed > (self.fps * self.serial_delay_factor):
-            if self.sequence_count < len(self.sequence_triggers) - 1:
+            if self.sequence_count < len(self.sequence_triggers):
                 self.vibrate_buttons(self.sequence_triggers[self.sequence_count])
+                print('Sequence count:' + str(self.sequence_count))
+                print('# Triggers:' + str(len(self.sequence_triggers)))
                 self.frames_passed = 0
 
-        if input_letter != None:
+        if input_key != None:
 
-            self.play_samples(self.sample_names[input_letter], True)
+            self.play_samples(self.sample_names[input_key], True)
             
             self.pygame.time.wait(100) # just a little extra time
 
-            if input_letter == self.sequence_triggers[self.sequence_count]:
-                self.pygame.mixer.stop()            
-                if self.sequence_count < len(self.sequence_triggers):
+            if self.sequence_count < len(self.sequence_triggers):
+                if input_key == self.sequence_triggers[self.sequence_count]:
+                    self.pygame.mixer.stop()
                     self.sequence_count += 1
                     self.play_sequence('seq' + str(self.sequence_count + 1))
                     self.frames_passed = 0
@@ -158,7 +162,7 @@ class StoryBook:
         """ Vibrate the buttons that correspond to the current prompt.
         """
         
-        self.braille_keyboard.vibrate_letter(character, sim=True)
+        self.braille_keyboard.vibrate_single_key(character)
 
 
 #---SOUND AND DISPLAY FUNCTIONS

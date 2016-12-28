@@ -68,29 +68,28 @@ class Search:
 
 #---FUNCTIONS---
 
-    def iterate(self, input_letter):
+    def iterate(self, input_dict):
         
         self.gameDisplay.blit(self.bg, (0,0))
 
-        self.current_input = input_letter
+        self.current_input = input_dict['cursor_key']
 
         if self.game_state == 'introduction':
-            self.introduction()
+            self.introduction(input_dict)
         elif self.game_state == 'game_play':
             self.game_play()
          
         self.pygame.display.update()
 
 
-    def introduction(self):
+    def introduction(self, input_dict):
         if self.intro_played == False:
             self.play_voice('insert_card')
             self.intro_played = True
         else:
-            if self.braille_keyboard.last_button_state == '11111111111111111111111111111111':
-                self.braille_keyboard.request_card()
-                self.card_str = self.braille_keyboard.card_str
-                self.play_sfx('insert',wait=True) # we need to rename this sound effect.  Just call it beep.
+            if input_dict['card_trigger']:
+                self.card_str = input_dict['card_str']
+                self.play_sfx('insert', wait=True) # we need to rename this sound effect.  Just call it beep.
                 self.game_state = 'game_play'
                 self.get_search_letters()
                 self.search_letter_num = 0
@@ -102,11 +101,11 @@ class Search:
 
 
     def game_play(self):
-        if self.braille_keyboard.last_button != None:
-            if (self.braille_keyboard.last_button in self.hidden_pos):
+        if self.current_input != None:
+            if (self.current_input in self.hidden_pos):
                 self.correct_choice()
             else:
-                if(self.braille_keyboard.last_button in self.found_pos):
+                if(self.current_input in self.found_pos):
                     self.play_sfx('double')
                     self.play_voice('already_found') 
                 else:
@@ -146,8 +145,8 @@ class Search:
 
 
     def correct_choice(self):
-        self.hidden_pos.remove(self.braille_keyboard.last_button)
-        self.found_pos.append(self.braille_keyboard.last_button)
+        self.hidden_pos.remove(self.current_input)
+        self.found_pos.append(self.current_input)
         if len(self.hidden_pos)<= 0:            
             self.search_letter_num +=1
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
