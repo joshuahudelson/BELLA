@@ -1,4 +1,4 @@
-from TypingTutor import TypingTutor
+from KeyCrush import KeyCrush
 from Search import Search
 from Etudes import Etudes
 from Menu import Menu
@@ -40,7 +40,7 @@ gametools = {'pygame':pygame,
 
 game_choice = "Menu"
 
-typing_tutor_initialized = False
+KeyCrush_initialized = False
 menu_initialized = False
 etudes_initialized = False
 search_initialized = False
@@ -76,13 +76,13 @@ while(True):
             Opening_Menu = Menu(gametools)
             menu_initialized = True
 
-    if game_choice == "Typing Tutor":
-        if typing_tutor_initialized:
-            Typing_Tutor.iterate(input_dict)
+    if game_choice == "KeyCrush":
+        if KeyCrush_initialized:
+            KeyCrush_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Typing_Tutor = TypingTutor(gametools)
-            typing_tutor_initialized = True
+            KeyCrush_game = KeyCrush(gametools)
+            KeyCrush_initialized = True
 
     if game_choice == "Etudes":
         if etudes_initialized:

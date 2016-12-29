@@ -13,7 +13,7 @@ class Menu:
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
-        self.pygame.display.set_caption('Typing Tutor')
+        self.pygame.display.set_caption('BrailleCade Game Suite')
 
         self.braille_keyboard = gametools['keyboard']
                 
@@ -24,7 +24,7 @@ class Menu:
         self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
-        self.options_list = ['Typing Tutor', 'Etudes', 'Search', 'Alphabet Game', 'StoryBook']
+        self.options_list = ['KeyCrush', 'Etudes', 'Search', 'Alphabet Game', 'StoryBook']
 
         self.option_tracker = 0
 
