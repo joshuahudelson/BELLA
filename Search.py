@@ -6,30 +6,56 @@ class Search:
         the cursor key above it.
     """
 
-    def __init__(self, gametools, starting_level=0):
+    def __init__(self, gametools, display_data, starting_level=0):
         """
         """
+
+
+#---META-GAME STUFF---
 
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
-
-        self.SCREEN_WIDTH = 800
-        self.SCREEN_HEIGHT = 600
-        self.bg = self.pygame.image.load("English_braille_sample.jpg")
-        self.pygame.display.set_caption('Typing Tutor')
-
         self.braille_keyboard = gametools['keyboard']
+
+
+#---DISPLAY---
         
+        self.SCREEN_WIDTH = display_data['screen_width']
+        self.SCREEN_HEIGHT = display_data['screen_height']
+
+        self.pygame.display.set_caption('Typing Tutor')
+   
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
+        self.font_large = self.pygame.font.SysFont(None, 500)
         
-        self.white, self.black, self.red, self.blue = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 0, 255)
-        self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
-        self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
+        self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
+
+        self.current_display_state = display_data['current_display_state']
+
+        self.display_names = ['white_black', 'black_white', 'blue_yellow']
+
+        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
+                               'white_black':{'background':self.white, 'text':self.black},
+                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
 
+#---SOUND---
+        
+        self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
+        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
+                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
+                                     }
+
+        self.sfx = self.sounds.sounds('sfx', self.pygame)
+        self.correct = self.sounds.sounds('correct', self.pygame)
+        self.voice = self.sounds.sounds('voice', self.pygame)
+
+
+#---GAME VARIABLES---
+        
         self.game_state = 'introduction'
         
         self.current_input = None
@@ -53,26 +79,19 @@ class Search:
         self.found_pos = []
 
         self.intro_played = False
-        
-#---SOUND---
-        
-        self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
-                                     }
-
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
 
 
-#---FUNCTIONS---
+#---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
         
-        self.gameDisplay.blit(self.bg, (0,0))
+        self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.current_input = input_dict['cursor_key']
+        self.current_control = input_dict['standard']
+
+        if self.current_control == 'display':
+            self.change_display_state()
 
         if self.game_state == 'introduction':
             self.introduction(input_dict)
@@ -83,18 +102,17 @@ class Search:
 
 
     def introduction(self, input_dict):
-        if self.intro_played == False:
+
+        if input_dict['card_state']:
+            self.card_str = input_dict['card_str']
+            self.game_state = 'game_play'
+            self.get_search_letters()
+            self.search_letter_num = 0
+            self.current_prompt = self.search_list[self.search_letter_num]
+            self.get_search_positions(self.current_prompt)
+        elif self.intro_played == False:
             self.play_voice('insert_card')
             self.intro_played = True
-        else:
-            if input_dict['card_trigger']:
-                self.card_str = input_dict['card_str']
-                self.play_sfx('insert', wait=True) # we need to rename this sound effect.  Just call it beep.
-                self.game_state = 'game_play'
-                self.get_search_letters()
-                self.search_letter_num = 0
-                self.current_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.current_prompt)
 
         self.display_word_prompt()
 
@@ -189,22 +207,40 @@ class Search:
         if wait:
             self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
 
-   
-    def display_letter_prompt(self):
+
+#---DISPLAY FUNCTIONS---
+
+    def change_display_state(self):
+        self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
+
+
+    def display_letter_prompt(self, letter=None):
         """ Write the current letter prompt to the screen.
         """
+        if letter == None:
+            letter = self.current_prompt
+            
+        displaybox = self.pygame.draw.rect(self.gameDisplay,
+                                           self.display_states[self.display_names[self.current_display_state]]['background'],
+                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
 
-        text = self.font.render(self.current_prompt, True, self.black)
+        text = self.font_large.render(letter, True,
+                                      self.display_states[self.display_names[self.current_display_state]]['text'])
+
         temp_width = text.get_rect().width
-        self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH / 2) - 100, 102, 200, 55))
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width / 2), 100))
+
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 
 
-    def display_word_prompt(self):
+    def display_word_prompt(self, word=None):
         """ Write the current word prompt to the screen.
         """
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(self.word_prompt, True, self.black)
+
+        if word == None:
+            word = self.word_prompt
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['background'], ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
+        text = self.font.render(word, True, self.display_states[self.display_names[self.current_display_state]]['text'])
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
 

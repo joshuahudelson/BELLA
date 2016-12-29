@@ -5,7 +5,7 @@ class Etudes:
         keys.
     """
 
-    def __init__(self, gametools, starting_level=0):
+    def __init__(self, gametools, display_data, starting_level=0):
         """
 
             self.game_state: string, what part of the game is currently running
@@ -46,17 +46,19 @@ class Etudes:
 
         """
 
+#---META-GAME STUFF---
+
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
+        self.braille_keyboard = gametools['keyboard']
 
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
         self.bg = self.pygame.image.load("English_braille_sample.jpg")
         self.pygame.display.set_caption('Typing Tutor')
 
-        self.braille_keyboard = gametools['keyboard']
         
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
@@ -66,6 +68,40 @@ class Etudes:
         self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
 
 
+#---DISPLAY---
+        
+        self.SCREEN_WIDTH = display_data['screen_width']
+        self.SCREEN_HEIGHT = display_data['screen_height']
+
+        self.pygame.display.set_caption('Etudes')
+   
+        self.font = self.pygame.font.SysFont(None, 80)
+        self.font_small = self.pygame.font.SysFont(None, 40)
+        self.font_large = self.pygame.font.SysFont(None, 500)
+        
+        self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
+
+        self.current_display_state = display_data['current_display_state']
+
+        self.display_names = ['white_black', 'black_white', 'blue_yellow']
+
+        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
+                               'white_black':{'background':self.white, 'text':self.black},
+                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
+
+#---SOUNDS---
+
+        self.alpha = self.sounds.sounds('alphabet', self.pygame)
+        
+        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
+                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
+                                     }
+        
+        self.sfx = self.sounds.sounds('sfx', self.pygame)
+        self.correct = self.sounds.sounds('correct', self.pygame)
+        self.voice = self.sounds.sounds('voice', self.pygame)
+
+#---GAME VARIABLES---
         self.game_state = 'introduction'
         self.alphabet = 'aeickbdfhjlmousgnprtvwxzqy'
         
@@ -84,18 +120,6 @@ class Etudes:
 
         self.prompt_vibrated = False
 
-#---SOUNDS---
-
-        self.alpha = self.sounds.sounds('alphabet', self.pygame)
-        
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
-                                     }
-        
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
-
 
 #---CENTRAL FUNCTIONS---
 
@@ -106,8 +130,14 @@ class Etudes:
             game.
         """
 
-        self.gameDisplay.blit(self.bg, (0,0))
-        self.current_input = input_dict['letter']
+        self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
+
+        self.input_letter = input_dict['letter']
+        self.input_control = input_dict['standard']
+
+        if self.input_control == 'display':
+            self.change_display_state()
+
         self.display_status_box()
 
         if self.game_state == 'introduction':
@@ -115,7 +145,8 @@ class Etudes:
         elif self.game_state == 'play_game':
             self.play_game()
 
-        self.display_chord()
+        self.draw_buttons(self.braille_keyboard.letter_to_chord[self.current_prompt])
+
         self.pygame.display.update()
 
 
@@ -125,7 +156,7 @@ class Etudes:
         """
         
         self.display_message('Press Space')
-        if self.current_input == 'space':
+        if self.input_control == 'space':
             self.game_state = 'play_game'
             self.update_letters_in_play()
             self.get_new_prompt()
@@ -145,8 +176,8 @@ class Etudes:
             self.vibrate_buttons()
             self.prompt_vibrated = True
         
-        if self.current_input != None:
-            if self.current_input == self.current_prompt:
+        if self.input_letter != None:
+            if self.input_letter == self.current_prompt:
                 self.correct_response()
             else:
                 self.incorrect_response()
@@ -181,9 +212,12 @@ class Etudes:
             past 0 nor increment past self.max_correct.
         """
 
-        if self.current_input != 'error' and self.current_input != 'space':
+        alpha_loc = self.alphabet.index(self.current_prompt, None)
+        
+        print(alpha_loc)
 
-            alpha_loc = self.alphabet.index(self.current_input)
+        if alpha_loc != None:
+            
             
             if correct:
                 self.responses_correct[alpha_loc] += 1
@@ -194,7 +228,7 @@ class Etudes:
                 if self.responses_correct[alpha_loc] < 0:
                     self.responses_correct[alpha_loc] = 0
                 
-        print(self.responses_correct[:self.levels[self.current_level]])
+            print(self.responses_correct[:self.levels[self.current_level]])
 
 
     def check_level(self):
@@ -269,21 +303,34 @@ class Etudes:
 
 #---DISPLAY FUNCTIONS---
 
-    def display_letter_prompt(self):
+    def change_display_state(self):
+        self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
+
+
+    def display_letter_prompt(self, letter=None):
         """ Write the current letter prompt to the screen.
         """
+        if letter == None:
+            letter = self.current_prompt
+            
+        displaybox = self.pygame.draw.rect(self.gameDisplay,
+                                           self.display_states[self.display_names[self.current_display_state]]['background'],
+                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
 
-        text = self.font.render(self.current_prompt, True, self.black)
+        text = self.font_large.render(letter, True,
+                                      self.display_states[self.display_names[self.current_display_state]]['text'])
+
         temp_width = text.get_rect().width
-        self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH / 2) - 100, 102, 200, 55))
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width / 2), 100))
+
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
+
 
 
     def display_message(self, message):
         """ Write the current word prompt to the screen.
         """
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.gray1, ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(message, True, self.black)
+        text = self.font.render(message, True,
+                                self.display_states[self.display_names[self.current_display_state]]['text'])
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 
@@ -292,7 +339,9 @@ class Etudes:
         """ Write the current word prompt to the screen.
         """
         
-        text = self.font_small.render("Level: " + str(self.current_level), True, self.black, self.gray1)
+        text = self.font_small.render("Level: " + str(self.current_level), True,
+                                      self.display_states[self.display_names[self.current_display_state]]['text'],
+                                      self.display_states[self.display_names[self.current_display_state]]['background'])
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
 
@@ -304,26 +353,39 @@ class Etudes:
         self.pygame.draw.ellipse(self.gameDisplay, color, position)
 
 
-    def display_chord(self):
-        """ Draw the keys to the screen
+    def draw_buttons(self, keys='000000'):
+        """ Draw all six buttons to the screen.
+            Color depends on input code.
         """
+        
+        xpos = None
+        ypos = 500
+        button_width = 60
+        button_height = 80
+        offset = 7
+
+        x_divisor = self.SCREEN_WIDTH / 6
+        x_scalar = 0.8
+        x_buffer = (1.0 - x_scalar) * self.SCREEN_WIDTH * 0.5
+        x_middle = self.SCREEN_WIDTH * 0.07
 
         key_order = [3, 4, 5, 2, 1, 0]
-
-        current_chord = self.braille_keyboard.letter_to_chord[self.current_prompt]
-
-        for i in range(len(current_chord)):
-            if current_chord[key_order[i]] == '1':
-                color = self.light_blue
-            elif current_chord[key_order[i]] == '0':
-                color = self.gray2
-    
+        
+        for i in range(len(keys)):
+            if keys[key_order[i]] == '1':
+                color = self.display_states[self.display_names[self.current_display_state]]['text']
+            elif keys[key_order[i]] == '0':
+                color = self.display_states[self.display_names[self.current_display_state]]['background']
+            
             if i > 2:
-                xpos = (50 + 40 + (i*110))
+                xpos = (i* x_divisor * x_scalar) + x_buffer + x_middle
             else:
-                xpos = (50 + (i*110))
-                
-            position = (xpos, 300, 100, 150) 
-            self.draw_single_button(self.black, position)
-            position_small = (xpos+20, 320, 60, 110)
+                xpos = (i* x_divisor * x_scalar) + x_buffer
+
+            position = (xpos, ypos, button_width, button_height)
+            position_small = (xpos + offset, ypos + offset, button_width - (2 * offset), button_height - (2 * offset))
+
+            self.draw_single_button(self.display_states[self.display_names[self.current_display_state]]['text'], position)
             self.draw_single_button(color, position_small)
+
+

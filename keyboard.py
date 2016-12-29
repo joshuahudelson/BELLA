@@ -31,7 +31,8 @@ class keyboard:
         self.card_state = None
         self.card_trigger = None
         self.card_str = '                    '
-
+        self.card_ID = None
+        
 
         self.last_chord = None
 
@@ -184,6 +185,14 @@ class keyboard:
                 
                 self.raw = '00000000000000000000000000000000'
 
+            if self.raw == '10101010101010101010101010101010':
+                self.card_state = False
+                self.card_str = '                    '
+                self.card_ID = None
+
+                self.raw = '00000000000000000000000000000000'
+
+
             self.chord = self.raw[2:8]
             self.letter = self.get_letter(self.chord)
             self.key = self.get_key(self.chord)
@@ -195,11 +204,12 @@ class keyboard:
 
             self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == 1]
 
-            if self.raw[8] == '1':
+
+            if ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
+                self.standard = 'quit'
+            elif self.raw[8] == '1':
                 self.standard = 'space'
                 self.letter = 'space' # is this right? space is higher priority than a letter?
-            elif ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
-                self.standard = 'quit'
             elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
                 self.standard = 'display'
             elif (self.raw[0] == '1'):
@@ -223,7 +233,8 @@ class keyboard:
                 'standard':self.standard,
                 'card_state':self.card_state,
                 'card_str':self.card_str,
-                'key':self.key
+                'key':self.key,
+                'card_ID':self.card_ID
                 }
 
 
@@ -244,8 +255,13 @@ class keyboard:
         self.ser.write(b'c')
         time.sleep(.1)
         
-        self.card_str = self.ser.readline().decode('ascii')[:-2]  # not sure why the last two aren't included; test to find out.
-        self.card_state = True # should this be here?
+        temp_string = self.ser.readline().decode('ascii')
+        self.card_str = temp_string[1:-2]
+        self.card_ID = temp_string[0]
+
+        print(self.card_str)
+
+        self.card_state = True
         
         return(self.card_str)
 

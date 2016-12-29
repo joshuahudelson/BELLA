@@ -15,14 +15,24 @@ pygame.init()
 pygame.mixer.init()
 
 braille_keyboard = keyboard()
-braille_keyboard.test_coms()    # automatically finds keyboard
+braille_keyboard.test_coms()
 
 clock = pygame.time.Clock()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 800
+current_display_state = 0
 
-input_letter = None
+white, black, yellow, blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
+
+display_data = {'screen_width':SCREEN_WIDTH, 'screen_height':SCREEN_HEIGHT, 'current_display_state':current_display_state}
+
+display_names = ['white_black', 'black_white', 'blue_yellow']
+
+display_states = {'black_white':{'background':black, 'text':white},
+                       'white_black':{'background':white, 'text':black},
+                       'blue_yellow':{'background':blue, 'text':yellow}}
+
 
 serial_delay_factor = 0.5
 
@@ -40,17 +50,12 @@ gametools = {'pygame':pygame,
 
 game_choice = "Menu"
 
-KeyCrush_initialized = False
-menu_initialized = False
-etudes_initialized = False
-search_initialized = False
-alphabet_game_initialized = False
-storybook_initialized = False
+initialized = {'KeyCrush':False, 'Menu':False, 'Etudes':False,
+               'Search':False, 'Alphabet Game':False, 'StoryBook':False}
 
 selection = None
 
-input_letter = None
-the_input = None
+input_control = None
 
 while(True):
 
@@ -60,58 +65,70 @@ while(True):
 
     input_dict = braille_keyboard.update_keyboard()
 
-    input_letter = input_dict['standard']
-    
+    input_control = input_dict['standard']
 
+
+    if input_control == 'display':
+        current_display_state = (current_display_state + 1) % len(display_names)
+        display_data = {'screen_width':SCREEN_WIDTH, 'screen_height':SCREEN_HEIGHT, 'current_display_state':current_display_state}
+
+    if input_control == 'quit':
+        print("Quit!!")
+        game_choice = 'Menu'
+        for game in initialized:
+            initialized[game] = False
+
+        print(initialized)
+            
+        
     if game_choice == "Menu":
-        if menu_initialized:
-            selection = Opening_Menu.iterate(input_letter)
+        if initialized[game_choice]:
+            selection = Opening_Menu.iterate(input_dict)
             clock.tick(fps)
             if selection != None:
-                print(selection)
                 Opening_Menu = None
-                menu_initialized = False
+                initialized[game_choice] = False
                 game_choice = selection
         else:
-            Opening_Menu = Menu(gametools)
-            menu_initialized = True
+            Opening_Menu = Menu(gametools, display_data)
+            initialized[game_choice] = True
 
     if game_choice == "KeyCrush":
-        if KeyCrush_initialized:
+        if initialized[game_choice]:
             KeyCrush_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            KeyCrush_game = KeyCrush(gametools)
-            KeyCrush_initialized = True
+            KeyCrush_game = KeyCrush(gametools, display_data)
+            initialized[game_choice] = True
 
     if game_choice == "Etudes":
-        if etudes_initialized:
+        if initialized[game_choice]:
             Etudes_Game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Etudes_Game = Etudes(gametools)
-            etudes_initialized = True
+            Etudes_Game = Etudes(gametools, display_data)
+            initialized[game_choice] = True
 
     if game_choice == "Search":
-        if search_initialized:
+        if initialized[game_choice]:
             Search_Game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Search_Game = Search(gametools)
-            search_initialized = True
+            Search_Game = Search(gametools, display_data)
+            initialized[game_choice] = True
 
     if game_choice == "Alphabet Game":
-        if alphabet_game_initialized:
+        if initialized[game_choice]:
             Alphabet_Game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Alphabet_Game = AlphabetGame(gametools)
-            alphabet_game_initialized = True
+            Alphabet_Game = AlphabetGame(gametools, display_data)
+            initialized[game_choice] = True
 
     if game_choice == "StoryBook":
-        if storybook_initialized:
+        if initialized[game_choice]:
             StoryBook.iterate(input_dict)
             clock.tick(fps)
         else:
-            StoryBook = StoryBook(gametools)
-            storybook_initialized = True
+            StoryBook = StoryBook(gametools, display_data)
+            initialized[game_choice] = True

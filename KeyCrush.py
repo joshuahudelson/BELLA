@@ -3,7 +3,7 @@ from random import choice, randint
 
 class KeyCrush:
 
-    def __init__(self, gametools, starting_level=0):
+    def __init__(self, gametools, display_data, starting_level=0):
         """
 
         self.alphabet: list, letters to be tested, in order.
@@ -77,18 +77,42 @@ class KeyCrush:
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
+        self.braille_keyboard = gametools['keyboard']
 
-        self.SCREEN_WIDTH = 800
-        self.SCREEN_HEIGHT = 600
+
+#---DISPLAY---
+        
+        self.SCREEN_WIDTH = display_data['screen_width']
+        self.SCREEN_HEIGHT = display_data['screen_height']
 
         self.pygame.display.set_caption('Typing Tutor')
-
-        self.braille_keyboard = gametools['keyboard']
-                
+   
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
+        self.font_large = self.pygame.font.SysFont(None, 500)
         
         self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
+
+        self.current_display_state = display_data['current_display_state']
+
+        self.display_names = ['white_black', 'black_white', 'blue_yellow']
+
+        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
+                               'white_black':{'background':self.white, 'text':self.black},
+                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
+
+
+#---SOUNDS---
+        
+        self.alpha = self.sounds.sounds('alphabet', self.pygame)
+        
+        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
+                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)}
+        
+        self.sfx = self.sounds.sounds('sfx', self.pygame)
+        self.correct = self.sounds.sounds('correct', self.pygame)
+        self.voice = self.sounds.sounds('voice', self.pygame)
+
 
 #---GAME VARIABLES---
 
@@ -138,28 +162,6 @@ class KeyCrush:
 
         self.using_card = False
         self.card_str = ''
-
-#---DISPLAY---
-
-        self.current_display_state = 0
-
-        self.display_names = ['white_black', 'black_white', 'blue_yellow']
-
-        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
-                               'white_black':{'background':self.white, 'text':self.black},
-                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
-
-#---SOUNDS---
-        
-        self.alpha = self.sounds.sounds('alphabet', self.pygame)
-        
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)}
-        
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
-
 
 #---CENTRAL FUNCTIONS---
 
@@ -492,9 +494,16 @@ class KeyCrush:
         """
         if letter == None:
             letter = self.letter_prompt
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['background'], ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(letter, True, self.display_states[self.display_names[self.current_display_state]]['text'])
+            
+        displaybox = self.pygame.draw.rect(self.gameDisplay,
+                                           self.display_states[self.display_names[self.current_display_state]]['background'],
+                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
+
+        text = self.font_large.render(letter, True,
+                                      self.display_states[self.display_names[self.current_display_state]]['text'])
+
         temp_width = text.get_rect().width
+
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 
 
@@ -531,6 +540,17 @@ class KeyCrush:
         """ Draw all six buttons to the screen.
             Color depends on input code.
         """
+        
+        xpos = None
+        ypos = 500
+        button_width = 60
+        button_height = 80
+        offset = 7
+
+        x_divisor = self.SCREEN_WIDTH / 6
+        x_scalar = 0.8
+        x_buffer = (1.0 - x_scalar) * self.SCREEN_WIDTH * 0.5
+        x_middle = self.SCREEN_WIDTH * 0.07
 
         key_order = [3, 4, 5, 2, 1, 0]
         
@@ -541,12 +561,12 @@ class KeyCrush:
                 color = self.display_states[self.display_names[self.current_display_state]]['background']
             
             if i > 2:
-                xpos = (50 + 40 + (i*110))
+                xpos = (i* x_divisor * x_scalar) + x_buffer + x_middle
             else:
-                xpos = (50 + (i*110))
+                xpos = (i* x_divisor * x_scalar) + x_buffer
 
-            position = (xpos, 300, 100, 150)
-            position_small = (xpos+20, 320, 60, 110)
+            position = (xpos, ypos, button_width, button_height)
+            position_small = (xpos + offset, ypos + offset, button_width - (2 * offset), button_height - (2 * offset))
 
             self.draw_single_button(self.display_states[self.display_names[self.current_display_state]]['text'], position)
             self.draw_single_button(color, position_small)
