@@ -79,6 +79,9 @@ class KeyCrush:
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
 
+        self.sound_object = self.sounds.sounds() #this is an object
+
+        self.game_name = 'KeyCrush'
 
 #---DISPLAY---
         
@@ -103,15 +106,21 @@ class KeyCrush:
 
 
 #---SOUNDS---
+
+        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
+        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
+        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
+
+
+        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
+        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
+        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
+
         
-        self.alpha = self.sounds.sounds('alphabet', self.pygame)
-        
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)}
-        
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
+        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
+                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
 
 #---GAME VARIABLES---
@@ -187,7 +196,7 @@ class KeyCrush:
             self.switch_to_letter()
 
         if self.input_letter != None:
-            self.play_sfx('type')
+            self.play_sound('type', self.standard_sfx)
         
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
             
@@ -209,7 +218,7 @@ class KeyCrush:
         """
         
         if self.intro_done == False:
-            self.play_voice('press_spacebar')
+            self.play_sound('press_spacebar', self.standard_voice)
             self.intro_done = True
         else:
             if self.input_control == 'space':
@@ -274,9 +283,9 @@ class KeyCrush:
         self.check_level()
 
         if self.letter_streak % 5 == 0:
-            self.play_streak_sound()
+            pass # add play streak sound
         else:
-            self.play_correct('correct')
+            self.play_sound('correct', self.standard_sfx)
 
         if (self.letter_attempts_before_word > self.letter_attempts_threshold) & (not self.using_card):
             self.gamble_switch_to_word()
@@ -299,7 +308,7 @@ class KeyCrush:
             self.give_hint()
         
         self.update_letter_tracking(False)
-        self.play_sfx('wrong')
+        self.play_sound('wrong', self.standard_sfx)
 
         print('Wrong letter!')
 
@@ -312,7 +321,7 @@ class KeyCrush:
         self.words_answered_correctly += 1
         self.word_streak += 1
         self.total_points += self.points_to_be_awarded
-        self.play_voice('nice_work', wait=True)
+        self.play_sound('nice_work', self.standard_voice, wait=True)
 
         self.switch_to_letter()
 
@@ -323,7 +332,7 @@ class KeyCrush:
         """
         self.total_words_answered += 1
         self.word_streak = 0
-        self.play_sfx('wrong')
+        self.play_sound('wrong', self.standard_sfx)
         self.switch_to_letter()
 
 
@@ -360,7 +369,7 @@ class KeyCrush:
         self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
         self.pygame.display.update()
         self.pygame.time.wait(500)
-        self.play_voice('oops_hint', wait=True)
+        self.play_sound('oops_hint', self.standard_voice, wait=True)
         self.braille_keyboard.vibrate_letter(self.letter_prompt)
 
 
@@ -384,7 +393,7 @@ class KeyCrush:
         self.letter_prompt = None
         self.get_new_word_prompt()
         self.game_state = "testing word"
-        self.play_voice('try_a_word')
+        self.play_sound('try_a_word', self.game_sounds)
 
 
     def switch_to_letter(self):
@@ -414,7 +423,7 @@ class KeyCrush:
             
         self.previous_prompt = self.letter_prompt
 
-        self.play_alpha(self.letter_prompt)
+        self.play_sound(self.letter_prompt, self.standard_alphabet)
 
 
     def get_new_word_prompt(self):
@@ -437,8 +446,8 @@ class KeyCrush:
                 temp_flag = False
 
         if temp_flag:
-            self.play_sfx('level_up')
-            self.play_voice('nice_work')
+            self.play_sound('level_up', self.standard_sfx)
+            self.play_sound('nice_work', self.standard_sfx)
             self.level += 1
             print("Level up!")
 
@@ -454,33 +463,11 @@ class KeyCrush:
 
 
 #---SOUND FUNCTIONS---
-
-    def play_streak_sound(self):
-        pass
     
-
-    def play_alpha(self, sound, wait=False):
-        self.alpha.sound_dict[sound]['sound'].play()
+    def play_sound(self, sound, dictionary, wait=False):
+        dictionary[sound]['sound'].play()
         if wait:
-            self.pygame.time.wait(self.alpha.sound_dict[sound]['length'])
-
-
-    def play_sfx(self, sound, wait=False):
-        self.sfx.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.sfx.sound_dict[sound]['length'])
-
-
-    def play_correct(self, sound, wait=False):
-        self.correct.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.correct.sound_dict[sound]['length'])
-
-
-    def play_voice(self, sound, wait=False):
-        self.voice.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.voice.sound_dict[sound]['length'])
+            self.pygame.time.wait(dictionary[sound]['length'])
 
 
 #---DISPLAY FUNCTIONS---
