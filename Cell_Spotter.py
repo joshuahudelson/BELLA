@@ -1,6 +1,6 @@
 from random import choice, randint
 
-class Search:
+class Cell_Spotter:
     """ A game that prompts a player with a letter, and
         the player finds that letter on the card and presses
         the cursor key above it.
@@ -25,7 +25,7 @@ class Search:
         self.SCREEN_WIDTH = display_data['screen_width']
         self.SCREEN_HEIGHT = display_data['screen_height']
 
-        self.pygame.display.set_caption('Typing Tutor')
+        self.pygame.display.set_caption('Cell Spotter')
    
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)

@@ -1,5 +1,5 @@
 
-class StoryBook:
+class Alphabet_Cards:
     """
     """
 
@@ -10,7 +10,6 @@ class StoryBook:
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
         self.np = gametools['numpy']
-        self.fps = gametools['fps']
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
 
@@ -20,7 +19,7 @@ class StoryBook:
         self.SCREEN_WIDTH = display_data['screen_width']
         self.SCREEN_HEIGHT = display_data['screen_height']
 
-        self.pygame.display.set_caption('Typing Tutor')
+        self.pygame.display.set_caption('Alphabet Cards')
    
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
@@ -36,7 +35,6 @@ class StoryBook:
                                'white_black':{'background':self.white, 'text':self.black},
                                'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
-
 #---SOUND---
         
         self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
@@ -50,55 +48,43 @@ class StoryBook:
 
         self.alphabet_sounds = self.sounds.sounds('alphabet_sounds', self.pygame)
 
-
 #---GAME VARIABLES---
 
         self.card_str = None
-        self.card_words = None
 
         self.game_state = starting_game_state
 
-        self.sequence_count = 0
-
-        self.sequence_triggers = ['key1', 'key2', 'key3', 'key4', 'key2', 'key5', 'key6']
-
-        self.sample_names = {'key1': 'bark', 'key2': 'door', 'key3': 'sniffing', 'key4': 'squeaktoy',
-                             'key5': 'pourfood', 'key6': 'pourwater'}
-
-        self.serial_delay_factor = gametools['serial_delay_factor']
-
         self.current_button = None
 
-        self.frames_passed = 0
+        self.press_counter = 0
+
+        self.number_of_seconds_to_wait = 3
+
+        self.num_prompts = 0
+
+        self.max_num_prompts = 1
 
         self.intro_played = False
 
-        self.sequences = None
+        self.current_cursor_button = None
 
 
-#---GAME VARIABLES---
+#---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
 
-        self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
-
-        self.input_key = input_dict['key']
-        self.input_button = input_dict['cursor_key']
+        self.current_cursor_button = input_dict['cursor_key']
         self.input_control = input_dict['standard']
+
+        self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         if self.input_control == 'display':
             self.change_display_state()
-        
-        self.frames_passed +=1
-        print(self.frames_passed)
-
-        if self.input_key == 'backspace':
-            self.current_display_state = (self.current_display_state + 1) % (len(self.display_names))
-
+                
         if self.game_state == 'introduction':
             self.introduction(input_dict)
         elif self.game_state == 'game_play':
-            self.game_play()
+            self.game_play(self.current_cursor_button)
 
         self.pygame.display.update()
 
@@ -107,91 +93,42 @@ class StoryBook:
 
         if input_dict['card_state']:
             self.card_str = input_dict['card_str']
-            self.make_sound_dicts()
-            self.play_sfx('cardinserted',wait=True)
+            self.play_sfx('cardinserted',wait=True) # we need to rename this sound effect.  Just call it beep.
             self.game_state = 'game_play'
-            self.play_sequence('seq1')
-            self.frames_passed = 0            
         elif self.intro_played == False:
-            self.play_voice('insert_card', True)
+            self.play_voice('insert_card')
             self.intro_played = True
 
-    def game_play(self):
+ 
 
-        if self.frames_passed > (self.fps * self.serial_delay_factor):
-            if self.sequence_count < len(self.sequence_triggers):
-                self.vibrate_buttons(self.sequence_triggers[self.sequence_count])
-                print('Sequence count:' + str(self.sequence_count))
-                print('# Triggers:' + str(len(self.sequence_triggers)))
-                self.frames_passed = 0
+    def game_play(self, cursor_button):
 
-        if self.input_key != None:
+        if cursor_button != None:
 
-            self.play_samples(self.sample_names[self.input_key], True)
+            if self.current_button != cursor_button:  # make own function...
+                self.current_button = cursor_button
+                self.press_counter = 0
+
+            character = self.card_str[self.current_button]
             
-            self.pygame.time.wait(100) # just a little extra time
-
-            if self.sequence_count < len(self.sequence_triggers):
-                if self.input_key == self.sequence_triggers[self.sequence_count]:
-                    self.pygame.mixer.stop()
-                    self.sequence_count += 1
-                    self.play_sequence('seq' + str(self.sequence_count + 1))
-                    self.frames_passed = 0
-
-        if self.input_button != None:
-
-            if self.card_str[self.input_button] == '_':   # make own function...
+            if character == ' ':   # make own function...
                 self.play_sfx('wrong')
-                      
             else:
-                
-                self.play_alpha(self.card_str[self.input_button])
+                self.play_alphabet_sound(character + str(self.press_counter))
+                self.press_counter = (self.press_counter + 1) % 3
+
+        if self.current_button == None:
+            self.display_letter_prompt(' ')
+        else:
+            self.display_letter_prompt(self.card_str[self.current_button])
 
 
-    def make_sound_dicts(self):
+#---SOUND FUNCTIONS
 
-        try:
-            sequences_dir = self.sounds.join(self.card_str, 'sequences')
-            print("Card String: " + self.card_str)
-            self.sequences = self.sounds.sounds(sequences_dir, self.pygame)
-        except:
-            print("Can't find sequences directory.")
-            print(sequences_dir)
-
-        try:
-            samples_dir = self.sounds.join(self.card_str, 'samples')
-            self.samples = self.sounds.sounds(samples_dir, self.pygame)
-        except:
-            print("Can't find samples directory.")
-            print(samples_dir)
-
-
-    def vibrate_buttons(self, character):
-        """ Vibrate the buttons that correspond to the current prompt.
-        """
-        
-        self.braille_keyboard.vibrate_single_key(character)
-
-
-#---SOUND AND DISPLAY FUNCTIONS
-
-    def play_sequence(self, sound, wait=False):
-        self.sequences.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.sequences.sound_dict[sound]['length'])
-
-
-    def play_samples(self, sound, wait=False):
-        self.samples.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.samples.sound_dict[sound]['length'])
-
-            
     def play_alpha(self, sound, wait=False):
         self.alpha.sound_dict[sound]['sound'].play()
         if wait:
             self.pygame.time.wait(self.alpha.sound_dict[sound]['length'])
-
 
     def play_sfx(self, sound, wait=False):
         self.sfx.sound_dict[sound]['sound'].play()
@@ -210,7 +147,6 @@ class StoryBook:
         if wait:
             self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
 
-
     def play_alphabet_sound(self, sound, wait=False):
         self.alphabet_sounds.sound_dict[sound]['sound'].play()
         if wait:
@@ -223,5 +159,20 @@ class StoryBook:
         self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
 
 
+    def display_letter_prompt(self, letter=None):
+        """ Write the current letter prompt to the screen.
+        """
+        if letter == None:
+            letter = self.current_button
+            
+        displaybox = self.pygame.draw.rect(self.gameDisplay,
+                                           self.display_states[self.display_names[self.current_display_state]]['background'],
+                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
 
+        text = self.font_large.render(letter, True,
+                                      self.display_states[self.display_names[self.current_display_state]]['text'])
+
+        temp_width = text.get_rect().width
+
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 

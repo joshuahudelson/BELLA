@@ -1,9 +1,9 @@
-from KeyCrush import KeyCrush
-from Search import Search
-from Etudes import Etudes
 from Menu import Menu
-from AlphabetGame import AlphabetGame
-from StoryBook import StoryBook
+from KeyCrush import KeyCrush
+from Whack_A_Dot import Whack_A_Dot
+from Cell_Spotter import Cell_Spotter
+from Alphabet_Cards import Alphabet_Cards
+from Braille_Tale import Braille_Tale
 import numpy
 from keyboard import keyboard
 import pygame
@@ -50,8 +50,8 @@ gametools = {'pygame':pygame,
 
 game_choice = "Menu"
 
-initialized = {'KeyCrush':False, 'Menu':False, 'Etudes':False,
-               'Search':False, 'Alphabet Game':False, 'StoryBook':False}
+initialized = {'KeyCrush':False, 'Menu':False, 'Whack-A-Dot':False,
+               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False}
 
 selection = None
 
@@ -101,34 +101,34 @@ while(True):
             KeyCrush_game = KeyCrush(gametools, display_data)
             initialized[game_choice] = True
 
-    if game_choice == "Etudes":
+    if game_choice == "Whack-A-Dot":
         if initialized[game_choice]:
-            Etudes_Game.iterate(input_dict)
+            Whack_A_Dot_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Etudes_Game = Etudes(gametools, display_data)
+            Whack_A_Dot_game = Whack_A_Dot(gametools, display_data)
             initialized[game_choice] = True
 
-    if game_choice == "Search":
+    if game_choice == "Cell Spotter":
         if initialized[game_choice]:
-            Search_Game.iterate(input_dict)
+            Cell_Spotter_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Search_Game = Search(gametools, display_data)
+            Cell_Spotter_game = Cell_Spotter(gametools, display_data)
             initialized[game_choice] = True
 
-    if game_choice == "Alphabet Game":
+    if game_choice == "Alphabet Cards":
         if initialized[game_choice]:
-            Alphabet_Game.iterate(input_dict)
+            Alphabet_Cards_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            Alphabet_Game = AlphabetGame(gametools, display_data)
+            Alphabet_Cards_game= Alphabet_Cards(gametools, display_data)
             initialized[game_choice] = True
 
-    if game_choice == "StoryBook":
+    if game_choice == "Braille Tale":
         if initialized[game_choice]:
-            StoryBook.iterate(input_dict)
+            Braille_Tale_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            StoryBook = StoryBook(gametools, display_data)
+            Braille_Tale_game = Braille_Tale(gametools, display_data)
             initialized[game_choice] = True

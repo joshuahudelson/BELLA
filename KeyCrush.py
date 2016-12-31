@@ -79,8 +79,7 @@ class KeyCrush:
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
 
-        self.sound_object = self.sounds.sounds() #this is an object
-
+        self.sound_object = self.sounds.sounds()
         self.game_name = 'KeyCrush'
 
 #---DISPLAY---

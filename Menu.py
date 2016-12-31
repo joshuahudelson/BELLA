@@ -15,7 +15,7 @@ class Menu:
         self.SCREEN_WIDTH = display_data['screen_width']
         self.SCREEN_HEIGHT = display_data['screen_height']
         
-        self.pygame.display.set_caption('BrailleCade Game Suite')
+        self.pygame.display.set_caption('BELLA: Braille Early Learning & Literacy Arcade')
 
         self.braille_keyboard = gametools['keyboard']
                 
@@ -34,10 +34,10 @@ class Menu:
                                'white_black':{'background':self.white, 'text':self.black},
                                'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
-        self.options_list = ['KeyCrush', 'Etudes', 'Search', 'Alphabet Game', 'StoryBook']
+        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale']
 
-        self.card_codes = {'a':'Alphabet Game', 'b':'StoryBook', 'k':'KeyCrush',
-                      'e':'Etudes', 'm':'Menu', 'w':'Search'}
+        self.card_codes = {'a':'Alphabet Cards', 'b':'Braille Tale', 'k':'KeyCrush',
+                      'w':'Whack-A-Dot', 'm':'Menu', 'c':'Cell Spotter'}
 
         self.option_tracker = 0
 

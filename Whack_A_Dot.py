@@ -1,6 +1,6 @@
 from random import choice, randint
 
-class Etudes:
+class Whack_A_Dot:
     """ A game in which the user is prompted to press vibrating
         keys.
     """
@@ -56,16 +56,11 @@ class Etudes:
 
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
-        self.bg = self.pygame.image.load("English_braille_sample.jpg")
-        self.pygame.display.set_caption('Typing Tutor')
 
-        
-        self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
-        
-        self.white, self.black, self.red, self.blue = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 0, 255)
-        self.gray1, self.gray2 = (160, 160, 160), (80, 80, 80)
-        self.light_blue, self.yellow = (0, 100, 255), (0, 255, 255)
+        self.pygame.display.set_caption('Whack-A-Dot')
+
+        self.sound_object = self.sounds.sounds()
+        self.game_name = 'Whack_A_Dot'
 
 
 #---DISPLAY---
@@ -91,15 +86,21 @@ class Etudes:
 
 #---SOUNDS---
 
-        self.alpha = self.sounds.sounds('alphabet', self.pygame)
+        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
+        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
+        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
+
+
+        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
+        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
+        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
+
         
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
-                                     }
-        
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
+        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
+                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
+
 
 #---GAME VARIABLES---
         self.game_state = 'introduction'
@@ -189,7 +190,7 @@ class Etudes:
             get a new prompt.
         """
         
-        self.play_correct('correct')
+        self.play_sound('correct', self.standard_sfx)
         self.update_points(True)
         self.check_level()
         self.get_new_prompt()
@@ -201,7 +202,7 @@ class Etudes:
             the current prompt again.
         """
         
-        self.play_sfx('wrong')
+        self.play_sound('wrong', self.standard_sfx)
         self.update_points(False)
         self.vibrate_buttons()
 
@@ -277,28 +278,12 @@ class Etudes:
 
 
 #---SOUND FUNCTIONS---
-        
-    def play_alpha(self, sound, wait=False):
-        self.alpha.sound_dict[sound]['sound'].play()
+    
+    def play_sound(self, sound, dictionary, wait=False):
+        dictionary[sound]['sound'].play()
         if wait:
-            self.pygame.time.wait(self.alpha.sound_dict[sound]['length'])
+            self.pygame.time.wait(dictionary[sound]['length'])
 
-    def play_sfx(self, sound, wait=False):
-        self.sfx.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.sfx.sound_dict[sound]['length'])
-
-
-    def play_correct(self, correct, wait=False):
-        self.correct.sound_dict[correct]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.correct.sound_dict[correct]['length'])
-
-
-    def play_voice(self, voice, wait=False):
-        self.voice.sound_dict[voice]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
 
 
 #---DISPLAY FUNCTIONS---
