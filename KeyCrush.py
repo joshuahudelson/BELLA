@@ -248,7 +248,7 @@ class KeyCrush:
         
         if self.input_letter != None and self.input_letter != 'space' and self.input_letter != 'error':
             self.word_string += self.input_letter
-        elif self.input_letter == 'space' or len(self.word_string) > len(self.word_prompt):
+        elif len(self.word_string) >= len(self.word_prompt):
             if self.word_string == self.word_prompt:
                 self.word_is_correct()
             else:
