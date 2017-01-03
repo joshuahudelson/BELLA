@@ -44,6 +44,8 @@ class Menu:
 
         self.option_tracker = 0
 
+        self.introduction_done = False
+
 
 #---SOUNDS---
 
@@ -84,18 +86,32 @@ class Menu:
         self.display_options()
         self.pygame.display.update()
 
+        if self.introduction_done == False:
+            self.introduction()
+
         if self.input_control == 'newline':
             self.option_tracker += 1
-            self.play_sound(self.options_list[self.option_tracker], self.game_sounds)
+            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'backspace':
             self.option_tracker -= 1
-            self.play_sound(self.options_list[self.option_tracker], self.game_sounds)
+            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'space':
+            self.play_sound('press_main_menu', self.game_sounds, True)
+            self.play_sound('display', self.game_sounds, True)
             return self.options_list[self.selection]
         else:
             return None
+
+
+    def introduction(self):
+        self.play_sound('intro', self.game_sounds, True)
+        self.play_sound('lets_play', self.game_sounds, True)
+        self.play_sound('instructions', self.game_sounds, True)
+        self.play_sound(self.options_list[self.selection], self.game_sounds)
+
+        self.introduction_done = True
 
 
 #---SOUND FUNCTIONS---
