@@ -202,7 +202,7 @@ class keyboard:
             except:
                 self.cursor_key = None
 
-            self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == 1]
+            self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == '1']
 
 
             if ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):

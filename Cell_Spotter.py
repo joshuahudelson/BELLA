@@ -19,6 +19,8 @@ class Cell_Spotter:
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
 
+        self.sound_object = self.sounds.sounds()
+
 
 #---DISPLAY---
         
@@ -42,16 +44,20 @@ class Cell_Spotter:
                                'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
 
-#---SOUND---
-        
-        self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
-                                     }
+#---SOUNDS---
 
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
+        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
+        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
+        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
+
+
+        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
+        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
+        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+
+        
+        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
+                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
 
 #---GAME VARIABLES---
@@ -111,11 +117,10 @@ class Cell_Spotter:
             self.current_prompt = self.search_list[self.search_letter_num]
             self.get_search_positions(self.current_prompt)
         elif self.intro_played == False:
-            self.play_voice('insert_card')
+            self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
         self.display_word_prompt()
-
 
 
     def game_play(self):
@@ -124,10 +129,10 @@ class Cell_Spotter:
                 self.correct_choice()
             else:
                 if(self.current_input in self.found_pos):
-                    self.play_sfx('double')
-                    self.play_voice('already_found') 
+                    self.play_sound('double', self.standard_sfx)
+                    self.play_sound('already_found', self.standard_voice) 
                 else:
-                    self.play_sfx('wrong')
+                    self.play_sound('wrong', self.standard_sfx)
 
         self.display_letter_prompt()  
 
@@ -155,11 +160,9 @@ class Cell_Spotter:
         print("letter = {}  positions = {}".format(letter,self.hidden_pos))
         self.found_pos = []
         
-        self.play_voice('find_all')
-        self.pygame.time.wait(round(self.voice.sound_dict['find_all']['length'] * .9))
-        self.play_alpha(self.current_prompt)
-        self.pygame.time.wait(round(self.alpha.sound_dict[self.current_prompt]['length'] * .75))
-        self.play_voice('_s',wait=True)
+        self.play_sound('find_all_the', self.standard_voice, True)
+        self.play_sound(self.current_prompt, self.standard_alphabet, True)
+        self.play_sound('_s', self.standard_voice, True)
 
 
     def correct_choice(self):
@@ -168,44 +171,28 @@ class Cell_Spotter:
         if len(self.hidden_pos)<= 0:            
             self.search_letter_num +=1
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
-                self.play_sfx('win')
-                self.play_voice('great_job',wait=True)
+                self.play_sound('win', self.standard_sfx)
+                self.play_sound('great_job', self.standard_voice, wait=True)
                 self.game_state = 'introduction'
                 self.card_inserted = False
                 self.intro_played = False
             else:
                 print("yay you found them all")
-                self.play_sfx('level_up')
-                self.play_voice('nice_work',wait=True)
+                self.play_sound('level_up', self.standard_sfx)
+                self.play_sound('nice_work', self.standard_voice, wait=True)
                 self.current_prompt = self.search_list[self.search_letter_num]
                 self.get_search_positions(self.current_prompt)
         else:
-            self.play_correct('correct')
+            self.play_sound('correct', self.standard_sfx)
                 
 
-#---SOUND AND DISPLAY FUNCTIONS
-
-    def play_alpha(self, sound, wait=False):
-        self.alpha.sound_dict[sound]['sound'].play()
+#---SOUND FUNCTIONS---
+    
+    def play_sound(self, sound, dictionary, wait=False):
+        dictionary[sound]['sound'].play()
         if wait:
-            self.pygame.time.wait(self.alpha.sound_dict[sound]['length'])
+            self.pygame.time.wait(dictionary[sound]['length'])
 
-    def play_sfx(self, sound, wait=False):
-        self.sfx.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.sfx.sound_dict[sound]['length'])
-
-
-    def play_correct(self, correct, wait=False):
-        self.correct.sound_dict[correct]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.correct.sound_dict[correct]['length'])
-
-
-    def play_voice(self, voice, wait=False):
-        self.voice.sound_dict[voice]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
 
 
 #---DISPLAY FUNCTIONS---

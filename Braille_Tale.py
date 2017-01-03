@@ -95,13 +95,10 @@ class Braille_Tale:
         self.input_buttons_list = input_dict['cursor_keys_list']
         self.input_control = input_dict['standard']
 
-        self.input_buttons_multiple = input_dict['cursor_keys_list']
-
         if self.input_control == 'display':
             self.change_display_state()
         
         self.frames_passed +=1
-        print(self.frames_passed)
 
         if self.input_key == 'backspace':
             self.current_display_state = (self.current_display_state + 1) % (len(self.display_names))
@@ -118,8 +115,8 @@ class Braille_Tale:
 
         if input_dict['card_state']:
             self.card_str = input_dict['card_str']
-            self.card_ranges = list(self.split_card_string(self.card_str))
             self.card_words = self.card_str.split('_')
+            print(self.card_words)
 
             self.make_sound_dicts()
             self.play_sound('cardinserted', self.standard_sfx, wait=True)
@@ -129,7 +126,7 @@ class Braille_Tale:
             self.play_sound('seq1', self.sequences)
             self.frames_passed = 0            
         elif self.intro_played == False:
-            self.play_sound('insert_card', self.standard_voice, True)
+            self.play_sound('insert_a_card', self.standard_voice, True)
             self.intro_played = True
 
     def game_play(self):
@@ -154,19 +151,29 @@ class Braille_Tale:
                     self.play_sound('seq' + str(self.sequence_count + 1), self.sequences)
                     self.frames_passed = 0
 
+
         if self.input_button != None:
 
-            if self.card_str[self.input_button] == '_':   # make own function...
-                self.play_sound('wrong', self.standard_sfx)
-                      
-            elif sum(self.input_buttons_list) > 1:
+            print(self.input_button)
+            print(self.input_buttons_list)
+
+            if len(self.input_buttons_list) == 2:
                 
-                    if self.input_buttons_list[self.input_button + 1] != '1':
-                        pass
+                    if self.input_buttons_list[0] != self.input_buttons_list[1] + 1:  # the list is reverse-ordered
+                        self.play_sound('wrong', self.standard_sfx)
+  
                     else:
-                        for i in range(len(self.card_ranges)):
-                            if self.input_button in range(self.card_ranges[i][0], self.card_ranges[i][1]):
-                                play_sound(self.card_words[i], self.words)
+                        print("Did it!")
+                        temp_word = self.get_whole_string(self.input_buttons_list[1], self.card_str)
+                        try:
+                            self.play_sound(temp_word, self.words)
+                        except:
+                            self.play_sound('wrong', self.standard_sfx)
+                            print("Couldn't find word?")
+
+            elif self.card_str[self.input_button] == '_':
+                self.play_sound('wrong', self.standard_sfx)
+
             else:
                 self.play_sound(self.card_str[self.input_button], self.standard_alphabet)
 
@@ -194,7 +201,7 @@ class Braille_Tale:
             self.words = self.sound_object.make_sound_dictionary(words_dir, self.pygame)
         except:
             print("Can't find word directory.")
-            print(samples_dir)
+
 
     def vibrate_buttons(self, character):
         """ Vibrate the buttons that correspond to the current prompt.
@@ -203,13 +210,23 @@ class Braille_Tale:
         self.braille_keyboard.vibrate_single_key(character)
 
 
-    def split_card_string(self, s, c='_'):
-        p = 0
-        for k, g in groupby(s, lambda x:x==c):
-            q = p + sum(1 for i in g)
-            if not k:
-                yield p, q-1 # or p, q-1 if you are really sure you want that
-            p = q
+    def get_whole_string(self, location, card_str):
+        if card_str[location] == '_':
+            return None
+        else:
+            temp_str = ''
+            for i in range(location + 1):
+                if card_str[location-i] != '_':
+                    temp_str = card_str[location-i] + temp_str
+                else:
+                    break
+            for i in range(len(card_str) - location - 1):
+                if card_str[location+i+1] != '_':
+                    temp_str = temp_str + card_str[location+i+1]
+                else:
+                    break
+                
+            return temp_str
 
 #---SOUND FUNCTIONS---
     
