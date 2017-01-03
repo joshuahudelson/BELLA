@@ -79,6 +79,8 @@ class Braille_Tale:
 
         self.sequences = None
 
+        self.samples = None
+
         self.cursor_keys = None
 
 
@@ -90,6 +92,7 @@ class Braille_Tale:
 
         self.input_key = input_dict['key']
         self.input_button = input_dict['cursor_key']
+        self.input_buttons_list = input_dict['cursor_keys_list']
         self.input_control = input_dict['standard']
 
         self.input_buttons_multiple = input_dict['cursor_keys_list']
@@ -140,7 +143,7 @@ class Braille_Tale:
 
         if self.input_key != None:
 
-            self.play_sound(self.sample_names[self.input_key], self.sequences, True)
+            self.play_sound(self.sample_names[self.input_key], self.samples, True)
             
             self.pygame.time.wait(100) # just a little extra time
 
