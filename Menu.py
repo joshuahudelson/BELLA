@@ -12,6 +12,9 @@ class Menu:
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
 
+        self.sound_object = self.sounds.sounds()
+        self.game_name = 'Menu'
+
         self.SCREEN_WIDTH = display_data['screen_width']
         self.SCREEN_HEIGHT = display_data['screen_height']
         
@@ -41,6 +44,28 @@ class Menu:
 
         self.option_tracker = 0
 
+        self.introduction_done = False
+
+
+#---SOUNDS---
+
+        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
+        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
+        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
+
+
+        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
+        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
+        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
+
+        
+        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
+                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
+
+
+
     def iterate(self, input_dict):
 
         if input_dict['card_trigger']:
@@ -61,17 +86,44 @@ class Menu:
         self.display_options()
         self.pygame.display.update()
 
+        if self.introduction_done == False:
+            self.introduction()
+
         if self.input_control == 'newline':
             self.option_tracker += 1
+            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'backspace':
             self.option_tracker -= 1
+            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'space':
+            self.play_sound('press_main_menu', self.game_sounds, True)
+            self.play_sound('display', self.game_sounds, True)
             return self.options_list[self.selection]
         else:
             return None
 
+
+    def introduction(self):
+        self.play_sound('intro', self.game_sounds, True)
+        self.play_sound('lets_play', self.game_sounds, True)
+        self.play_sound('instructions', self.game_sounds, True)
+        self.play_sound(self.options_list[self.selection], self.game_sounds)
+
+        self.introduction_done = True
+
+
+#---SOUND FUNCTIONS---
+    
+    def play_sound(self, sound, dictionary, wait=False):
+        dictionary[sound]['sound'].play()
+        if wait:
+            self.pygame.time.wait(dictionary[sound]['length'])
+
+
+
+#---DISPLAY FUNCTIONS---
 
     def display_options(self):
 
@@ -107,4 +159,4 @@ class Menu:
     def selection(self):
         return self.option_tracker % len(self.options_list)
 
-        
+

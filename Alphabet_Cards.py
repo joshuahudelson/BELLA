@@ -13,7 +13,9 @@ class Alphabet_Cards:
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
 
-
+        self.sound_object = self.sounds.sounds()
+        self.game_name = 'Alphabet_Cards'
+        
 #---DISPLAY---
         
         self.SCREEN_WIDTH = display_data['screen_width']
@@ -35,18 +37,23 @@ class Alphabet_Cards:
                                'white_black':{'background':self.white, 'text':self.black},
                                'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
-#---SOUND---
+#---SOUNDS---
+
+        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
+        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
+        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
+
+
+        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
+        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
+        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
+
         
-        self.alpha = self.sounds.sounds('alphabet', self.pygame) #creates self.alpha.sound_dict dictionary
-        self.alpha.sound_dict[' '] = {'sound':self.pygame.mixer.Sound('alphabet/space.wav'),
-                                     'length':int(self.pygame.mixer.Sound('alphabet/space.wav').get_length() * 1000)
-                                     }
+        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
+                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
-        self.sfx = self.sounds.sounds('sfx', self.pygame)
-        self.correct = self.sounds.sounds('correct', self.pygame)
-        self.voice = self.sounds.sounds('voice', self.pygame)
-
-        self.alphabet_sounds = self.sounds.sounds('alphabet_sounds', self.pygame)
 
 #---GAME VARIABLES---
 
@@ -93,10 +100,10 @@ class Alphabet_Cards:
 
         if input_dict['card_state']:
             self.card_str = input_dict['card_str']
-            self.play_sfx('cardinserted',wait=True) # we need to rename this sound effect.  Just call it beep.
+            self.play_sound('cardinserted', self.standard_sfx, wait=True) # we need to rename this sound effect.  Just call it beep.
             self.game_state = 'game_play'
         elif self.intro_played == False:
-            self.play_voice('insert_card')
+            self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
  
@@ -112,9 +119,9 @@ class Alphabet_Cards:
             character = self.card_str[self.current_button]
             
             if character == ' ':   # make own function...
-                self.play_sfx('wrong')
+                self.play_sound('wrong', self.standard_sfx)
             else:
-                self.play_alphabet_sound(character + str(self.press_counter))
+                self.play_sound(character + str(self.press_counter), self.game_sounds)
                 self.press_counter = (self.press_counter + 1) % 3
 
         if self.current_button == None:
@@ -123,34 +130,12 @@ class Alphabet_Cards:
             self.display_letter_prompt(self.card_str[self.current_button])
 
 
-#---SOUND FUNCTIONS
-
-    def play_alpha(self, sound, wait=False):
-        self.alpha.sound_dict[sound]['sound'].play()
+#---SOUND FUNCTIONS---
+    
+    def play_sound(self, sound, dictionary, wait=False):
+        dictionary[sound]['sound'].play()
         if wait:
-            self.pygame.time.wait(self.alpha.sound_dict[sound]['length'])
-
-    def play_sfx(self, sound, wait=False):
-        self.sfx.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.sfx.sound_dict[sound]['length'])
-
-
-    def play_correct(self, correct, wait=False):
-        self.correct.sound_dict[correct]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.correct.sound_dict[correct]['length'])
-
-
-    def play_voice(self, voice, wait=False):
-        self.voice.sound_dict[voice]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.voice.sound_dict[voice]['length'])
-
-    def play_alphabet_sound(self, sound, wait=False):
-        self.alphabet_sounds.sound_dict[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(self.alphabet_sounds.sound_dict[sound]['length'])
+            self.pygame.time.wait(dictionary[sound]['length'])
 
 
 #---DISPLAY FUNCTIONS---

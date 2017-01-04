@@ -126,10 +126,8 @@ class KeyCrush:
 
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
-        self.list_word_prompts = [["tea","eat", "at", "ate", "tee", "tata", ],
-                                  ["tie", "it", "at"],
-                                  ["tine", "tint", "net", "ten", "ant", "tan", ],
-                                  ["stint", "stone", "notes", "nest"]]
+        self.list_word_prompts = [["ace", "bad", "cab"],
+                                  ["age", "acid", "cage", "dice", "cafe", "face", "fig", "hide", "idea"]]
         
         self.letters_correct = self.np.ones(len(self.alphabet))
 
@@ -137,7 +135,7 @@ class KeyCrush:
         self.level = starting_level
         self.max_correct = 6
 
-        self.zero_level_letters = 3
+        self.zero_level_letters = 5
 
         self.letters_in_play = ""
         self.letter_prompt = None
@@ -217,7 +215,7 @@ class KeyCrush:
         """
         
         if self.intro_done == False:
-            self.play_sound('press_spacebar', self.standard_voice)
+            self.play_sound('instructions', self.game_sounds)
             self.intro_done = True
         else:
             if self.input_control == 'space':
@@ -246,9 +244,9 @@ class KeyCrush:
         """ Test user on a word prompt.
         """
         
-        if self.input_letter != None and self.input_letter != 'space' and self.input_letter != 'error':
+        if self.input_letter != None:
             self.word_string += self.input_letter
-        elif len(self.word_string) >= len(self.word_prompt):
+        elif (len(self.word_string) >= len(self.word_prompt)) | (self.input_control == 'space'):
             if self.word_string == self.word_prompt:
                 self.word_is_correct()
             else:
@@ -284,7 +282,7 @@ class KeyCrush:
         if self.letter_streak % 5 == 0:
             pass # add play streak sound
         else:
-            self.play_sound('correct', self.standard_sfx)
+            self.play_sound('correct_coins', self.game_sounds)
 
         if (self.letter_attempts_before_word > self.letter_attempts_threshold) & (not self.using_card):
             self.gamble_switch_to_word()
@@ -307,7 +305,7 @@ class KeyCrush:
             self.give_hint()
         
         self.update_letter_tracking(False)
-        self.play_sound('wrong', self.standard_sfx)
+        self.play_sound('wrong_buzz', self.game_sounds)
 
         print('Wrong letter!')
 
@@ -320,7 +318,7 @@ class KeyCrush:
         self.words_answered_correctly += 1
         self.word_streak += 1
         self.total_points += self.points_to_be_awarded
-        self.play_sound('nice_work', self.standard_voice, wait=True)
+        self.play_sound('hang_of_it', self.game_sounds, wait=True)
 
         self.switch_to_letter()
 
@@ -331,7 +329,7 @@ class KeyCrush:
         """
         self.total_words_answered += 1
         self.word_streak = 0
-        self.play_sound('wrong', self.standard_sfx)
+        self.play_sound('wrong_buzz', self.game_sounds)
         self.switch_to_letter()
 
 
@@ -368,7 +366,7 @@ class KeyCrush:
         self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
         self.pygame.display.update()
         self.pygame.time.wait(500)
-        self.play_sound('oops_hint', self.standard_voice, wait=True)
+        self.play_sound('hint', self.game_sounds, wait=True)
         self.braille_keyboard.vibrate_letter(self.letter_prompt)
 
 
@@ -392,7 +390,7 @@ class KeyCrush:
         self.letter_prompt = None
         self.get_new_word_prompt()
         self.game_state = "testing word"
-        self.play_sound('try_a_word', self.game_sounds)
+        self.play_sound('lets_try_word', self.game_sounds)
 
 
     def switch_to_letter(self):
@@ -413,8 +411,13 @@ class KeyCrush:
         if self.using_card:
             self.letters_in_play = self.card_str
         else:
-            self.letters_in_play = self.alphabet[:(self.zero_level_letters + self.level)]
+            temp_num_letters = self.zero_level_letters + (self.level * self.zero_level_letters)
+            
+            if temp_num_letters > 26:
+                temp_num_letters = 26
 
+            self.letters_in_play = self.alphabet[:temp_num_letters]
+            
         self.letter_prompt = choice(self.letters_in_play)
 
         while(self.letter_prompt == self.previous_prompt):
@@ -422,15 +425,17 @@ class KeyCrush:
             
         self.previous_prompt = self.letter_prompt
 
-        self.play_sound(self.letter_prompt, self.standard_alphabet)
+        self.play_sound(self.letter_prompt, self.game_sounds)
 
 
     def get_new_word_prompt(self):
         """ Randomly select a new word from the list of possible
             words available at the current level.
         """
-        
-        self.word_prompt = choice(self.list_word_prompts[self.level])
+        if self.level < 2:
+            self.word_prompt = choice(self.list_word_prompts[self.level])
+        else:
+            self.word_prompt = choice(self.list_word_prompts[1])
 
 
     def check_level(self):
@@ -445,8 +450,8 @@ class KeyCrush:
                 temp_flag = False
 
         if temp_flag:
-            self.play_sound('level_up', self.standard_sfx)
-            self.play_sound('nice_work', self.standard_sfx)
+            self.play_sound('level_up_sfx', self.game_sounds, True)
+            self.play_sound('level_up', self.game_sounds, True)
             self.level += 1
             print("Level up!")
 
