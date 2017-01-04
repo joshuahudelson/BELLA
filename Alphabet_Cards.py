@@ -118,7 +118,7 @@ class Alphabet_Cards:
 
             character = self.card_str[self.current_button]
             
-            if character == ' ':   # make own function...
+            if (character == ' ') or (character == '_'):   # make own function...
                 self.play_sound('wrong', self.standard_sfx)
             else:
                 self.play_sound(character + str(self.press_counter), self.game_sounds)

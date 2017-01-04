@@ -109,14 +109,16 @@ class Cell_Spotter:
 
     def introduction(self, input_dict):
 
-        if input_dict['card_state']:
+        if input_dict['card_trigger'] == False:
+            pass
+        elif (input_dict['card_state'] == True) & (self.intro_played == True):
             self.card_str = input_dict['card_str']
             self.game_state = 'game_play'
             self.get_search_letters()
             self.search_letter_num = 0
             self.current_prompt = self.search_list[self.search_letter_num]
             self.get_search_positions(self.current_prompt)
-        elif self.intro_played == False:
+        if self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
@@ -150,6 +152,11 @@ class Cell_Spotter:
         except KeyError:
             pass
 
+        try:
+            del self.freq_dict['_']
+        except KeyError:
+            pass
+
         self.search_list = sorted(self.freq_dict,key=self.freq_dict.get)
         print(self.search_list)
 
@@ -171,14 +178,15 @@ class Cell_Spotter:
         if len(self.hidden_pos)<= 0:            
             self.search_letter_num +=1
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
-                self.play_sound('win', self.standard_sfx)
+                self.play_sound('win', self.standard_sfx, True)
                 self.play_sound('great_job', self.standard_voice, wait=True)
-                self.game_state = 'introduction'
                 self.card_inserted = False
                 self.intro_played = False
+                self.card_state = False
+                self.game_state = 'introduction'
+
             else:
-                print("yay you found them all")
-                self.play_sound('level_up', self.standard_sfx)
+                self.play_sound('level_up', self.standard_sfx, True)
                 self.play_sound('nice_work', self.standard_voice, wait=True)
                 self.current_prompt = self.search_list[self.search_letter_num]
                 self.get_search_positions(self.current_prompt)
