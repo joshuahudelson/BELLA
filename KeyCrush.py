@@ -160,6 +160,7 @@ class KeyCrush:
 
         self.word_string = ""
         self.word_prompt = ""
+        self.word_has_been_said = False
 
         self.intro_done = False
 
@@ -243,14 +244,19 @@ class KeyCrush:
     def test_word(self):
         """ Test user on a word prompt.
         """
+
+        if self.word_has_been_said:
         
-        if self.input_letter != None:
-            self.word_string += self.input_letter
-        elif (len(self.word_string) >= len(self.word_prompt)) | (self.input_control == 'space'):
-            if self.word_string == self.word_prompt:
-                self.word_is_correct()
-            else:
-                self.word_is_wrong()
+            if self.input_letter != None:
+                self.word_string += self.input_letter
+            elif (len(self.word_string) >= len(self.word_prompt)) | (self.input_control == 'space'):
+                if self.word_string == self.word_prompt:
+                    self.word_is_correct()
+                else:
+                    self.word_is_wrong()
+        else:
+            self.play_sound(self.word_prompt, self.game_sounds)
+            self.word_has_been_said = True
 
         self.display_word_prompt()
         self.draw_buttons()
@@ -390,7 +396,7 @@ class KeyCrush:
         self.letter_prompt = None
         self.get_new_word_prompt()
         self.game_state = "testing word"
-        self.play_sound('lets_try_word', self.game_sounds)
+        self.play_sound('lets_try_word', self.game_sounds, True)
 
 
     def switch_to_letter(self):
@@ -399,6 +405,7 @@ class KeyCrush:
         self.points_to_be_awarded = 10
         self.word_prompt = ""
         self.word_string = ""
+        self.word_has_been_said = False
         self.get_new_letter()
         self.game_state = "testing letter"
 
@@ -524,7 +531,7 @@ class KeyCrush:
         
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
-        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
+#        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
 
 
     def draw_buttons(self, keys='000000'):

@@ -62,6 +62,9 @@ class Whack_A_Dot:
         self.sound_object = self.sounds.sounds()
         self.game_name = 'Whack_A_Dot'
 
+        self.delay = gametools['serial_delay_factor']
+        self.fps = gametools['fps']
+
 
 #---DISPLAY---
         
@@ -110,7 +113,7 @@ class Whack_A_Dot:
         self.levels = [5, 14, 23, 25]
         self.current_level = 0
         
-        self.current_prompt = 'space'
+        self.current_prompt = '000000'
         
         self.responses_correct = self.np.ones(26)
         self.max_correct = 2
@@ -121,6 +124,11 @@ class Whack_A_Dot:
 
         self.prompt_vibrated = False
 
+        self.intro_played = False
+
+        self.points = 0
+
+        self.frames_passed = 0
 
 #---CENTRAL FUNCTIONS---
 
@@ -133,7 +141,11 @@ class Whack_A_Dot:
 
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
-        self.input_letter = input_dict['letter']
+        self.input_letter = input_dict['chord']
+
+        if self.input_letter == '000000':
+            self.input_letter = None
+        
         self.input_control = input_dict['standard']
 
         if self.input_control == 'display':
@@ -146,7 +158,7 @@ class Whack_A_Dot:
         elif self.game_state == 'play_game':
             self.play_game()
 
-        self.draw_buttons(self.braille_keyboard.letter_to_chord[self.current_prompt])
+        self.draw_buttons(self.current_prompt)
 
         self.pygame.display.update()
 
@@ -157,10 +169,17 @@ class Whack_A_Dot:
         """
         
         self.display_message('Press Space')
-        if self.input_control == 'space':
-            self.game_state = 'play_game'
-            self.update_letters_in_play()
-            self.get_new_prompt()
+
+        if self.intro_played:
+        
+            if self.input_control == 'space':
+                self.game_state = 'play_game'
+#            self.update_letters_in_play()
+                self.get_new_prompt()
+
+        else:
+            self.play_sound('press_space_when', self.standard_voice)
+            self.intro_played = True
 
 
     def play_game(self):
@@ -171,12 +190,18 @@ class Whack_A_Dot:
             the appropriate update function.
         """
         
-        self.display_letter_prompt()
+#        self.display_letter_prompt()
+
+        self.frames_passed += 1
 
         if self.prompt_vibrated == False:
             self.vibrate_buttons()
             self.prompt_vibrated = True
-        
+
+        if self.frames_passed > (self.delay * self.fps * 0.5):
+            self.vibrate_buttons()
+            self.frames_passed = 0
+
         if self.input_letter != None:
             if self.input_letter == self.current_prompt:
                 self.correct_response()
@@ -192,8 +217,10 @@ class Whack_A_Dot:
         
         self.play_sound('correct', self.standard_sfx)
         self.update_points(True)
-        self.check_level()
+#        self.check_level()
         self.get_new_prompt()
+        self.frames_passed = 0
+
 
 
     def incorrect_response(self):
@@ -205,9 +232,28 @@ class Whack_A_Dot:
         self.play_sound('wrong', self.standard_sfx)
         self.update_points(False)
         self.vibrate_buttons()
+        self.frames_passed = 0
 
 
     def update_points(self, correct):
+        """ Increment or decrement the value in the list that
+            tracks responses per character.  Can't decrement
+            past 0 nor increment past self.max_correct.
+        """
+
+        if correct:
+            self.points += 10
+            
+        if self.points > ((self.current_level + 1) * 100):
+            self.play_sound('level_up', self.standard_sfx, True)
+            self.play_sound('great_job', self.standard_voice, True)
+            self.current_level += 1
+            if self.current_level > 4:
+                self.current_level = 4
+                
+
+
+    def update_points_deprecated(self, correct):
         """ Increment or decrement the value in the list that
             tracks responses per character.  Can't decrement
             past 0 nor increment past self.max_correct.
@@ -260,7 +306,7 @@ class Whack_A_Dot:
         previous_prompt = self.current_prompt
         
         while(previous_prompt == self.current_prompt):
-            self.current_prompt = choice(self.letters_in_play)
+            self.current_prompt = self.generate_chord(self.current_level + 1)
 
         self.prompt_vibrated = False
 
@@ -274,7 +320,31 @@ class Whack_A_Dot:
         """ Vibrate the buttons that correspond to the current prompt.
         """
         
-        self.braille_keyboard.vibrate_letter(self.current_prompt, sim=True)
+        self.braille_keyboard.vibrate_chord(self.current_prompt, sim=True)
+
+
+    def generate_chord(self, num_keys):
+        if num_keys > 5:
+            num_keys = 5
+        if num_keys < 1:
+            num_keys = 1
+
+        press_list = []        
+
+        while len(press_list) < num_keys:
+            x = randint(0, 5)
+            if x not in press_list:
+                press_list.append(x)
+
+        chord = ''
+
+        for i in range(6):
+            if i in press_list:
+                chord += '1'
+            else:
+                chord += '0'
+
+        return chord
 
 
 #---SOUND FUNCTIONS---
@@ -283,7 +353,6 @@ class Whack_A_Dot:
         dictionary[sound]['sound'].play()
         if wait:
             self.pygame.time.wait(dictionary[sound]['length'])
-
 
 
 #---DISPLAY FUNCTIONS---

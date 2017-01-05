@@ -295,7 +295,7 @@ class keyboard:
         self.ser.write(b'\r')
 
 
-    def vibrate_letter(self, letter, sim=False):  # What the fuck does "sim" mean?
+    def vibrate_letter(self, letter, sim=False):
         """
         """
         
@@ -321,5 +321,30 @@ class keyboard:
                     self.ser.reset_input_buffer() 
                 counter += 1
         
-    
+
+    def vibrate_chord(self, chord, sim=False):
+        """
+        """
+        
+        counter = 0
+
+        if sim:
+            value = 0 
+            for key in chord[::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    value = value + vib
+                counter += 1
+                
+            self._vibrate_key(value)
+
+        else:
+            for key in chord[::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
+                if key == '1':
+                    vib = pow(2, counter)
+                    self._vibrate_key(vib)
+                    print(vib)
+                    time.sleep(.05)
+                    self.ser.reset_input_buffer() 
+                counter += 1
 
