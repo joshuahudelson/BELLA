@@ -82,12 +82,15 @@ class Alphabet_Cards:
 
         self.current_cursor_button = input_dict['cursor_key']
         self.input_control = input_dict['standard']
-
+        
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         if self.input_control == 'display':
             self.change_display_state()
-                
+
+        if input_dict['card_trigger']:
+            self.game_state = 'introduction'
+
         if self.game_state == 'introduction':
             self.introduction(input_dict)
         elif self.game_state == 'game_play':
@@ -101,6 +104,7 @@ class Alphabet_Cards:
         if input_dict['card_state']:
             self.card_str = input_dict['card_str']
             self.play_sound('cardinserted', self.standard_sfx, wait=True) # we need to rename this sound effect.  Just call it beep.
+            self.play_sound('press_dots',self.game_sounds, wait=True)
             self.game_state = 'game_play'
         elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)

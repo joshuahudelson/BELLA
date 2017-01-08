@@ -109,7 +109,7 @@ class Menu:
         self.play_sound('intro', self.game_sounds, True)
 #        self.play_sound('lets_play', self.game_sounds, True)
 #        self.play_sound('instructions', self.game_sounds, True)
-        self.play_sound(self.options_list[self.selection], self.game_sounds)
+#        self.play_sound(self.options_list[self.selection], self.game_sounds)
 
         self.introduction_done = True
 

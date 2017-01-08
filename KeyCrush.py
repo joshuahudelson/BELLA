@@ -114,16 +114,19 @@ class KeyCrush:
         self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
         self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
         self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
-
+        
         self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
 
         
         self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
                                      'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
-
+       
 #---GAME VARIABLES---
 
+        self.correct_sfx = ["correct_one","correct_two","correct_three","correct_four","correct_five","correct_six"]
+        self.correct_voice = ["fantastic","keep_it_up","good_job","great_job","outstanding"]
+        
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
         self.list_word_prompts = [["ace", "bad", "cab"],
@@ -286,9 +289,10 @@ class KeyCrush:
         self.check_level()
 
         if self.letter_streak % 5 == 0:
-            pass # add play streak sound
-        else:
-            self.play_sound('correct_coins', self.game_sounds)
+            self.play_sound(choice(self.correct_sfx), self.standard_sfx, wait=True)
+            self.play_sound(choice(self.correct_voice),self.standard_voice, wait=True)
+        else:            
+            self.play_sound(choice(self.correct_sfx), self.standard_sfx)
 
         if (self.letter_attempts_before_word > self.letter_attempts_threshold) & (not self.using_card):
             self.gamble_switch_to_word()
@@ -305,13 +309,14 @@ class KeyCrush:
         self.letter_streak = 0
         self.letter_attempts_before_hint += 1
         self.points_to_be_awarded = int(self.points_to_be_awarded * 0.5)
-
+        self.update_letter_tracking(False)
+        self.play_sound('wrong', self.standard_sfx)
+        
         if self.letter_attempts_before_hint > 2:
             self.points_to_be_awarded = 0
             self.give_hint()
         
-        self.update_letter_tracking(False)
-        self.play_sound('wrong_buzz', self.game_sounds)
+        
 
         print('Wrong letter!')
 
@@ -324,8 +329,8 @@ class KeyCrush:
         self.words_answered_correctly += 1
         self.word_streak += 1
         self.total_points += self.points_to_be_awarded
-        self.play_sound('hang_of_it', self.game_sounds, wait=True)
-
+        self.play_sound('correct_word', self.standard_sfx)
+        self.play_sound(choice(self.correct_voice),self.standard_voice, wait=True)
         self.switch_to_letter()
 
 
@@ -335,7 +340,7 @@ class KeyCrush:
         """
         self.total_words_answered += 1
         self.word_streak = 0
-        self.play_sound('wrong_buzz', self.game_sounds)
+        self.play_sound('almost', self.standard_voice)
         self.switch_to_letter()
 
 
