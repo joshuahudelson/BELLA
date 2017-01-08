@@ -106,11 +106,15 @@ class Whack_A_Dot:
 
 
 #---GAME VARIABLES---
+
+        self.correct_sfx = ["correct_one","correct_two","correct_three","correct_four","correct_five","correct_six"]
+        self.correct_voice = ["fantastic","keep_it_up","good_job","great_job","outstanding"]
+
         self.game_state = 'introduction'
         self.alphabet = 'aeickbdfhjlmousgnprtvwxzqy'
         
         self.letters_in_play = ''
-        self.levels = [5, 14, 23, 25]
+        self.levels = [10, 28, 46, 50]
         self.current_level = 0
         
         self.current_prompt = '000000'
@@ -192,21 +196,23 @@ class Whack_A_Dot:
         
 #        self.display_letter_prompt()
 
+        if self.input_letter != None:
+            if self.input_letter == self.current_prompt:
+                self.correct_response()
+            else:
+                self.incorrect_response()
+
         self.frames_passed += 1
 
         if self.prompt_vibrated == False:
             self.vibrate_buttons()
             self.prompt_vibrated = True
 
-        if self.frames_passed > (self.delay * self.fps * 0.5):
+        if self.frames_passed > (self.delay * self.fps * 0.07):
             self.vibrate_buttons()
             self.frames_passed = 0
 
-        if self.input_letter != None:
-            if self.input_letter == self.current_prompt:
-                self.correct_response()
-            else:
-                self.incorrect_response()
+        
                 
 
     def correct_response(self):
@@ -215,7 +221,7 @@ class Whack_A_Dot:
             get a new prompt.
         """
         
-        self.play_sound('correct', self.standard_sfx)
+        self.play_sound(choice(self.correct_sfx), self.standard_sfx, wait=True)
         self.update_points(True)
 #        self.check_level()
         self.get_new_prompt()
@@ -229,9 +235,9 @@ class Whack_A_Dot:
             the current prompt again.
         """
         
-        self.play_sound('wrong', self.standard_sfx)
+        self.play_sound('wrong', self.standard_sfx, wait=True)
         self.update_points(False)
-        self.vibrate_buttons()
+        #self.vibrate_buttons() # this is a little confusing when we are hinting more often
         self.frames_passed = 0
 
 
@@ -246,8 +252,10 @@ class Whack_A_Dot:
             
         if self.points > ((self.current_level + 1) * 100):
             self.play_sound('level_up', self.standard_sfx, True)
-            self.play_sound('great_job', self.standard_voice, True)
+            self.play_sound(choice(self.correct_voice),self.standard_voice, wait=True)
+            self.play_sound('combinations',self.game_sounds, wait=True)
             self.current_level += 1
+            print(self.current_level)
             if self.current_level > 4:
                 self.current_level = 4
                 
@@ -292,6 +300,7 @@ class Whack_A_Dot:
 
         if temp_flag:
             self.current_level += 1
+            print("Level up")
             if self.current_level > len(self.levels)-1:
                 self.current_level = len(self.levels)-1
                 self.update_letters_in_play
@@ -324,6 +333,7 @@ class Whack_A_Dot:
 
 
     def generate_chord(self, num_keys):
+        num_keys = choice(range(num_keys))
         if num_keys > 5:
             num_keys = 5
         if num_keys < 1:

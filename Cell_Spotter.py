@@ -18,10 +18,10 @@ class Cell_Spotter:
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
-
+        
         self.sound_object = self.sounds.sounds()
 
-
+        self.new_card = True
 #---DISPLAY---
         
         self.SCREEN_WIDTH = display_data['screen_width']
@@ -109,16 +109,17 @@ class Cell_Spotter:
 
     def introduction(self, input_dict):
 
-        if input_dict['card_trigger'] == False:
-            pass
-        elif (input_dict['card_state'] == True) & (self.intro_played == True):
+        if input_dict['card_trigger'] == True:
+            self.new_card = True
+        elif (input_dict['card_state'] == True) & (self.new_card == True):
+            self.play_sound('cardinserted', self.standard_sfx, wait=True) 
             self.card_str = input_dict['card_str']
             self.game_state = 'game_play'
             self.get_search_letters()
             self.search_letter_num = 0
             self.current_prompt = self.search_list[self.search_letter_num]
             self.get_search_positions(self.current_prompt)
-        if self.intro_played == False:
+        elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
@@ -183,6 +184,7 @@ class Cell_Spotter:
                 self.card_inserted = False
                 self.intro_played = False
                 self.card_state = False
+                self.new_card = False
                 self.game_state = 'introduction'
 
             else:
