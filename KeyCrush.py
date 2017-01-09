@@ -187,14 +187,14 @@ class KeyCrush:
 
         self.input_letter = input_dictionary['letter']
 
-        if input_dictionary['card_trigger']: #make this its own function
-            self.using_card = True
-            temp_string = input_dictionary['card_str']
-            for character in temp_string:
-                if (character in self.alphabet) & (character not in self.card_str):
-                    self.card_str += character
-            self.letters_correct = self.np.ones(len(self.card_str))
-            self.switch_to_letter()
+##        if input_dictionary['card_trigger']: #make this its own function
+##            self.using_card = True
+##            temp_string = input_dictionary['card_str']
+##            for character in temp_string:
+##                if (character in self.alphabet) & (character not in self.card_str):
+##                    self.card_str += character
+##            self.letters_correct = self.np.ones(len(self.card_str))
+##            self.switch_to_letter()
 
         if self.input_letter != None:
             self.play_sound('type', self.standard_sfx)
@@ -312,7 +312,7 @@ class KeyCrush:
         self.update_letter_tracking(False)
         self.play_sound('wrong', self.standard_sfx)
         
-        if self.letter_attempts_before_hint > 2:
+        if self.letter_attempts_before_hint > 1:
             self.points_to_be_awarded = 0
             self.give_hint()
         

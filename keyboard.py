@@ -143,7 +143,7 @@ class keyboard:
         if len(port_numbers) > 0:
             for port in port_numbers: # don't use i
                 print("testing {}".format(port)) 
-                self.ser = serial.Serial(port,baudrate=9600,timeout=0)
+                self.ser = serial.Serial(port,baudrate=38400,timeout=0)
                 time.sleep(.5)
                 self.ser.write(b"i")
                 time.sleep(.5)
@@ -275,12 +275,12 @@ class keyboard:
                 vib = pow(2, counter)
                 self._vibrate_key(vib)
                 print(vib)
-                time.sleep(.05)
+                time.sleep(.01)
                 self.ser.reset_input_buffer() 
             counter += 1
 
 
-    def _vibrate_key(self, vib, sleep_time=0.2):
+    def _vibrate_key(self, vib, sleep_time=0.05):
         """ 
         """
         

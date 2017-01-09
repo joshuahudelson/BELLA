@@ -8,6 +8,7 @@ import numpy
 from keyboard import keyboard
 import pygame
 import sounds
+from sys import exit
 
 pygame.mixer.pre_init(22050, -16,  2, 512)
 
@@ -40,6 +41,8 @@ gameDisplay = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 fps = 100
 
+BELLA_start_up = True
+
 gametools = {'pygame':pygame,
              'numpy':numpy,
              'sounds':sounds,
@@ -61,7 +64,12 @@ while(True):
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            quitGame = True
+            pygame.quit()
+            exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                exit()
 
     input_dict = braille_keyboard.update_keyboard()
 
@@ -90,8 +98,9 @@ while(True):
                 initialized[game_choice] = False
                 game_choice = selection
         else:
-            Opening_Menu = Menu(gametools, display_data)
+            Opening_Menu = Menu(gametools, display_data,BELLA_start_up)
             initialized[game_choice] = True
+            BELLA_start_up = False
 
     if game_choice == "KeyCrush":
         if initialized[game_choice]:

@@ -1,11 +1,13 @@
 
 class Menu:
 
-    def __init__(self, gametools, display_data):
+    def __init__(self, gametools, display_data, BELLA_start_up):
 
         
         self.input_letter = None
         self.key_was_pressed = None
+
+        self.BELLA_start_up = BELLA_start_up
 
         self.pygame = gametools['pygame']
         self.sounds = gametools['sounds']
@@ -71,6 +73,8 @@ class Menu:
         if input_dict['card_trigger']:
             for letter in self.card_codes:
                 if input_dict['card_ID'] == letter:
+                    #self.play_sound('playing', self.game_sounds, wait = True)
+                    #self.play_sound(self.card_codes[input_dict['card_ID']], self.game_sounds, wait = True)
                     return self.card_codes[input_dict['card_ID']]
                 else:
                     print(input_dict['card_ID'])
@@ -90,23 +94,31 @@ class Menu:
             self.introduction()
 
         if self.input_control == 'newline':
+            self.pygame.mixer.stop()
             self.option_tracker += 1
             self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'backspace':
+            self.pygame.mixer.stop()
             self.option_tracker -= 1
             self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'space':
+            self.pygame.mixer.stop()
 #            self.play_sound('press_main_menu', self.game_sounds, True)
 #            self.play_sound('display', self.game_sounds, True)
+            self.play_sound('playing', self.game_sounds, wait = True)
+            self.play_sound(self.options_list[self.selection], self.game_sounds, wait = True)
             return self.options_list[self.selection]
         else:
             return None
 
 
     def introduction(self):
-        self.play_sound('intro', self.game_sounds, True)
+        if self.BELLA_start_up:
+            self.play_sound('intro', self.game_sounds)
+        else:
+            self.play_sound('main_menu', self.game_sounds)
 #        self.play_sound('lets_play', self.game_sounds, True)
 #        self.play_sound('instructions', self.game_sounds, True)
 #        self.play_sound(self.options_list[self.selection], self.game_sounds)
