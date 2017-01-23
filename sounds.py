@@ -17,7 +17,7 @@ class sounds:
 
         self.soundList = [x for x in os.listdir(dirName) if x[-4:].lower() == '.wav']  #list comprehension that gives makes a list of all wav files in directory
         for sound in self.soundList:
-            print(sound)
+            #print(sound)
             temp_sound = pygame.mixer.Sound(join(dirName,sound)) # create sound object for each wav file
             self.sound_dict[sound[:-4]] =  {'sound':temp_sound,
                                             'length':int(temp_sound.get_length() * 1000)
