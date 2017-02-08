@@ -1,5 +1,5 @@
 from Menu import Menu
-from KeyCrush2 import KeyCrush2
+from KeyCrush import KeyCrush
 from Whack_A_Dot import Whack_A_Dot
 from Cell_Spotter import Cell_Spotter
 from Alphabet_Cards import Alphabet_Cards
@@ -107,7 +107,7 @@ while(True):
             KeyCrush_game.iterate(input_dict)
             clock.tick(fps)
         else:
-            KeyCrush_game = KeyCrush2(gametools, display_data)
+            KeyCrush_game = KeyCrush(gametools, display_data)
             initialized[game_choice] = True
 
     if game_choice == "Whack-A-Dot":
