@@ -1,12 +1,14 @@
 from random import choice, randint
+from BELLA_GAME import Bella_Game
 
-class Cell_Spotter:
-    """ A game that prompts a player with a letter, and
+class Cell_Spotter(Bella_Game):
+    """ A game that requires a card to play.  Game prompts a player with a letter, and
         the player finds that letter on the card and presses
         the cursor key above it.
     """
 
     def __init__(self, gametools, display_data, starting_level=0):
+        super().__init__(gametools, display_data, starting_level)
         """
         """
 
