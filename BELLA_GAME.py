@@ -4,6 +4,9 @@ from random import choice, randint
 class Bella_Game:
 
     def __init__(self, gametools, display_data, starting_level=0):
+        """ A class for BELLA games.  Creates all the variables and functions
+        that would be duplicated, such as the sound and display functions.
+        """
 
 #---META-GAME STUFF---
 
@@ -12,9 +15,8 @@ class Bella_Game:
         self.np = gametools['numpy']
         self.gameDisplay = gametools['display']
         self.braille_keyboard = gametools['keyboard']
-
+        self.fps = gametools['fps']
         self.sound_object = self.sounds.sounds()
-        self.game_name = 'KeyCrush'
 
 #---DISPLAY---
         
@@ -48,15 +50,15 @@ class Bella_Game:
         self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
         self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
 
-        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
-
-        
         self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
                                      'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
 #---SOUND FUNCTIONS---
     
     def play_sound(self, sound, dictionary, wait=False):
+        """ Plays a sound.  If wait is True, the game loop pauses
+            until the sound has finished playing.
+        """
         dictionary[sound]['sound'].play()
         if wait:
             self.pygame.time.wait(dictionary[sound]['length'])
@@ -65,12 +67,16 @@ class Bella_Game:
 #---DISPLAY FUNCTIONS---
 
     def change_display_state(self):
+        """ When called, iterates to the next display state, which
+            determines the colors of the text and background.
+        """
         self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
         # change this along with the main Bella program so that the main program just sends in the state number, no computing or tracking on this side.
 
 
     def display_letter_prompt(self, letter=None):
         """ Write the current letter prompt to the screen.
+            If no input is given, displays the game's current letter prompt.
         """
         if letter == None:
             letter = self.letter_prompt
@@ -89,6 +95,7 @@ class Bella_Game:
 
     def display_word_prompt(self, word=None):
         """ Write the current word prompt to the screen.
+            If no input is given, displays the game's current letter prompt.
         """
 
         if word == None:
@@ -100,7 +107,7 @@ class Bella_Game:
 
 
     def display_status_box(self):
-        """ Write the current word prompt to the screen.
+        """ Displays the current level and points on the screen.
         """
         
         text = self.font_small.render("Level: " + str(self.level), True,
@@ -113,12 +120,11 @@ class Bella_Game:
         
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
-#        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 45))
 
 
     def draw_buttons(self, keys='000000'):
         """ Draw all six buttons to the screen.
-            Color depends on input code.
+            Color depends on input code and display_state.
         """
         
         xpos = None

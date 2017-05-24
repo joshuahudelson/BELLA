@@ -12,63 +12,13 @@ class Cell_Spotter(Bella_Game):
         """
         """
 
-
-#---META-GAME STUFF---
-
-        self.pygame = gametools['pygame']
-        self.sounds = gametools['sounds']
-        self.np = gametools['numpy']
-        self.gameDisplay = gametools['display']
-        self.braille_keyboard = gametools['keyboard']
-        
-        self.sound_object = self.sounds.sounds()
-
-        self.new_card = True
-#---DISPLAY---
-        
-        self.SCREEN_WIDTH = display_data['screen_width']
-        self.SCREEN_HEIGHT = display_data['screen_height']
-
-        self.pygame.display.set_caption('Cell Spotter')
-   
-        self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
-        self.font_large = self.pygame.font.SysFont(None, 500)
-        
-        self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
-
-        self.current_display_state = display_data['current_display_state']
-
-        self.display_names = ['white_black', 'black_white', 'blue_yellow']
-
-        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
-                               'white_black':{'background':self.white, 'text':self.black},
-                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
-
-
-#---SOUNDS---
-
-        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
-        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
-        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
-
-
-        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
-        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
-        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
-
-        
-        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
-                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
-
-
 #---GAME VARIABLES---
         
         self.game_state = 'introduction'
         
         self.current_input = None
 
-        self.current_prompt = ''
+        self.letter_prompt = ''
         
         self.word_prompt = 'insert card'
 
@@ -87,6 +37,8 @@ class Cell_Spotter(Bella_Game):
         self.found_pos = []
 
         self.intro_played = False
+        
+        self.new_card = False
 
 
 #---CENTRAL FUNCTIONS---
@@ -96,9 +48,9 @@ class Cell_Spotter(Bella_Game):
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.current_input = input_dict['cursor_key']
-        self.current_control = input_dict['standard']
+        self.letter_control = input_dict['standard']
 
-        if self.current_control == 'display':
+        if self.letter_control == 'display':
             self.change_display_state()
 
         if self.game_state == 'introduction':
@@ -119,8 +71,8 @@ class Cell_Spotter(Bella_Game):
             self.game_state = 'game_play'
             self.get_search_letters()
             self.search_letter_num = 0
-            self.current_prompt = self.search_list[self.search_letter_num]
-            self.get_search_positions(self.current_prompt)
+            self.letter_prompt = self.search_list[self.search_letter_num]
+            self.get_search_positions(self.letter_prompt)
         elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
@@ -171,7 +123,7 @@ class Cell_Spotter(Bella_Game):
         self.found_pos = []
         
         self.play_sound('find_all_the', self.standard_voice, True)
-        self.play_sound(self.current_prompt, self.standard_alphabet, True)
+        self.play_sound(self.letter_prompt, self.standard_alphabet, True)
         self.play_sound('_s', self.standard_voice, True)
 
 
@@ -192,54 +144,7 @@ class Cell_Spotter(Bella_Game):
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
                 self.play_sound('nice_work', self.standard_voice, wait=True)
-                self.current_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.current_prompt)
+                self.letter_prompt = self.search_list[self.search_letter_num]
+                self.get_search_positions(self.letter_prompt)
         else:
             self.play_sound('correct', self.standard_sfx)
-                
-
-#---SOUND FUNCTIONS---
-    
-    def play_sound(self, sound, dictionary, wait=False):
-        dictionary[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(dictionary[sound]['length'])
-
-
-
-#---DISPLAY FUNCTIONS---
-
-    def change_display_state(self):
-        self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
-
-
-    def display_letter_prompt(self, letter=None):
-        """ Write the current letter prompt to the screen.
-        """
-        if letter == None:
-            letter = self.current_prompt
-            
-        displaybox = self.pygame.draw.rect(self.gameDisplay,
-                                           self.display_states[self.display_names[self.current_display_state]]['background'],
-                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-
-        text = self.font_large.render(letter, True,
-                                      self.display_states[self.display_names[self.current_display_state]]['text'])
-
-        temp_width = text.get_rect().width
-
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-
-
-    def display_word_prompt(self, word=None):
-        """ Write the current word prompt to the screen.
-        """
-
-        if word == None:
-            word = self.word_prompt
-        displaybox = self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['background'], ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-        text = self.font.render(word, True, self.display_states[self.display_names[self.current_display_state]]['text'])
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-
-

@@ -92,6 +92,8 @@ class KeyCrush(Bella_Game):
 
 #---GAME VARIABLES---
 
+        self.game_name = 'KeyCrush'
+
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
         self.list_word_prompts = [["ace", "bad", "cab"],
@@ -138,8 +140,13 @@ class KeyCrush(Bella_Game):
         self.using_card = False
         self.card_str = ''
 
-#---CENTRAL FUNCTIONS---
 
+#---LOCAL GAME SOUNDS---
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
+
+
+#---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dictionary):
         """ A single iteration of the game loop.
