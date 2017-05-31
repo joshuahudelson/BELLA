@@ -8,9 +8,9 @@ class KeyCrush(Bella_Game):
         """
 
         self.alphabet: list, letters to be tested, in order.
-        
+
         self.list_word_prompts: list, words to be tested.
-        
+
         self.letters_correct: list, int between 0 and self.max_correct.
 
         self.game_state: string; introduction, test_leter, test_word,
@@ -29,9 +29,9 @@ class KeyCrush(Bella_Game):
 
         self.letter_prompt: string, the current single-letter
                              prompt.
-        
+
         self.previous_prompt: string, the previous single-letter
-                               prompt.      
+                               prompt.
 
         self.input_letter: string, the letter most recently typed.
 
@@ -40,7 +40,7 @@ class KeyCrush(Bella_Game):
 
         self.total_attempted_letters_answered: int, total number of attempted
                                      answers.
-                                     
+
         self.letters_answered_correctly: int, number of attempts that were
                               successful.
 
@@ -48,7 +48,7 @@ class KeyCrush(Bella_Game):
                             all-correct letter answers.
 
         self.career_streak: int, longest streak of this game.
-        
+
         self.letter_attempts_before_word: int, tallies answered letters;
                                           helps switch to word if above some #.
 
@@ -57,18 +57,18 @@ class KeyCrush(Bella_Game):
 
         self.letter_attempts_threshold: int, number of attempts before possible
                                         to switch to word.
-                                          
+
         self.total_words_answered: int, total number of words answered.
-        
+
         self.words_answered_correctly: int, number of words answered
                                        correctly.
-                                       
+
         self.word_streak: int, length of most recent series of all-correct
                            word answers.
 
         self.word_string: string, the concatenated player input when
                           answering a word.
-                          
+
         self.word_prompt: string, the word to be answered.
 
         self.word_has_been_said = boolean, whether current word soundfile has been
@@ -76,18 +76,18 @@ class KeyCrush(Bella_Game):
 
         self.intro_done: boolean, has the introduction sound been played?
 
-        self.points_to_be_awareded: int, base number of points, adjusted depending on
+        self.points_to_be_awarded: int, base number of points, adjusted depending on
                                     whether earned in a streak or after a wrong letter, etc.
 
         self.total_points: int, tally of all points so far in game.
 
         self.using_card: boolean, whether game is using an inserted card or the game's own
                          alphabet.
-        
+
         self.card_str: string, the set of letters read from an inserted card.  If a card is
                        being used, the letters to be tested are chosen from tis, rather than
                        the game's self.alphabet string.
-                
+
         """
 
 #---GAME VARIABLES---
@@ -98,7 +98,7 @@ class KeyCrush(Bella_Game):
 
         self.list_word_prompts = [["ace", "bad", "cab"],
                                   ["age", "acid", "cage", "dice", "cafe", "face", "fig", "hide", "idea"]]
-        
+
         self.letters_correct = self.np.ones(len(self.alphabet))
 
         self.game_state = 'introduction'
@@ -110,16 +110,16 @@ class KeyCrush(Bella_Game):
         self.letters_in_play = ""
         self.letter_prompt = None
         self.previous_prompt = None
-        
+
         self.input_letter = None
         self.input_control = None
 
         self.total_attempted_letters_answered = 0
         self.letters_answered_correctly = 0
-        
+
         self.letter_streak = 0
         self.career_streak = 0
-        
+
         self.letter_attempts_before_word = 0
         self.letter_attempts_before_hint = 0
         self.letter_attempts_threshold = 3
@@ -134,7 +134,7 @@ class KeyCrush(Bella_Game):
 
         self.intro_done = False
 
-        self.points_to_be_awareded = None # put in docstring, from here down...
+        self.points_to_be_awarded = None # put in docstring, from here down...
         self.total_points = 0
 
         self.using_card = False
@@ -158,7 +158,7 @@ class KeyCrush(Bella_Game):
 
         self.input_letter = input_dictionary['letter']
         self.input_control = input_dictionary['standard']
-        
+
         if (self.input_control == 'display'):
             self.change_display_state()
 
@@ -182,7 +182,7 @@ class KeyCrush(Bella_Game):
         """ Plays instructions and waits for space-bar
             to be pressed.
         """
-        
+
         if self.intro_done == False:
             self.play_sound('instructions', self.game_sounds)
             self.intro_done = True
@@ -197,7 +197,7 @@ class KeyCrush(Bella_Game):
     def test_letter(self):
         """ Test users on a letter prompt.
         """
-        
+
         if self.input_letter != None:
             if self.input_letter == self.letter_prompt:
                 self.letter_is_correct()
@@ -232,7 +232,7 @@ class KeyCrush(Bella_Game):
             in the string to be tested, and if so, include
             them.
         """
-        
+
         self.using_card = True
         temp_string = input_dictionary['card_str']
         for character in temp_string:
@@ -247,33 +247,34 @@ class KeyCrush(Bella_Game):
             whether the string as long as the word string or whether the
             user has typed space.  If either is true, compare the words.
         """
-        
+
         if self.input_letter != None:
             self.word_string += self.input_letter
         elif (len(self.word_string) >= len(self.word_prompt)) | (self.input_control == 'space'):
             if self.word_string == self.word_prompt:
                 self.word_is_correct()
             else:
-                self.word_is_wrong() 
+                self.word_is_wrong()
 
 
     def letter_is_correct(self):
         """ Update variables for a correctly-answered letter,
             play response sound, and call for a new letter prompt.
         """
-        
+
         self.total_attempted_letters_answered += 1
         self.letters_answered_correctly += 1
         self.letter_streak += 1
         self.total_points += self.letter_streak * self.points_to_be_awarded
+        print(self.total_points)
         self.letter_attempts_before_hint = 0
         self.letter_attempts_before_word += 1
 
         if self.letter_streak > self.career_streak:
             self.career_streak = self.letter_streak
-            
+
         self.update_letter_tracking(True)
-        
+
         if self.letter_streak % 5 == 0:
             self.play_streak_sound()
         else:
@@ -293,7 +294,7 @@ class KeyCrush(Bella_Game):
         """ Update variables for an incorrectly-answered letter,
             play response sound, and possibly give a hint.
         """
-        
+
         self.total_attempted_letters_answered += 1
         self.letter_streak = 0
         self.letter_attempts_before_hint += 1
@@ -302,7 +303,7 @@ class KeyCrush(Bella_Game):
         if self.letter_attempts_before_hint > 2:
             self.points_to_be_awarded = 0
             self.give_hint()
-        
+
         self.update_letter_tracking(False)
         self.play_sound('wrong_buzz', self.game_sounds)
 
@@ -344,7 +345,7 @@ class KeyCrush(Bella_Game):
             else:
                 temp_index = self.alphabet.index(self.letter_prompt)
 
-                
+
             if correct:
                 self.letters_correct[temp_index] += 1
                 if self.letters_correct[temp_index] > self.max_correct:
@@ -355,13 +356,13 @@ class KeyCrush(Bella_Game):
                 if self.letters_correct[temp_index] < 0:
                     self.letters_correct[temp_index] = 0
 
-                
+
 
     def give_hint(self):
         """ Play response sound, show correct buttons.
-            Vibrate the correct keys for the letter prompt.  
+            Vibrate the correct keys for the letter prompt.
         """
-        
+
         self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
         self.pygame.display.update()
         self.pygame.time.wait(500)
@@ -374,7 +375,7 @@ class KeyCrush(Bella_Game):
         """
 
         tossup = randint(0, 4)
-        
+
         if tossup == 0:
             self.game_state = "testing_word"
             self.switch_to_word()
@@ -402,7 +403,7 @@ class KeyCrush(Bella_Game):
         self.get_new_letter()
         self.game_state = "testing letter"
 
-        
+
     def get_new_letter(self):
         """ Set the letter_prompt to a letter that's currently
             in play and not the previous letter_prompt.
@@ -412,17 +413,17 @@ class KeyCrush(Bella_Game):
             self.letters_in_play = self.card_str
         else:
             temp_num_letters = self.zero_level_letters + (self.level * self.zero_level_letters)
-            
+
             if temp_num_letters > 26:
                 temp_num_letters = 26
 
             self.letters_in_play = self.alphabet[:temp_num_letters]
-            
+
         self.letter_prompt = choice(self.letters_in_play)
 
         while(self.letter_prompt == self.previous_prompt):
             self.letter_prompt = choice(self.letters_in_play)
-            
+
         self.previous_prompt = self.letter_prompt
 
         self.play_sound(self.letter_prompt, self.game_sounds)
@@ -442,9 +443,9 @@ class KeyCrush(Bella_Game):
         """ Check if all letters have received enough correct responses
             to increment the level.  If so, increment the level.
         """
-        
+
         temp_flag = True
-        
+
         for i in range(len(self.letters_in_play)):
             if self.letters_correct[i] < self.max_correct:
                 temp_flag = False

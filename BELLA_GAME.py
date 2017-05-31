@@ -19,16 +19,17 @@ class Bella_Game:
         self.sound_object = self.sounds.sounds()
 
 #---DISPLAY---
-        
+
         self.SCREEN_WIDTH = display_data['screen_width']
         self.SCREEN_HEIGHT = display_data['screen_height']
 
         self.pygame.display.set_caption('Typing Tutor')
-   
+
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
+        self.font_medium = self.pygame.font.SysFont(None, 140)
         self.font_large = self.pygame.font.SysFont(None, 500)
-        
+
         self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
 
         self.current_display_state = display_data['current_display_state']
@@ -54,7 +55,7 @@ class Bella_Game:
                                      'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
 #---SOUND FUNCTIONS---
-    
+
     def play_sound(self, sound, dictionary, wait=False):
         """ Plays a sound.  If wait is True, the game loop pauses
             until the sound has finished playing.
@@ -80,7 +81,7 @@ class Bella_Game:
         """
         if letter == None:
             letter = self.letter_prompt
-            
+
         displaybox = self.pygame.draw.rect(self.gameDisplay,
                                            self.display_states[self.display_names[self.current_display_state]]['background'],
                                            ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
@@ -109,24 +110,25 @@ class Bella_Game:
     def display_status_box(self):
         """ Displays the current level and points on the screen.
         """
-        
-        text = self.font_small.render("Level: " + str(self.level), True,
+        temp_variable = 13
+        text = self.font_medium.render("Level: " + str(temp_variable), True,
                                       self.display_states[self.display_names[self.current_display_state]]['text'],
                                       self.display_states[self.display_names[self.current_display_state]]['background'])
-        
-        text2 = self.font_small.render("Points: " + str(self.score), True,
+
+        text2 = self.font_medium.render("Points: " + str(self.score), True,
                                        self.display_states[self.display_names[self.current_display_state]]['text'],
                                        self.display_states[self.display_names[self.current_display_state]]['background'])
-        
+
         temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 10) - (temp_width/2), 10))
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 15), 10))
+        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH * (14.0/15)) - temp_width, 10))
 
 
     def draw_buttons(self, keys='000000'):
         """ Draw all six buttons to the screen.
             Color depends on input code and display_state.
         """
-        
+
         xpos = None
         ypos = 500
         button_width = 60
@@ -139,13 +141,13 @@ class Bella_Game:
         x_middle = self.SCREEN_WIDTH * 0.07
 
         key_order = [3, 4, 5, 2, 1, 0]
-        
+
         for i in range(len(keys)):
             if keys[key_order[i]] == '1':
                 color = self.display_states[self.display_names[self.current_display_state]]['text']
             elif keys[key_order[i]] == '0':
                 color = self.display_states[self.display_names[self.current_display_state]]['background']
-            
+
             if i > 2:
                 xpos = (i* x_divisor * x_scalar) + x_buffer + x_middle
             else:
@@ -161,5 +163,5 @@ class Bella_Game:
     def draw_single_button(self, color, position):
         """ Draw a single button to the screen.
         """
-        
+
         self.pygame.draw.ellipse(self.gameDisplay, color, position)
