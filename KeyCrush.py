@@ -1,4 +1,5 @@
-from random import choice, randint
+from random import choice, randint, random
+import numpy as np
 from BELLA_GAME import Bella_Game
 
 class KeyCrush(Bella_Game):
@@ -41,7 +42,7 @@ class KeyCrush(Bella_Game):
         self.total_attempted_letters_answered: int, total number of attempted
                                      answers.
 
-        self.letters_answered_correctly: int, number of attempts that were
+        self.total_attempted_letters_answered_correctly: int, number of attempts that were
                               successful.
 
         self.letter_streak: int, length of most recent series of
@@ -93,29 +94,33 @@ class KeyCrush(Bella_Game):
 #---GAME VARIABLES---
 
         self.game_name = 'KeyCrush'
-
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
-
         self.list_word_prompts = [["ace", "bad", "cab"],
                                   ["age", "acid", "cage", "dice", "cafe", "face", "fig", "hide", "idea"]]
 
-        self.letters_correct = self.np.ones(len(self.alphabet))
-
         self.game_state = 'introduction'
         self.level = starting_level
-        self.max_correct = 6
+        self.max_correct = 1000
+        self.max_incorrect = 1000
 
-        self.zero_level_letters = 5
+        self.zero_level_letters = 3
+        self.level_letter_increment = 1
 
+        self.num_letters_in_play = 0;
         self.letters_in_play = ""
+
         self.letter_prompt = None
         self.previous_prompt = None
 
         self.input_letter = None
         self.input_control = None
 
+        self.letters_correct = self.np.ones(len(self.alphabet))
+        self.letters_incorrect = self.np.ones(len(self.alphabet))
+        self.letters_ratio = self.np.ones(len(self.alphabet))
+
         self.total_attempted_letters_answered = 0
-        self.letters_answered_correctly = 0
+        self.total_attempted_letters_answered_correctly = 0
 
         self.letter_streak = 0
         self.career_streak = 0
@@ -263,7 +268,8 @@ class KeyCrush(Bella_Game):
         """
 
         self.total_attempted_letters_answered += 1
-        self.letters_answered_correctly += 1
+        self.total_attempted_letters_answered_correctly += 1
+
         self.letter_streak += 1
         self.total_points += self.letter_streak * self.points_to_be_awarded
         print(self.total_points)
@@ -286,6 +292,7 @@ class KeyCrush(Bella_Game):
             self.gamble_switch_to_word()
         else:
             self.get_new_letter()
+
 
     def play_streak_sound(self):
         pass
@@ -345,18 +352,20 @@ class KeyCrush(Bella_Game):
             else:
                 temp_index = self.alphabet.index(self.letter_prompt)
 
-
             if correct:
                 self.letters_correct[temp_index] += 1
                 if self.letters_correct[temp_index] > self.max_correct:
                     self.letters_correct[temp_index] = self.max_correct
-
             else:
-                self.letters_correct[temp_index] -= 1
-                if self.letters_correct[temp_index] < 0:
-                    self.letters_correct[temp_index] = 0
+                self.letters_incorrect[temp_index] += 1
+                if self.letters_correct[temp_index] > self.max_incorrect:
+                    self.letters_correct[temp_index] = self.max_incorrect
 
+        self.compute_letters_ratio()
 
+    def compute_letters_ratio(self):
+        for i in range(self.num_letters_in_play):
+            self.letters_ratio[i] = self.letters_incorrect[i] / self.letters_correct[i]
 
     def give_hint(self):
         """ Play response sound, show correct buttons.
@@ -412,21 +421,37 @@ class KeyCrush(Bella_Game):
         if self.using_card:
             self.letters_in_play = self.card_str
         else:
-            temp_num_letters = self.zero_level_letters + (self.level * self.zero_level_letters)
+            self.num_letters_in_play = self.zero_level_letters + (self.level * self.level_letter_increment)
 
-            if temp_num_letters > 26:
-                temp_num_letters = 26
+            if self.num_letters_in_play > 26:
+                self.num_letters_in_play = 26
 
-            self.letters_in_play = self.alphabet[:temp_num_letters]
+            self.letters_in_play = self.alphabet[:self.num_letters_in_play]
 
-        self.letter_prompt = choice(self.letters_in_play)
+        self.choose_letter()
 
         while(self.letter_prompt == self.previous_prompt):
-            self.letter_prompt = choice(self.letters_in_play)
+            print("Chose the same!")
+            self.choose_letter()
 
         self.previous_prompt = self.letter_prompt
 
         self.play_sound(self.letter_prompt, self.game_sounds)
+
+
+    def choose_letter(self):
+        """ Choose a random number, multiply it by the sum of letters_ratio
+            and then find that value in the cumulative sum of letters_ratio.
+            Letters that have a higher ratio are more likely to be chosen.
+        """
+
+        temp_cumsum = np.cumsum(self.letters_ratio[:self.num_letters_in_play])
+
+        temp_scalar = random()
+
+        temp_search_term = temp_scalar * temp_cumsum[-1]
+
+        self.letter_prompt = self.letters_in_play[sum(temp_cumsum < temp_search_term)]
 
 
     def get_new_word_prompt(self):
