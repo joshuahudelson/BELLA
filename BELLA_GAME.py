@@ -110,8 +110,7 @@ class Bella_Game:
     def display_status_box(self):
         """ Displays the current level and points on the screen.
         """
-        temp_variable = 13
-        text = self.font_medium.render("Level: " + str(temp_variable), True,
+        text = self.font_medium.render("Level: " + str(self.level), True,
                                       self.display_states[self.display_names[self.current_display_state]]['text'],
                                       self.display_states[self.display_names[self.current_display_state]]['background'])
 

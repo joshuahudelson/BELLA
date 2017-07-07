@@ -8,7 +8,7 @@ class KeyCrush(Bella_Game):
         super().__init__(gametools, display_data, starting_level)
         """
 
-        self.alphabet: list, letters to be tested, in order.
+        self.alphabet: list; letters to be tested, in order.
 
         self.list_word_prompts: list, words to be tested.
 
@@ -88,25 +88,30 @@ class KeyCrush(Bella_Game):
         self.card_str: string, the set of letters read from an inserted card.  If a card is
                        being used, the letters to be tested are chosen from tis, rather than
                        the game's self.alphabet string.
-
         """
-
 #---GAME VARIABLES---
 
         self.game_name = 'KeyCrush'
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
-        self.list_word_prompts = [["ace", "bad", "cab"],
-                                  ["age", "acid", "cage", "dice", "cafe", "face", "fig", "hide", "idea"]]
+        self.alphabet_length = len(self.alphabet)
+
+        self.words_by_letters = []
+        for i in range(self.alphabet_length):
+            self.words_by_letters.append([])
+
+        self.sort_words() # populates self.words_by_letters.
 
         self.game_state = 'introduction'
         self.level = starting_level
+        self.level_advance_threshold = 5
+
         self.max_correct = 1000
         self.max_incorrect = 1000
 
         self.zero_level_letters = 3
         self.level_letter_increment = 1
 
-        self.num_letters_in_play = 0;
+        self.num_letters_in_play = self.zero_level_letters;
         self.letters_in_play = ""
 
         self.letter_prompt = None
@@ -115,9 +120,12 @@ class KeyCrush(Bella_Game):
         self.input_letter = None
         self.input_control = None
 
-        self.letters_correct = self.np.ones(len(self.alphabet))
-        self.letters_incorrect = self.np.ones(len(self.alphabet))
-        self.letters_ratio = self.np.ones(len(self.alphabet))
+        self.letters_correct = self.np.ones(self.alphabet_length)
+        self.letters_incorrect = self.np.ones(self.alphabet_length)
+        self.letters_ratio = self.np.ones(self.alphabet_length)
+
+        self.correct_letter_increment_amount = 1
+        self.incorrect_letter_increment_amount = 3
 
         self.total_attempted_letters_answered = 0
         self.total_attempted_letters_answered_correctly = 0
@@ -145,11 +153,9 @@ class KeyCrush(Bella_Game):
         self.using_card = False
         self.card_str = ''
 
-
 #---LOCAL GAME SOUNDS---
 
         self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
-
 
 #---CENTRAL FUNCTIONS---
 
@@ -182,12 +188,11 @@ class KeyCrush(Bella_Game):
 
         self.pygame.display.update()
 
-
     def introduction(self):
-        """ Plays instructions and waits for space-bar
+        """ Populates the lists of words.
+            Plays instructions and waits for space-bar
             to be pressed.
         """
-
         if self.intro_done == False:
             self.play_sound('instructions', self.game_sounds)
             self.intro_done = True
@@ -200,14 +205,17 @@ class KeyCrush(Bella_Game):
 
 
     def test_letter(self):
-        """ Test users on a letter prompt.
+        """ Just displays if the user hasn't typed anything.
+            Calls correct/wrong responses if user types something.
         """
-
-        if self.input_letter != None:
-            if self.input_letter == self.letter_prompt:
-                self.letter_is_correct()
-            else:
-                self.letter_is_wrong()
+        if self.input_control == 'space':
+            self.give_hint(self.letter_prompt)
+        else:
+            if self.input_letter != None:
+                if self.input_letter == self.letter_prompt:
+                    self.letter_is_correct()
+                else:
+                    self.letter_is_wrong()
 
         self.display_letter_prompt()
         self.display_status_box()
@@ -217,17 +225,18 @@ class KeyCrush(Bella_Game):
     def test_word(self):
         """ Test user on a word prompt.
         """
-
-        if self.word_has_been_said:
-            self.update_and_check_word()
+        if self.input_control == 'space':
+            self.give_hint(self.word_prompt[len(self.word_string)])
         else:
-            self.play_sound(self.word_prompt, self.game_sounds)
-            self.word_has_been_said = True
+            if self.word_has_been_said:
+                self.update_and_check_word()
+            else:
+                #self.play_sound(self.word_prompt, self.game_sounds) - Need text-to-speech or recordings.
+                self.word_has_been_said = True
 
         self.display_word_prompt()
         self.draw_buttons()
         self.display_status_box()
-
 
 #---OTHER FUNCTIONS---
 
@@ -246,7 +255,6 @@ class KeyCrush(Bella_Game):
         self.letters_correct = self.np.ones(len(self.card_str))
         self.switch_to_letter()
 
-
     def update_and_check_word(self):
         """ Add the most recent typed letter to a string and check
             whether the string as long as the word string or whether the
@@ -255,12 +263,11 @@ class KeyCrush(Bella_Game):
 
         if self.input_letter != None:
             self.word_string += self.input_letter
-        elif (len(self.word_string) >= len(self.word_prompt)) | (self.input_control == 'space'):
+        elif (len(self.word_string) >= len(self.word_prompt)):
             if self.word_string == self.word_prompt:
                 self.word_is_correct()
             else:
                 self.word_is_wrong()
-
 
     def letter_is_correct(self):
         """ Update variables for a correctly-answered letter,
@@ -293,7 +300,6 @@ class KeyCrush(Bella_Game):
         else:
             self.get_new_letter()
 
-
     def play_streak_sound(self):
         pass
 
@@ -301,6 +307,7 @@ class KeyCrush(Bella_Game):
         """ Update variables for an incorrectly-answered letter,
             play response sound, and possibly give a hint.
         """
+        self.play_sound('wrong_buzz', self.game_sounds)
 
         self.total_attempted_letters_answered += 1
         self.letter_streak = 0
@@ -309,13 +316,10 @@ class KeyCrush(Bella_Game):
 
         if self.letter_attempts_before_hint > 2:
             self.points_to_be_awarded = 0
-            self.give_hint()
+            self.give_hint(self.letter_prompt)
 
         self.update_letter_tracking(False)
-        self.play_sound('wrong_buzz', self.game_sounds)
-
         print('Wrong letter!')
-
 
     def word_is_correct(self):
         """ Update variables for a correctly-answered word,
@@ -329,7 +333,6 @@ class KeyCrush(Bella_Game):
 
         self.switch_to_letter()
 
-
     def word_is_wrong(self):
         """ Update variables for an incorrectly-answered word,
             play response sound, and switch to testing letter.
@@ -339,45 +342,43 @@ class KeyCrush(Bella_Game):
         self.play_sound('wrong_buzz', self.game_sounds)
         self.switch_to_letter()
 
-
-    def update_letter_tracking(self, correct):
+    def update_letter_tracking(self, boolean):
         """ If the correct letter was typed, increment that letter's value
             in the list of letters_correct.  Decrement if incorrect.
-        """
+    """
+        if self.using_card:
+            temp_index = self.card_str.index(self.letter_prompt)
+        else:
+            temp_index = self.alphabet.index(self.letter_prompt)
 
-        if self.input_letter != 'error' and self.input_letter != 'space':
+        if boolean:
+            self.letters_correct[temp_index] += self.correct_letter_increment_amount
+            print("added to letters_correct")
+            if self.letters_correct[temp_index] > self.max_correct:
+                self.letters_correct[temp_index] = self.max_correct
+        else:
+            self.letters_incorrect[temp_index] += self.incorrect_letter_increment_amount
+            print("added to letters_incorrect")
+            if self.letters_incorrect[temp_index] > self.max_incorrect:
+                self.letters_incorrect[temp_index] = self.max_incorrect
 
-            if self.using_card:
-                temp_index = self.card_str.index(self.letter_prompt)
-            else:
-                temp_index = self.alphabet.index(self.letter_prompt)
-
-            if correct:
-                self.letters_correct[temp_index] += 1
-                if self.letters_correct[temp_index] > self.max_correct:
-                    self.letters_correct[temp_index] = self.max_correct
-            else:
-                self.letters_incorrect[temp_index] += 1
-                if self.letters_correct[temp_index] > self.max_incorrect:
-                    self.letters_correct[temp_index] = self.max_incorrect
-
+        print("About to compute...")
         self.compute_letters_ratio()
 
     def compute_letters_ratio(self):
         for i in range(self.num_letters_in_play):
             self.letters_ratio[i] = self.letters_incorrect[i] / self.letters_correct[i]
+        print(self.letters_ratio)
 
-    def give_hint(self):
+    def give_hint(self, prompt):
         """ Play response sound, show correct buttons.
             Vibrate the correct keys for the letter prompt.
         """
-
-        self.draw_buttons(self.braille_keyboard.letter_to_chord[self.letter_prompt])
+        self.draw_buttons(self.braille_keyboard.letter_to_chord[prompt])
         self.pygame.display.update()
         self.pygame.time.wait(500)
         self.play_sound('hint', self.game_sounds, wait=True)
-        self.braille_keyboard.vibrate_letter(self.letter_prompt)
-
+        self.braille_keyboard.vibrate_letter(prompt)
 
     def gamble_switch_to_word(self):
         """ Roll dice to see if a word should be tested now.
@@ -391,7 +392,6 @@ class KeyCrush(Bella_Game):
         else:
             self.get_new_letter()
 
-
     def switch_to_word(self):
         """ Get a word prompt and test it.
         """
@@ -400,7 +400,6 @@ class KeyCrush(Bella_Game):
         self.get_new_word_prompt()
         self.game_state = "testing word"
         self.play_sound('lets_try_word', self.game_sounds, True)
-
 
     def switch_to_letter(self):
         """ Get a letter prompt and test it.
@@ -412,7 +411,6 @@ class KeyCrush(Bella_Game):
         self.get_new_letter()
         self.game_state = "testing letter"
 
-
     def get_new_letter(self):
         """ Set the letter_prompt to a letter that's currently
             in play and not the previous letter_prompt.
@@ -421,10 +419,8 @@ class KeyCrush(Bella_Game):
         if self.using_card:
             self.letters_in_play = self.card_str
         else:
-            self.num_letters_in_play = self.zero_level_letters + (self.level * self.level_letter_increment)
-
-            if self.num_letters_in_play > 26:
-                self.num_letters_in_play = 26
+            if self.num_letters_in_play > self.alphabet_length:
+                self.num_letters_in_play = self.alphabet_length
 
             self.letters_in_play = self.alphabet[:self.num_letters_in_play]
 
@@ -438,7 +434,6 @@ class KeyCrush(Bella_Game):
 
         self.play_sound(self.letter_prompt, self.game_sounds)
 
-
     def choose_letter(self):
         """ Choose a random number, multiply it by the sum of letters_ratio
             and then find that value in the cumulative sum of letters_ratio.
@@ -446,43 +441,65 @@ class KeyCrush(Bella_Game):
         """
 
         temp_cumsum = np.cumsum(self.letters_ratio[:self.num_letters_in_play])
-
         temp_scalar = random()
-
         temp_search_term = temp_scalar * temp_cumsum[-1]
 
         self.letter_prompt = self.letters_in_play[sum(temp_cumsum < temp_search_term)]
-
 
     def get_new_word_prompt(self):
         """ Randomly select a new word from the list of possible
             words available at the current level.
         """
-        if self.level < 2:
-            self.word_prompt = choice(self.list_word_prompts[self.level])
-        else:
-            self.word_prompt = choice(self.list_word_prompts[1])
-
+        self.word_prompt = choice(self.words_by_letters[self.zero_level_letters - 1 + self.level])
 
     def check_level(self):
         """ Check if all letters have received enough correct responses
             to increment the level.  If so, increment the level.
         """
-
         temp_flag = True
 
-        for i in range(len(self.letters_in_play)):
-            if self.letters_correct[i] < self.max_correct:
+        for i in range(self.num_letters_in_play):
+            if self.letters_correct[i] < self.level_advance_threshold:
                 temp_flag = False
 
         if temp_flag:
             self.play_sound('level_up_sfx', self.game_sounds, True)
             self.play_sound('level_up', self.game_sounds, True)
             self.level += 1
+            self.num_letters_in_play = self.zero_level_letters + (self.level * self.level_letter_increment)
             print("Level up!")
 
-        print(self.letters_correct[:len(self.letters_in_play)])
+        print(self.letters_correct[:self.num_letters_in_play])
 
+    def sort_words(self):
+
+        f = open('./KeyCrush/Oxford3000plus.txt', 'r')
+
+        num_lines = sum([1 for line in f])
+        f.seek(0)
+
+        for i in range(num_lines):
+
+            current_word = f.readline().rstrip()
+
+            if (len(current_word) > 1):
+
+                temp_highest = 0
+                temp_add_flag = True
+
+                for letter in current_word:
+                    if letter not in self.alphabet:
+                        temp_add_flag = False
+                    if ord(letter) > temp_highest:
+                        temp_highest = ord(letter)
+
+                if temp_add_flag:
+                    print(current_word)
+                    self.words_by_letters[temp_highest - 97].append(current_word)
+
+        for index, container in enumerate(self.words_by_letters):
+            print(self.alphabet[index])
+            print(len(container))
 
     @property
     def score(self):
