@@ -6,8 +6,8 @@ class KeyCrush(Bella_Game):
 
     def __init__(self, gametools, display_data, starting_level=0):
         super().__init__(gametools, display_data, starting_level)
-        """
 
+        """
         self.alphabet: list; letters to be tested, in order.
 
         self.list_word_prompts: list, words to be tested.
@@ -89,6 +89,7 @@ class KeyCrush(Bella_Game):
                        being used, the letters to be tested are chosen from tis, rather than
                        the game's self.alphabet string.
         """
+
 #---GAME VARIABLES---
 
         self.game_name = 'KeyCrush'
@@ -471,7 +472,12 @@ class KeyCrush(Bella_Game):
 
         print(self.letters_correct[:self.num_letters_in_play])
 
+
     def sort_words(self):
+        """ Go through a long list of words and sort them
+            by the highest letter in each.  Print how many
+            words there are for each letter.
+        """
 
         f = open('./KeyCrush/Oxford3000plus.txt', 'r')
 
@@ -488,14 +494,19 @@ class KeyCrush(Bella_Game):
                 temp_add_flag = True
 
                 for letter in current_word:
-                    if letter not in self.alphabet:
-                        temp_add_flag = False
-                    if ord(letter) > temp_highest:
-                        temp_highest = ord(letter)
+                    try:
+                        if letter not in self.alphabet:
+                            temp_add_flag = False
+
+                        if self.alphabet.index(letter) > temp_highest:
+                            temp_highest = self.alphabet.index(letter)
+
+                    except ValueError:
+                        print(str(letter) + " not found in alphabet.")
 
                 if temp_add_flag:
                     print(current_word)
-                    self.words_by_letters[temp_highest - 97].append(current_word)
+                    self.words_by_letters[temp_highest].append(current_word)
 
         for index, container in enumerate(self.words_by_letters):
             print(self.alphabet[index])
