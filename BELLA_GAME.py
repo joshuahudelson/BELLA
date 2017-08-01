@@ -27,7 +27,7 @@ class Bella_Game:
 
         self.font = self.pygame.font.SysFont(None, 80)
         self.font_small = self.pygame.font.SysFont(None, 40)
-        self.font_medium = self.pygame.font.SysFont(None, 140)
+        self.font_medium = self.pygame.font.SysFont(None, 110)
         self.font_large = self.pygame.font.SysFont(None, 500)
 
         self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
@@ -110,17 +110,19 @@ class Bella_Game:
     def display_status_box(self):
         """ Displays the current level and points on the screen.
         """
-        text = self.font_medium.render("Level: " + str(self.level), True,
+        level = self.font_medium.render("Level: " + str(self.level), True,
                                       self.display_states[self.display_names[self.current_display_state]]['text'],
                                       self.display_states[self.display_names[self.current_display_state]]['background'])
 
-        text2 = self.font_medium.render("Points: " + str(self.score), True,
+        points = self.font_medium.render("Points: " + str(self.score), True,
                                        self.display_states[self.display_names[self.current_display_state]]['text'],
                                        self.display_states[self.display_names[self.current_display_state]]['background'])
 
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 15), 10))
-        self.gameDisplay.blit(text2, ((self.SCREEN_WIDTH * (14.0/15)) - temp_width, 10))
+        level_width = level.get_rect().width
+        points_width = points.get_rect().width
+
+        self.gameDisplay.blit(level, (((self.SCREEN_WIDTH/2.0) - level_width)/2, 10))
+        self.gameDisplay.blit(points, ((((self.SCREEN_WIDTH/2.0) - points_width)/2) + (self.SCREEN_WIDTH/2.0), 10))
 
 
     def draw_buttons(self, keys='000000'):
