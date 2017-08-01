@@ -57,16 +57,16 @@ class Whack_A_Dot(Bella_Game):
 
         self.game_state = 'introduction'
         self.alphabet = 'aeickbdfhjlmousgnprtvwxzqy'
-        
+
         self.letters_in_play = ''
         self.levels = [10, 28, 46, 50]
         self.score = 0
         self.level = 0
-        
+
         self.delay = 1
-        
+
         self.current_prompt = '000000'
-        
+
         self.responses_correct = self.np.ones(26)
         self.max_correct = 2
 
@@ -103,7 +103,7 @@ class Whack_A_Dot(Bella_Game):
 
         if self.input_letter == '000000':
             self.input_letter = None
-        
+
         self.input_control = input_dict['standard']
 
         if self.input_control == 'display':
@@ -125,11 +125,11 @@ class Whack_A_Dot(Bella_Game):
         """ The introduction screen of the game.
             Waits for space bar to begin prompting.
         """
-        
+
         self.display_word_prompt('Press Space')
 
         if self.intro_played:
-        
+
             if self.input_control == 'space':
                 self.game_state = 'play_game'
                 self.get_new_prompt()
@@ -169,7 +169,7 @@ class Whack_A_Dot(Bella_Game):
             the game variables accordingly and
             get a new prompt.
         """
-        
+
         self.play_sound(choice(self.correct_sfx), self.standard_sfx, wait=True)
         self.update_points(True)
         self.get_new_prompt()
@@ -182,7 +182,7 @@ class Whack_A_Dot(Bella_Game):
             the game variables accordingly and vibrate
             the current prompt again.
         """
-        
+
         self.play_sound('wrong', self.standard_sfx, wait=True)
         self.update_points(False)
         self.frames_passed = 0
@@ -196,7 +196,7 @@ class Whack_A_Dot(Bella_Game):
 
         if correct:
             self.points += 10
-            
+
         if self.points > ((self.level + 1) * 100):
             self.play_sound('level_up', self.standard_sfx, True)
             self.play_sound(choice(self.correct_voice), self.standard_voice, wait=True)
@@ -205,16 +205,16 @@ class Whack_A_Dot(Bella_Game):
             print(self.level)
             if self.level > 4:
                 self.level = 4
-                
+
 
     def check_level(self):
         """ If all values in the list that tracks responses per
             character are equal to self.max_correct, then the
             player advances a level.
         """
-        
+
         temp_flag = True
-        
+
         for i in range(len(self.letters_in_play)):
             if self.responses_correct[i] < self.max_correct:
                 levelup_flag = False
@@ -233,9 +233,9 @@ class Whack_A_Dot(Bella_Game):
             Don't keep it if it's the same as
             the one just prompted.
         """
-        
+
         previous_prompt = self.current_prompt
-        
+
         while(previous_prompt == self.current_prompt):
             self.current_prompt = self.generate_chord(self.level + 1)
 
@@ -243,14 +243,14 @@ class Whack_A_Dot(Bella_Game):
 
 
     def update_letters_in_play(self):
-        
+
         self.letters_in_play = self.alphabet[:self.levels[self.level]]
 
 
     def vibrate_buttons(self):
         """ Vibrate the buttons that correspond to the current prompt.
         """
-        
+
         self.braille_keyboard.vibrate_chord(self.current_prompt, sim=True)
 
 
@@ -261,12 +261,12 @@ class Whack_A_Dot(Bella_Game):
         if num_keys < 1:
             num_keys = 1
 
-        press_list = []        
+        press_list = []
 
         while len(press_list) < num_keys:
-            x = randint(0, 5)
-            if x not in press_list:
-                press_list.append(x)
+            possible_key = randint(0, 5)
+            if possibly_key not in press_list:
+                press_list.append(possibly_key)
 
         chord = ''
 
@@ -277,13 +277,3 @@ class Whack_A_Dot(Bella_Game):
                 chord += '0'
 
         return chord
-
-
-    def display_message(self, message):
-        """ Write the current word prompt to the screen.
-        """
-        text = self.font.render(message, True,
-                                self.display_states[self.display_names[self.current_display_state]]['text'])
-        temp_width = text.get_rect().width
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-
