@@ -502,6 +502,7 @@ class KeyCrush(Bella_Game):
                             temp_highest = self.alphabet.index(letter)
 
                     except ValueError:
+                        temp_add_flag = False
                         print(str(letter) + " not found in alphabet.")
 
                 if temp_add_flag:
