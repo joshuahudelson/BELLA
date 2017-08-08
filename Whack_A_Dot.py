@@ -19,9 +19,9 @@ class Whack_A_Dot(Bella_Game):
             self.letters_in_play: string, the current set of characters being
                                   prompted.
 
-            self.levels: list, the substring from self.alphabet that should be
+            self.letters_by_level: list, the substring from self.alphabet that should be
                          used as self.letters_in_play for each level (the index
-                         of self.levels).
+                         of self.letters_by_level).
 
             self.level: int, the player's current level.
 
@@ -59,7 +59,7 @@ class Whack_A_Dot(Bella_Game):
         self.alphabet = 'aeickbdfhjlmousgnprtvwxzqy'
 
         self.letters_in_play = ''
-        self.levels = [10, 28, 46, 50]
+        self.letters_by_level = [10, 28, 46, 50]
         self.score = 0
         self.level = 0
 
@@ -222,8 +222,8 @@ class Whack_A_Dot(Bella_Game):
         if temp_flag:
             self.level += 1
             print("Level up")
-            if self.level > len(self.levels)-1:
-                self.level = len(self.levels)-1
+            if self.level > len(self.letters_by_level)-1:
+                self.level = len(self.letters_by_level)-1
                 self.update_letters_in_play
                 print("Level up")
 
@@ -243,8 +243,11 @@ class Whack_A_Dot(Bella_Game):
 
 
     def update_letters_in_play(self):
+        """ If the level has changed, set the letters in play
+            to reflect that.
+        """
 
-        self.letters_in_play = self.alphabet[:self.levels[self.level]]
+        self.letters_in_play = self.alphabet[:self.letters_by_level[self.level]]
 
 
     def vibrate_buttons(self):
@@ -255,6 +258,9 @@ class Whack_A_Dot(Bella_Game):
 
 
     def generate_chord(self, num_keys):
+        """ Generate and return a random chord with a given number
+            of keys in it.
+        """
         num_keys = choice(range(num_keys))
         if num_keys > 5:
             num_keys = 5

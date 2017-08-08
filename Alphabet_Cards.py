@@ -1,9 +1,11 @@
+from BELLA_GAME import Bella_Game
 
-class Alphabet_Cards:
+class Alphabet_Cards(Bella_Game):
     """
     """
 
-    def __init__(self, gametools, display_data, starting_game_state='introduction'):
+    def __init__(self, gametools, display_data):
+        super().__init__(gametools, display_data)
 
 #---META-GAME STUFF---
 
@@ -15,66 +17,22 @@ class Alphabet_Cards:
 
         self.sound_object = self.sounds.sounds()
         self.game_name = 'Alphabet_Cards'
-        
-#---DISPLAY---
-        
-        self.SCREEN_WIDTH = display_data['screen_width']
-        self.SCREEN_HEIGHT = display_data['screen_height']
-
-        self.pygame.display.set_caption('Alphabet Cards')
-   
-        self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
-        self.font_large = self.pygame.font.SysFont(None, 500)
-        
-        self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
-
-        self.current_display_state = display_data['current_display_state']
-
-        self.display_names = ['white_black', 'black_white', 'blue_yellow']
-
-        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
-                               'white_black':{'background':self.white, 'text':self.black},
-                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
 
 #---SOUNDS---
 
-        standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
-        standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
-        standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
-
-
-        self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
-        self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
-        self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
-
         self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
-
-        
-        self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
-                                     'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
-
 
 #---GAME VARIABLES---
 
+        self.game_state = None
         self.card_str = None
-
-        self.game_state = starting_game_state
-
         self.current_button = None
-
         self.press_counter = 0
-
         self.number_of_seconds_to_wait = 3
-
         self.num_prompts = 0
-
         self.max_num_prompts = 1
-
         self.intro_played = False
-
         self.current_cursor_button = None
-
 
 #---CENTRAL FUNCTIONS---
 
@@ -82,7 +40,7 @@ class Alphabet_Cards:
 
         self.current_cursor_button = input_dict['cursor_key']
         self.input_control = input_dict['standard']
-        
+
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         if self.input_control == 'display':
@@ -110,7 +68,7 @@ class Alphabet_Cards:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
- 
+
 
     def game_play(self, cursor_button):
 
@@ -121,7 +79,7 @@ class Alphabet_Cards:
                 self.press_counter = 0
 
             character = self.card_str[self.current_button]
-            
+
             if (character == ' ') or (character == '_'):   # make own function...
                 self.play_sound('wrong', self.standard_sfx)
             else:
@@ -132,36 +90,3 @@ class Alphabet_Cards:
             self.display_letter_prompt(' ')
         else:
             self.display_letter_prompt(self.card_str[self.current_button])
-
-
-#---SOUND FUNCTIONS---
-    
-    def play_sound(self, sound, dictionary, wait=False):
-        dictionary[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(dictionary[sound]['length'])
-
-
-#---DISPLAY FUNCTIONS---
-
-    def change_display_state(self):
-        self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
-
-
-    def display_letter_prompt(self, letter=None):
-        """ Write the current letter prompt to the screen.
-        """
-        if letter == None:
-            letter = self.current_button
-            
-        displaybox = self.pygame.draw.rect(self.gameDisplay,
-                                           self.display_states[self.display_names[self.current_display_state]]['background'],
-                                           ((self.SCREEN_WIDTH/2)-200, 108, 400, 50))
-
-        text = self.font_large.render(letter, True,
-                                      self.display_states[self.display_names[self.current_display_state]]['text'])
-
-        temp_width = text.get_rect().width
-
-        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
-

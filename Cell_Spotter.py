@@ -13,13 +13,13 @@ class Cell_Spotter(Bella_Game):
         """
 
 #---GAME VARIABLES---
-        
-        self.game_state = 'introduction'
-        
+
+        self.game_state = 'introduction' # others: game_play_letters, game_play_words, game_play_contractionsz
+
         self.current_input = None
 
         self.letter_prompt = ''
-        
+
         self.word_prompt = 'insert card'
 
         self.card_str = '                    '
@@ -31,20 +31,20 @@ class Cell_Spotter(Bella_Game):
         self.search_list = []
 
         self.search_letter_num = 0
-        
+
         self.hidden_pos = []
 
         self.found_pos = []
 
         self.intro_played = False
-        
+
         self.new_card = False
 
 
 #---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
-        
+
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.current_input = input_dict['cursor_key']
@@ -55,9 +55,11 @@ class Cell_Spotter(Bella_Game):
 
         if self.game_state == 'introduction':
             self.introduction(input_dict)
-        elif self.game_state == 'game_play':
-            self.game_play()
-         
+        elif self.game_state == 'game_play_letters':
+            self.game_play_letters()
+        elif self.game_state == 'game_play_words':
+            self.game_play_words()
+
         self.pygame.display.update()
 
 
@@ -66,7 +68,7 @@ class Cell_Spotter(Bella_Game):
         if input_dict['card_trigger'] == True:
             self.new_card = True
         elif (input_dict['card_state'] == True) & (self.new_card == True):
-            self.play_sound('cardinserted', self.standard_sfx, wait=True) 
+            self.play_sound('cardinserted', self.standard_sfx, wait=True)
             self.card_str = input_dict['card_str']
             self.game_state = 'game_play'
             self.get_search_letters()
@@ -80,18 +82,29 @@ class Cell_Spotter(Bella_Game):
         self.display_word_prompt()
 
 
-    def game_play(self):
+    def game_play_letters(self):
         if self.current_input != None:
+            print("button pressed!")
             if (self.current_input in self.hidden_pos):
                 self.correct_choice()
             else:
                 if(self.current_input in self.found_pos):
                     self.play_sound('double', self.standard_sfx)
-                    self.play_sound('already_found', self.standard_voice) 
+                    self.play_sound('already_found', self.standard_voice)
                 else:
                     self.play_sound('wrong', self.standard_sfx)
 
-        self.display_letter_prompt()  
+        self.display_letter_prompt()
+
+    def game_play_words(self):
+        passd
+        # read a word from the word list
+        # check to see if they found it
+        # tell them to type the word
+        # update the score
+
+    def get_search_words(self):
+        self.word_list = self.card_str.split(' ')
 
 
     def get_search_letters(self):
@@ -121,7 +134,7 @@ class Cell_Spotter(Bella_Game):
         self.hidden_pos = [pos for pos,char in enumerate(self.card_str) if char == letter]
         print("letter = {}  positions = {}".format(letter,self.hidden_pos))
         self.found_pos = []
-        
+
         self.play_sound('find_all_the', self.standard_voice, True)
         self.play_sound(self.letter_prompt, self.standard_alphabet, True)
         self.play_sound('_s', self.standard_voice, True)
@@ -130,7 +143,7 @@ class Cell_Spotter(Bella_Game):
     def correct_choice(self):
         self.hidden_pos.remove(self.current_input)
         self.found_pos.append(self.current_input)
-        if len(self.hidden_pos)<= 0:            
+        if len(self.hidden_pos)<= 0:
             self.search_letter_num +=1
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
                 self.play_sound('win', self.standard_sfx, True)

@@ -1,6 +1,5 @@
 from random import choice, randint
 
-
 class Bella_Game:
 
     def __init__(self, gametools, display_data, starting_level=0):

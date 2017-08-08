@@ -1,11 +1,13 @@
 from itertools import groupby
 import copy
+from BELLA_GAME import Bella_Game
 
-class Braille_Tale:
+class Braille_Tale(Bella_Game):
     """
     """
 
     def __init__(self, gametools, display_data, starting_game_state='introduction'):
+        super().__init__(gametools, display_data)
 
 #---META-GAME STUFF---
 
@@ -18,28 +20,6 @@ class Braille_Tale:
 
         self.sound_object = self.sounds.sounds()
 
-#---DISPLAY---
-        
-        self.SCREEN_WIDTH = display_data['screen_width']
-        self.SCREEN_HEIGHT = display_data['screen_height']
-
-        self.pygame.display.set_caption('Braille Tale')
-   
-        self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
-        self.font_large = self.pygame.font.SysFont(None, 500)
-        
-        self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
-
-        self.current_display_state = display_data['current_display_state']
-
-        self.display_names = ['white_black', 'black_white', 'blue_yellow']
-
-        self.display_states = {'black_white':{'background':self.black, 'text':self.white},
-                               'white_black':{'background':self.white, 'text':self.black},
-                               'blue_yellow':{'background':self.blue, 'text':self.yellow}}
-
-
 #---SOUNDS---
 
         standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
@@ -49,7 +29,7 @@ class Braille_Tale:
         self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
         self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
         self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
-        
+
         self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
                                      'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
 
@@ -97,7 +77,7 @@ class Braille_Tale:
 
         if self.input_control == 'display':
             self.change_display_state()
-        
+
         self.frames_passed +=1
 
         if self.input_key == 'backspace':
@@ -124,7 +104,7 @@ class Braille_Tale:
             self.game_state = 'game_play'
 
             self.play_sound('seq1', self.sequences)
-            self.frames_passed = 0            
+            self.frames_passed = 0
         elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice, True)
             self.intro_played = True
@@ -141,7 +121,7 @@ class Braille_Tale:
         if self.input_key != None:
 
             self.play_sound(self.sample_names[self.input_key], self.samples, True)
-            
+
             self.pygame.time.wait(100) # just a little extra time
 
             if self.sequence_count < len(self.sequence_triggers):
@@ -158,10 +138,10 @@ class Braille_Tale:
             print(self.input_buttons_list)
 
             if len(self.input_buttons_list) == 2:
-                
+
                     if self.input_buttons_list[0] != self.input_buttons_list[1] + 1:  # the list is reverse-ordered
                         self.play_sound('wrong', self.standard_sfx)
-  
+
                     else:
                         print("Did it!")
                         temp_word = self.get_whole_string(self.input_buttons_list[1], self.card_str)
@@ -206,7 +186,6 @@ class Braille_Tale:
     def vibrate_buttons(self, character):
         """ Vibrate the buttons that correspond to the current prompt.
         """
-        
         self.braille_keyboard.vibrate_single_key(character)
 
 
@@ -225,22 +204,5 @@ class Braille_Tale:
                     temp_str = temp_str + card_str[location+i+1]
                 else:
                     break
-                
+
             return temp_str
-
-#---SOUND FUNCTIONS---
-    
-    def play_sound(self, sound, dictionary, wait=False):
-        dictionary[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(dictionary[sound]['length'])
-
-
-#---DISPLAY FUNCTIONS---
-
-    def change_display_state(self):
-        self.current_display_state = (self.current_display_state + 1) % len(self.display_names)
-
-
-
-
