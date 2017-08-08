@@ -4,13 +4,35 @@ import serial.tools.list_ports
 import struct
 
 class keyboard:
-    """ Object that communicates between the
-        braillecade keyboard and the computer.
+    """ Communicates between the BELLA
+        keyboard and the game programs.
     """
 
     def __init__(self):
         """
-            self.Ser: serial object?
+            self.Ser: a serial object for transmitting the keyboard state.
+
+            self.raw: a 32-bit number representing the entire state of the
+                      keyboard ("1" == key down).
+
+            self.chord: a 6-bit number representing only the state of the main
+                        typing keys.
+
+            self.letter: a string representing the letter translation of the
+                         chord of keys being pressed.  If no chord, then "None."
+
+            self.cursor_key: the index (0-19) of the cursor key being pressed.
+                             If multiple, it returns only the leftmost.
+
+            self.cursor_keys_list: a list of indices of the cursor keys being
+                                   depressed.
+
+            self.standard:  a string that is either the letter translation of
+                            a chord being typed, or one of a set of additional
+                            commands (quit, space, display, newline, backspace)
+                            or the index of a cursor key that has been pressed.
+
+            self.card_state: 
 
             self.last_button_state:
 
@@ -21,26 +43,25 @@ class keyboard:
 
         self.ser = None
 
-
-        self.standard = None
         self.raw = None
         self.chord = None
         self.letter = None
         self.cursor_key = None
         self.cursor_key_list = None
+        self.standard = None
+
         self.card_state = None
         self.card_trigger = None
         self.card_str = '                    '
         self.card_ID = None
-        
+
 
         self.last_chord = None
-
         self.last_letter = None
 
         self.comport = None
-    
-        
+
+
         self.chord_to_letter = {
             '000001': 'a',
             '000011': 'b',
@@ -53,7 +74,7 @@ class keyboard:
             '001010': 'i',
             '011010': 'j',
             '000101': 'k',
-            '000111': 'l', 
+            '000111': 'l',
             '001101': 'm',
             '011101': 'n',
             '010101': 'o',
@@ -73,7 +94,7 @@ class keyboard:
 
         self.letter_to_chord = {
             'a':'000001',
-            'b':'000011', 
+            'b':'000011',
             'c':'001001',
             'd':'011001',
             'e':'010001',
@@ -119,18 +140,18 @@ class keyboard:
             'key6':'100000',
             }
 
-    
+
     def list_coms(self):
         """ Returns a list of communication ports available
         """
-        
+
         comports = list(serial.tools.list_ports.comports())
 
         port_numbers = []
 
         for port_no, description, address in comports:
             port_numbers.append(port_no)
-            
+
         return port_numbers
 
 
@@ -142,13 +163,13 @@ class keyboard:
 
         if len(port_numbers) > 0:
             for port in port_numbers: # don't use i
-                print("testing {}".format(port)) 
+                print("testing {}".format(port))
                 self.ser = serial.Serial(port,baudrate=9600,timeout=0)
                 time.sleep(.5)
                 self.ser.write(b"i")
                 time.sleep(.5)
                 out = ''
-                
+
                 while self.ser.inWaiting() > 0:
                     out += self.ser.read(1).decode('utf-8')
 
@@ -182,7 +203,7 @@ class keyboard:
 
                 self.request_card()
                 self.card_trigger = True
-                
+
                 self.raw = '00000000000000000000000000000000'
 
             if self.raw == '10101010101010101010101010101010':
@@ -239,7 +260,7 @@ class keyboard:
 
 
     def get_letter(self, chord):
-        
+
         return self.chord_to_letter.get(chord, 'error')
 
     def get_key(self, chord):
@@ -251,10 +272,10 @@ class keyboard:
         """ Sends a request to the keyboard for the data on the card.
             Returns this data in the form of an string.
         """
-        
+
         self.ser.write(b'c')
         time.sleep(.1)
-        
+
         temp_string = self.ser.readline().decode('ascii')
         self.card_str = temp_string[1:-2]
         self.card_ID = temp_string[0]
@@ -262,7 +283,7 @@ class keyboard:
         print(self.card_str)
 
         self.card_state = True
-        
+
         return(self.card_str)
 
 
@@ -276,18 +297,18 @@ class keyboard:
                 self._vibrate_key(vib)
                 print(vib)
                 time.sleep(.01)
-                self.ser.reset_input_buffer() 
+                self.ser.reset_input_buffer()
             counter += 1
 
 
     def _vibrate_key(self, vib, sleep_time=0.05):
-        """ 
         """
-        
+        """
+
         self.ser.write(b'v')
         self.ser.write(str(vib).encode('ascii'))
         self.ser.write(b'\r')
-        
+
         time.sleep(sleep_time)
 
         self.ser.write(b'v')
@@ -298,17 +319,17 @@ class keyboard:
     def vibrate_letter(self, letter, sim=False):
         """
         """
-        
+
         counter = 0
 
         if sim:
-            value = 0 
+            value = 0
             for key in self.letter_to_chord[letter][::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
                 if key == '1':
                     vib = pow(2, counter)
                     value = value + vib
                 counter += 1
-                
+
             self._vibrate_key(value)
 
         else:
@@ -318,24 +339,24 @@ class keyboard:
                     self._vibrate_key(vib)
                     print(vib)
                     time.sleep(.05)
-                    self.ser.reset_input_buffer() 
+                    self.ser.reset_input_buffer()
                 counter += 1
-        
+
 
     def vibrate_chord(self, chord, sim=False):
         """
         """
-        
+
         counter = 0
 
         if sim:
-            value = 0 
+            value = 0
             for key in chord[::-1]: # switch order of string since MSB ans LSB are switching when reading left to right.
                 if key == '1':
                     vib = pow(2, counter)
                     value = value + vib
                 counter += 1
-                
+
             self._vibrate_key(value)
 
         else:
@@ -345,6 +366,5 @@ class keyboard:
                     self._vibrate_key(vib)
                     print(vib)
                     time.sleep(.05)
-                    self.ser.reset_input_buffer() 
+                    self.ser.reset_input_buffer()
                 counter += 1
-

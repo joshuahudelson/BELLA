@@ -1,5 +1,10 @@
-This is currently just a place for notes.
 
-- self.letter_prompt and self.word_prompt are used the Bella_Game class, so they need to appear in all games that inherit from it (and call display_word_prompt or display_letter_prompt)
 
-- likewise self.level (in Whack_A_Dot it was self.current_level)
+
+
+
+<h2> keyboard.py </h2>
+
+    BELLA.py creates a keyboard object that it passes to a game upon the game's initialization.
+    
+    
