@@ -37,6 +37,8 @@ class Alphabet_Cards(Bella_Game):
 #---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
+        """ One iteration of the game loop.
+        """
 
         self.current_cursor_button = input_dict['cursor_key']
         self.input_control = input_dict['standard']
@@ -58,6 +60,10 @@ class Alphabet_Cards(Bella_Game):
 
 
     def introduction(self, input_dict):
+        """ Play the intro sound.
+            Check to see if a card has been inserted.
+            If so, change the game state.
+        """
 
         if input_dict['card_state']:
             self.card_str = input_dict['card_str']
@@ -69,8 +75,11 @@ class Alphabet_Cards(Bella_Game):
             self.intro_played = True
 
 
-
     def game_play(self, cursor_button):
+        """ If a button is pressed, play the sound associated with
+            that button (depending on how many times it has been
+            pressed in a row).
+        """
 
         if cursor_button != None:
 

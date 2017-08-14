@@ -32,7 +32,7 @@ class keyboard:
                             commands (quit, space, display, newline, backspace)
                             or the index of a cursor key that has been pressed.
 
-            self.card_state: 
+            self.card_state:
 
             self.last_button_state:
 
@@ -156,7 +156,8 @@ class keyboard:
 
 
     def test_coms(self):
-        """
+        """ Scans through the communication ports to find the one to which
+            the BELLA is attached.
         """
 
         port_numbers = self.list_coms()
@@ -179,7 +180,7 @@ class keyboard:
                 if out == 'BrailleCade':
                     print('Braillecade Found')
                     self.com_port = port
-                    break # does this need to be a return
+                    break # does this need to be a return?
 
                 self.ser.close
 

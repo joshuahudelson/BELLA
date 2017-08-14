@@ -271,8 +271,8 @@ class Whack_A_Dot(Bella_Game):
 
         while len(press_list) < num_keys:
             possible_key = randint(0, 5)
-            if possibly_key not in press_list:
-                press_list.append(possibly_key)
+            if possible_key not in press_list:
+                press_list.append(possible_key)
 
         chord = ''
 
