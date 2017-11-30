@@ -14,6 +14,8 @@ class Cell_Spotter(Bella_Game):
 
 #---GAME VARIABLES---
 
+        self.game_name = 'Cell Spotter'
+
         self.game_state = 'introduction' # others: game_play_letters, game_play_words, game_play_contractionsz
 
         self.current_input = None
