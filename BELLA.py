@@ -85,10 +85,8 @@ while(True):
         game_choice = 'Menu'
         for game in initialized:
             initialized[game] = False
-
         print(initialized)
-            
-        
+
     if game_choice == "Menu":
         if initialized[game_choice]:
             selection = Opening_Menu.iterate(input_dict)
@@ -141,3 +139,18 @@ while(True):
         else:
             Braille_Tale_game = Braille_Tale(gametools, display_data)
             initialized[game_choice] = True
+
+"""
+    Load_Profile, New_Profile, Delete_Profile
+    if game_choice == ""
+
+    game starts updating dictionary, and BELLA.py saves the dict every... 10 seconds or so to a file?
+
+
+- every typed letter of alphabet: num right, wrong, (num right of most recent 10?)
+- every read cell of braille: num right, wrong, (num right of most recent 10)
+- record each time a game starts and as long as it's not 0: how long played for, score
+- then: total time playing each game, high score for each.
+- 
+
+"""

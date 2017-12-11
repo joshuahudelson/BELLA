@@ -15,31 +15,18 @@ class Cell_Spotter(Bella_Game):
 #---GAME VARIABLES---
 
         self.game_name = 'Cell Spotter'
-
         self.game_state = 'introduction' # others: game_play_letters, game_play_words, game_play_contractionsz
-
         self.current_input = None
-
         self.letter_prompt = ''
-
         self.word_prompt = 'insert card'
-
         self.card_str = '                    '
-
         self.card_inserted = False
-
         self.freq_dict = {}
-
         self.search_list = []
-
         self.search_letter_num = 0
-
         self.hidden_pos = []
-
         self.found_pos = []
-
         self.intro_played = False
-
         self.new_card = False
 
 
@@ -61,6 +48,8 @@ class Cell_Spotter(Bella_Game):
             self.game_play_letters()
         elif self.game_state == 'game_play_words':
             self.game_play_words()
+        elif self.game_state == 'game_play_different':
+            self.game_play_different()
 
         self.pygame.display.update()
 
@@ -99,11 +88,15 @@ class Cell_Spotter(Bella_Game):
         self.display_letter_prompt()
 
     def game_play_words(self):
-        passd
+        pass
         # read a word from the word list
         # check to see if they found it
         # tell them to type the word
         # update the score
+
+    def game_play_different(self):
+        pass
+        # find the letter that's different.
 
     def get_search_words(self):
         self.word_list = self.card_str.split(' ')
