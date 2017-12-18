@@ -4,6 +4,7 @@ from Whack_A_Dot import Whack_A_Dot
 from Cell_Spotter import Cell_Spotter
 from Alphabet_Cards import Alphabet_Cards
 from Braille_Tale import Braille_Tale
+from Load_Player import Load_Player
 import numpy
 from keyboard import keyboard
 import pygame
@@ -54,11 +55,16 @@ gametools = {'pygame':pygame,
 game_choice = "Menu"
 
 initialized = {'KeyCrush':False, 'Menu':False, 'Whack-A-Dot':False,
-               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False}
+               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False,
+               'Load Player': False}
 
 selection = None
 
 input_control = None
+
+player_stats = {'name':None,
+                'keys_correct': [0 for key in range(128)],
+                'keys_incorrect': [0 for key in range(128)]}
 
 while(True):
 
@@ -140,6 +146,15 @@ while(True):
             Braille_Tale_game = Braille_Tale(gametools, display_data)
             initialized[game_choice] = True
 
+    if game_choice == "Load Player":
+        if initialized[game_choice]:
+            Load_Player_game.iterate(input_dict)
+            clock.tick(fps)
+        else:
+            Load_Player_game = Load_Player(gametools, display_data)
+            initialized[game_choice] = True
+
+
 """
     Load_Profile, New_Profile, Delete_Profile
     if game_choice == ""
@@ -151,6 +166,6 @@ while(True):
 - every read cell of braille: num right, wrong, (num right of most recent 10)
 - record each time a game starts and as long as it's not 0: how long played for, score
 - then: total time playing each game, high score for each.
-- 
+-
 
 """

@@ -1,27 +1,22 @@
 from BELLA_GAME import Bella_Game
 
-class Menu(Bella_Game):
+class Load_Player(Bella_Game):
 
-    def __init__(self, gametools, display_data, BELLA_start_up):
+    def __init__(self, gametools, display_data):
         super().__init__(gametools, display_data)
 
         self.input_letter = None
         self.key_was_pressed = None
-        self.BELLA_start_up = BELLA_start_up
 
-        self.game_name = 'Menu'
+        self.game_name = 'Load Player'
 
         self.pygame.display.set_caption('BELLA: Braille Early Learning & Literacy Arcade')
 
-        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale', 'Load Player']
+        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale']
         self.card_codes = {'a':'Alphabet Cards', 'b':'Braille Tale', 'k':'KeyCrush',
                            'w':'Whack-A-Dot', 'm':'Menu', 'c':'Cell Spotter'}
         self.option_tracker = 0
         self.introduction_done = False
-
-#---LOCAL GAME SOUNDS---
-
-        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
 
 #---CENTRAL FUNCTIONS---
 
@@ -30,8 +25,6 @@ class Menu(Bella_Game):
         if input_dict['card_trigger']:
             for letter in self.card_codes:
                 if input_dict['card_ID'] == letter:
-                    #self.play_sound('playing', self.game_sounds, wait = True)
-                    #self.play_sound(self.card_codes[input_dict['card_ID']], self.game_sounds, wait = True)
                     return self.card_codes[input_dict['card_ID']]
                 else:
                     print(input_dict['card_ID'])
@@ -47,19 +40,13 @@ class Menu(Bella_Game):
         if self.input_control == 'newline':
             self.pygame.mixer.stop()
             self.option_tracker += 1
-            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'backspace':
             self.pygame.mixer.stop()
             self.option_tracker -= 1
-            self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'space':
             self.pygame.mixer.stop()
-#            self.play_sound('press_main_menu', self.game_sounds, True)
-#            self.play_sound('display', self.game_sounds, True)
-            self.play_sound('playing', self.game_sounds, wait = True)
-            self.play_sound(self.options_list[self.selection], self.game_sounds, wait = True)
             return self.options_list[self.selection]
         else:
             return None
@@ -67,10 +54,9 @@ class Menu(Bella_Game):
 
     def introduction(self):
         if self.BELLA_start_up:
-            self.play_sound('intro', self.game_sounds)
+            pass
         else:
-            self.play_sound('main_menu', self.game_sounds)
-        self.introduction_done = True
+          self.introduction_done = True
 
 #---DISPLAY FUNCTIONS---
 
