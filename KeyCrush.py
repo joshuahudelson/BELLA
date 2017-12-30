@@ -119,6 +119,7 @@ class KeyCrush(Bella_Game):
         self.previous_prompt = None
 
         self.input_letter = None
+        self.input_braille = None
         self.input_control = None
 
         self.letters_correct = self.np.ones(self.alphabet_length)
@@ -143,6 +144,7 @@ class KeyCrush(Bella_Game):
         self.word_streak = 0
 
         self.word_string = ""
+        self.braille_string = ""
         self.word_prompt = ""
         self.word_has_been_said = False
 
@@ -169,6 +171,7 @@ class KeyCrush(Bella_Game):
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
         self.input_letter = input_dictionary['letter']
+        self.input_braille = input_dictionary['braille_unicode']
         self.input_control = input_dictionary['standard']
 
         if (self.input_control == 'display'):
@@ -236,6 +239,7 @@ class KeyCrush(Bella_Game):
                 self.word_has_been_said = True
 
         self.display_word_prompt()
+        self.display_sub_word_prompt() # MAKE THIS SHOW IN CELLS!!
         self.draw_buttons()
         self.display_status_box()
 
@@ -264,6 +268,7 @@ class KeyCrush(Bella_Game):
 
         if self.input_letter != None:
             self.word_string += self.input_letter
+            self.braille_string += self.input_braille
         elif (len(self.word_string) >= len(self.word_prompt)):
             if self.word_string == self.word_prompt:
                 self.word_is_correct()
@@ -396,6 +401,7 @@ class KeyCrush(Bella_Game):
     def switch_to_word(self):
         """ Get a word prompt and test it.
         """
+        self.braille_string = ""
         self.points_to_be_awarded = 100
         self.letter_prompt = None
         self.get_new_word_prompt()

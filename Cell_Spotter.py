@@ -28,6 +28,9 @@ class Cell_Spotter(Bella_Game):
         self.found_pos = []
         self.intro_played = False
         self.new_card = False
+        self.card_ID = None;
+
+        self.card_codes = {'m': 'game_play_mccarthy', 'w': 'game_play_mccarthy'}  # mccarthy: find the one that's different from the others.
 
 
 #---CENTRAL FUNCTIONS---
@@ -38,6 +41,7 @@ class Cell_Spotter(Bella_Game):
 
         self.current_input = input_dict['cursor_key']
         self.letter_control = input_dict['standard']
+        self.card_ID = input_dict['card_ID']
 
         if self.letter_control == 'display':
             self.change_display_state()
@@ -48,8 +52,8 @@ class Cell_Spotter(Bella_Game):
             self.game_play_letters()
         elif self.game_state == 'game_play_words':
             self.game_play_words()
-        elif self.game_state == 'game_play_different':
-            self.game_play_different()
+        elif self.game_state == 'game_play_mccarthy':
+            self.game_play_mccarthy()
 
         self.pygame.display.update()
 
@@ -61,16 +65,30 @@ class Cell_Spotter(Bella_Game):
         elif (input_dict['card_state'] == True) & (self.new_card == True):
             self.play_sound('cardinserted', self.standard_sfx, wait=True)
             self.card_str = input_dict['card_str']
-            self.game_state = 'game_play'
-            self.get_search_letters()
-            self.search_letter_num = 0
-            self.letter_prompt = self.search_list[self.search_letter_num]
-            self.get_search_positions(self.letter_prompt)
+            try:
+                self.game_state = self.card_codes[self.card_ID]
+            except KeyError:
+                self.game_state = 'game_play_letters'
+            if (self.game_state == 'game_play_letters'):
+                self.get_search_letters()
+                self.search_letter_num = 0
+                self.letter_prompt = self.search_list[self.search_letter_num]
+                self.get_search_positions(self.letter_prompt)
+            elif (self.game_state == 'game_play_words'):
+                pass  #get_search_words()...
+            elif (self.game_state == 'game_play_mccarthy'):
+                self.search_letter_num = 1 # start with whatever the not-most-frequent letter is.
+                self.get_search_letters()
+                if len(self.search_list) < 2:
+                    pass # "This card won't for this game!"
+                else:
+                    self.letter_prompt = self.search_list[self.search_letter_num]
+                self.get_search_positions(self.letter_prompt)
         elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
 
-        self.display_word_prompt()
+        self.display_word_prompt() # why is this here?
 
 
     def game_play_letters(self):
@@ -88,19 +106,30 @@ class Cell_Spotter(Bella_Game):
         self.display_letter_prompt()
 
     def game_play_words(self):
-        pass
+        self.game_state = "game_play_letters"
         # read a word from the word list
         # check to see if they found it
         # tell them to type the word
         # update the score
 
-    def game_play_different(self):
-        pass
-        # find the letter that's different.
+
+    def game_play_mccarthy(self):
+        if self.current_input != None:
+            print("button pressed!")
+            if (self.current_input in self.hidden_pos):
+                self.correct_choice()
+            else:
+                if(self.current_input in self.found_pos):
+                    self.play_sound('double', self.standard_sfx)
+                    self.play_sound('already_found', self.standard_voice)
+                else:
+                    self.play_sound('wrong', self.standard_sfx)
+
+        self.display_letter_prompt()
+
 
     def get_search_words(self):
         self.word_list = self.card_str.split(' ')
-
 
     def get_search_letters(self):
         """ Makes a histogram of the characters on the card.
@@ -130,10 +159,17 @@ class Cell_Spotter(Bella_Game):
         print("letter = {}  positions = {}".format(letter,self.hidden_pos))
         self.found_pos = []
 
-        self.play_sound('find_all_the', self.standard_voice, True)
-        self.play_sound(self.letter_prompt, self.standard_alphabet, True)
-        self.play_sound('_s', self.standard_voice, True)
-
+        if (self.game_state == 'game_play_letters'):
+            self.play_sound('find_all_the', self.standard_voice, True)
+            self.play_sound(self.letter_prompt, self.standard_alphabet, True)
+            self.play_sound('_s', self.standard_voice, True)
+        elif (self.game_state == 'game_play_mccarthy'):
+            try:
+                self.play_sound('find_the_one_thats_different', self.standard_voice, True)
+            except:
+                self.play_sound('find_all_the', self.standard_voice, True)
+                self.play_sound(self.letter_prompt, self.standard_alphabet, True)
+                self.play_sound('_s', self.standard_voice, True)
 
     def correct_choice(self):
         self.hidden_pos.remove(self.current_input)
@@ -148,7 +184,6 @@ class Cell_Spotter(Bella_Game):
                 self.card_state = False
                 self.new_card = False
                 self.game_state = 'introduction'
-
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
                 self.play_sound('nice_work', self.standard_voice, wait=True)

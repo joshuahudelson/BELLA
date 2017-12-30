@@ -24,10 +24,10 @@ class Bella_Game:
 
         self.pygame.display.set_caption('Typing Tutor')
 
-        self.font = self.pygame.font.SysFont(None, 80)
-        self.font_small = self.pygame.font.SysFont(None, 40)
-        self.font_medium = self.pygame.font.SysFont(None, 110)
-        self.font_large = self.pygame.font.SysFont(None, 500)
+        self.font = self.pygame.font.SysFont('dejavusans', 60)
+        self.font_small = self.pygame.font.SysFont('dejavusans', 20)
+        self.font_medium = self.pygame.font.SysFont('dejavusans',80)
+        self.font_large = self.pygame.font.SysFont('dejavusans', 200)
 
         self.white, self.black, self.yellow, self.blue = (255, 255, 255), (0, 0, 0), (255, 255, 0), (0, 0, 255)
 
@@ -105,6 +105,17 @@ class Bella_Game:
         temp_width = text.get_rect().width
         self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 100))
 
+    def display_sub_word_prompt(self, word=None):
+        """ Write the current word prompt to the screen, but below the main word prompt.
+            If no input is given, displays nothing.
+        """
+
+        if word == None:
+            word = self.braille_string
+        displaybox = self.pygame.draw.rect(self.gameDisplay, self.display_states[self.display_names[self.current_display_state]]['background'], ((self.SCREEN_WIDTH/2)-200, 208, 400, 100))
+        text = self.font.render(word, True, self.display_states[self.display_names[self.current_display_state]]['text'])
+        temp_width = text.get_rect().width
+        self.gameDisplay.blit(text, ((self.SCREEN_WIDTH / 2) - (temp_width/2), 200))
 
     def display_status_box(self):
         """ Displays the current level and points on the screen.
