@@ -2,6 +2,8 @@ import time
 import serial
 import serial.tools.list_ports
 import struct
+import codecs
+
 
 class keyboard:
     """ Communicates between the BELLA

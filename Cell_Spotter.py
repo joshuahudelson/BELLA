@@ -1,6 +1,7 @@
 from random import choice, randint
 from BELLA_GAME import Bella_Game
 import re
+import louis
 
 class Cell_Spotter(Bella_Game):
     """ A game that requires a card to play.  Game prompts a player with a letter, and
@@ -19,13 +20,16 @@ class Cell_Spotter(Bella_Game):
         self.game_state = 'introduction' # others: game_play_letters, game_play_words, game_play_contractionsz
         self.current_input = None
         self.letter_prompt = ''
-        self.word_prompt = 'insert card'
+        self.word_prompt = None
         self.card_str = '                    '
         self.card_inserted = False
         self.freq_dict = {}
+
         self.search_list = []
+        self.search_list_words = []
         self.search_letter_num = 0
         self.search_word_num = 0
+
         self.hidden_pos = []
         self.found_pos = []
         self.hidden_pos_word = []
@@ -33,29 +37,24 @@ class Cell_Spotter(Bella_Game):
         self.intro_played = False
         self.new_card = False
         self.card_ID = None
-        self.word_list = None
         self.word_histogram = None
 
         self.card_codes = {'1': 'game_play_mccarthy_level_1',
                            '2': 'game_play_mccarthy_level_2',
                            '3': 'game_play_mccarthy_level_3',
-                           '4': 'game_play_mccarthy_level_4'
+                           '4': 'game_play_mccarthy_level_4',
                            'l': 'game_play_letters',
                            'w': 'game_play_words'}
 
 #---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
-
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
-
         self.current_input = input_dict['cursor_key']
         self.letter_control = input_dict['standard']
         self.card_ID = input_dict['card_ID']
-
         if self.letter_control == 'display':
             self.change_display_state()
-
         if self.game_state == 'introduction':
             self.introduction(input_dict)
         elif self.game_state == 'game_play_letters':
@@ -63,20 +62,14 @@ class Cell_Spotter(Bella_Game):
         elif self.game_state == 'game_play_words':
             self.game_play_words()
         elif self.game_state == 'game_play_mccarthy_level_1':
-            self.game_play_mccarthy_level_1
+            self.game_play_letters()
         elif self.game_state == 'game_play_mccarthy_level_2':
-            self.game_play_mccarthy_level_2()
+            self.game_play_letters()
         elif self.game_state == 'game_play_mccarthy_level_3':
-            self.game_play_mccarthy_level_3()
+            self.game_play_words()
         elif self.game_state == 'game_play_mccarthy_level_4':
-            self.game_play_mccarthy_level_4()
-        elif self.game_state == 'game_play_mccarthy_level_5':
-            self.game_play_mccarthy_level_5()
-        elif self.game_state == 'game_play_mccarthy_level_6':
-            self.game_play_mccarthy_level_6()
-
+            self.game_play_words()
         self.pygame.display.update()
-
 
     def introduction(self, input_dict):
         """ Prompt user to insert a card.  If the card has a code, change the
@@ -94,57 +87,61 @@ class Cell_Spotter(Bella_Game):
                 self.game_state = self.card_codes[self.card_ID]
             except KeyError:
                 self.game_state = 'game_play_letters'
-
-            if (self.game_state == 'game_play_letters'):
-                self.get_search_letters()
-                self.search_letter_num = 0
-                self.letter_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.letter_prompt)
-
-            elif (self.game_state == 'game_play_words'):
-                """ get search words
-                    get search positions for wors
-                """
-                self.get_search_words()
-                self.search_word_num = 0
-                self.word_prompt = self.search_list_word[self.search_word_num]
-                self.get_search_positions_for_word(self.word_prompt)
-
-            elif (self.game_state == 'game_play_mccarthy_level_1'):
-                self.get_search_letters()
-                if len(self.search_list) < 2:
-                    # card won't work for this game
-                    self.intro_played = False
-                else:
-                    self.search_list = self.search_list[-2] # only search for the second-most-frequent letter.
-                    self.search_letter_num = 0 # start with whatever the not-most-frequent letter is.
-                    self.letter_prompt = self.search_list[self.search_letter_num]  # set search letter to next-most-common letter.
-                    self.get_search_positions(self.letter_prompt
-
-            elif (self.game_state == 'game_play_mccarthy_level_2'):
-                self.get_search_letters()
-                if len(self.search_list) < 2:
-                    self.intro_played = False
-                else:
-                    self.search_list = self.search_list[-1]  # search only for most frequent letter
-                    search_letter_num = 0
-                    self.letter_prompt = self.search_list[self.search_letter_num]
-                    self.get_search_positions(self.letter_prompt)
-
-            elif (self.game_state == 'game_play_mccarthy_level_3'):
-                self.get_search_letters()
-                # words
-
+            self.initialize_game()
+            return
         elif self.intro_played == False:
             self.play_sound('insert_a_card', self.standard_voice)
             self.intro_played = True
+        self.word_prompt = "Insert a card."
+        self.display_word_prompt()                                               # Why is this here?
 
-        self.display_word_prompt() # why is this here?
-
+    def initialize_game(self):
+        """
+        """
+        if (self.game_state == 'game_play_letters'):
+            self.get_search_letters()
+            self.search_letter_num = 0
+            self.letter_prompt = self.search_list[self.search_letter_num]
+            self.get_search_positions(self.letter_prompt)
+        elif (self.game_state == 'game_play_words'):
+            self.get_search_words()
+            self.search_word_num = 0
+            self.word_prompt = self.search_list_words[self.search_word_num]
+            print("THIS IS THE WORD PROMPT: " + str(self.word_prompt))
+            self.get_search_positions_for_word(self.word_prompt)
+        elif (self.game_state == 'game_play_mccarthy_level_1'):
+            self.get_search_letters()
+            if len(self.search_list) < 2:
+                # card won't work for this game
+                self.intro_played = False
+            else:
+                self.search_list = self.search_list[-2]                         # only search for the second-most-frequent letter.
+                self.search_letter_num = 0                                      # start with whatever the not-most-frequent letter is.
+                self.letter_prompt = self.search_list[self.search_letter_num]   # set search letter to next-most-common letter.
+                self.get_search_positions(self.letter_prompt)
+        elif (self.game_state == 'game_play_mccarthy_level_2'):
+            self.get_search_letters()
+            if len(self.search_list) < 2:
+                # card won't work for this game
+                self.intro_played = False
+            else:
+                self.search_list = self.search_list[-1]                         # search only for most frequent letter
+                search_letter_num = 0
+                self.letter_prompt = self.search_list[self.search_letter_num]
+                self.get_search_positions(self.letter_prompt)
+        elif (self.game_state == 'game_play_mccarthy_level_3'):
+            self.get_search_words()
+            if len(self.search_list_words) < 2:
+                # card won't work for this game
+                self.intro_played = False
+            else:
+                self.search_list_words = self.search_list_words[0]
+                self.search_word_num = 0
+                self.word_prompt = self.search_list_words[self.search_word_num]
+                self.get_search_positions_for_word(self.word_prompt)
 
     def game_play_letters(self):
         if self.current_input != None:
-            print("button pressed!")
             if (self.current_input in self.hidden_pos):
                 self.correct_choice()
             else:
@@ -158,34 +155,19 @@ class Cell_Spotter(Bella_Game):
 
     def game_play_words(self):
         """ If the button is within range of the word,
-
         """
         if self.current_input != None:
-            print("button pressed2!")
-            if (self.current_input in self.hidden_pos_word):
-                self.correct_choice_word()
-            else:
-                if (self.current_input in self.found_pos_word):
+            for word_index in range(len(self.hidden_pos_word)):
+                if self.current_input in self.hidden_pos_word[word_index]:
+                    self.correct_choice_word(word_index)
+                    return
+            for word_index in range(len(self.found_pos_word)):
+                if self.current_input in self.found_pos_word[word_index]:
                     self.play_sound('double', self.standard_sfx)
                     self.play_sound('already_found', self.standard_voice)
-                else:
-                    self.play_sound('wrong', self.standard_sfx)
-
-    def game_play_mccarthy_level_1(self):
-        self.game_play_letters()
-
-    def game_play_mccarthy_level_2(self):
-        self.game_play_letters()
-
-    def game_play_mccarthy_level_3(self):
-        self.game_play_words()
-
-    def game_play_mccarthy_level_4(self):
-        self.game_play_words()
-
-    def game_play_mccarthy_level_5(self):
-        pass
-        # Totally different
+                    return
+            self.play_sound('wrong', self.standard_sfx)
+        self.display_word_prompt()
 
     def get_search_letters(self):
         """ Makes a histogram of the characters on the card.
@@ -223,12 +205,20 @@ class Cell_Spotter(Bella_Game):
                 self.play_sound('_s', self.standard_voice, True)
 
     def get_search_words(self):
-        self.search_list_word = self.card_str.split(' ')
-        self.word_histogram = {i:self.search_list_word.count(i) for i in self.word_list}
+        self.search_list_words = self.card_str.split(' ')
+        self.search_list_words = set(self.search_list_words)
+        self.search_list_words = list(self.search_list_words)                   # Now contains only unique words.
+        temp_nothing = ''
+        if temp_nothing in self.search_list_words:
+            self.search_list_words.remove(temp_nothing)
+        print("LIST OF WORDS:" + str(self.search_list_words))
+        self.word_histogram = {i:self.search_list_words.count(i) for i in self.search_list_words}
 
     def get_search_positions_for_word(self, word):
-        temp_start_index = re.search(r'\b(word)\b', self.card_str)
-        self.hidden_pos_word = [index+temp_start_index for index in range(len(word))]
+        # temp_start_index = re.search(r'\b(word)\b', self.card_str)
+        temp_start_index = [word_copy.start() for word_copy in re.finditer(word, self.card_str)]
+        print("This is the TEMP START INDEX: " + str(temp_start_index))          # THIS IS RETURNING NONE RIGHT NOW.
+        self.hidden_pos_word = [[index + letter for letter in range(len(word))] for index in temp_start_index]
         print("Word search positions: " + str(self.hidden_pos_word))
 
     def correct_choice(self):
@@ -239,11 +229,7 @@ class Cell_Spotter(Bella_Game):
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
                 self.play_sound('win', self.standard_sfx, True)
                 self.play_sound('great_job', self.standard_voice, wait=True)
-                self.card_inserted = False
-                self.intro_played = False
-                self.card_state = False
-                self.new_card = False
-                self.game_state = 'introduction'
+                self.reset_game()
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
                 self.play_sound('nice_work', self.standard_voice, wait=True)
@@ -252,23 +238,31 @@ class Cell_Spotter(Bella_Game):
         else:
             self.play_sound('correct', self.standard_sfx)
 
-    def correct_choice_word
-        self.hidden_pos_word.remove(self.current_input)
-        self.found_pos_word.append(self.current_input)
+    def correct_choice_word(self, word_index):
+        self.found_pos_word.append(self.hidden_pos_word[word_index])
+        self.hidden_pos_word.remove(self.hidden_pos_word[word_index])
         if len(self.hidden_pos_word) <= 0:
             self.search_word_num +=1
-            if self.search_word_num >= len(self.search_list_word):  # you finished searching the whole card
+            if self.search_word_num >= len(self.search_list_words):  # you finished searching the whole card
                 self.play_sound('win', self.standard_sfx, True)
                 self.play_sound('great_job', self.standard_voice, wait=True)
-                self.card_inserted = False
-                self.intro_played = False
-                self.card_state = False
-                self.new_card = False
-                self.game_state = 'introduction'
+                self.reset_game()
+
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
                 self.play_sound('nice_work', self.standard_voice, wait=True)
-                self.letter_prompt = self.search_list[self.search_letter_num]
-                self.get_search_positions(self.letter_prompt)
+                self.word_prompt = self.search_list_words[self.search_word_num]
+                self.get_search_positions_for_word(self.word_prompt)
         else:
             self.play_sound('correct', self.standard_sfx)
+
+    def reset_game(self):
+        self.card_inserted = False
+        self.intro_played = False
+        self.card_state = False
+        self.new_card = False
+        self.game_state = 'introduction'
+        self.hidden_pos = []
+        self.hidden_pos_word = []
+        self.found_pos = []
+        self.found_pos_word = []
