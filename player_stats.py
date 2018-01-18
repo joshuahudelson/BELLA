@@ -41,7 +41,7 @@ class player_stats:
             self.KeyCrush_num_words_typed_incorrectly = self.loaded_stats['KC_n_w_t_incorrect']
             self.KeyCrush_num_contractions_typed_correctly = self.loaded_stats['KC_n_c_t_correct']
             self.KeyCrush_num_contractions_typed_incorrectly = self.loaded_stats['KC_n_c_t_incorrect']
-            self.KeyCrush_time_on_game = self.loaded_stats['KC_t_o_game']
+            self.KeyCrush_time_on_game = self.loaded_stats['KeyCrush']
 
             self.Cell_Spotter_num_letters_read_correctly = self.loaded_stats['CS_n_l_t_correct']
             self.Cell_Spotter_num_letters_read_incorrectly = self.loaded_stats['CS_n_l_t_incorrect']
@@ -49,7 +49,7 @@ class player_stats:
             self.Cell_Spotter_num_letters_read_incorrectly = self.loaded_stats['CS_n_w_t_incorrect']
             self.Cell_Spotter_num_contractions_read_correctly = self.loaded_stats['CS_n_c_t_correct']
             self.Cell_Spotter_num_contractions_read_incorrectly = self.loaded_stats['CS_n_c_t_incorrect']
-            self.Cell_Spotter_time_on_game = self.loaded_stats['CS_t_o_game']
+            self.Cell_Spotter_time_on_game = self.loaded_stats['Cell Spotter']
 
 
     def save_stats(self, filename):
@@ -62,7 +62,7 @@ class player_stats:
         self.loaded_stats['KC_n_w_t_incorrect'] = self.KeyCrush_num_words_typed_incorrectly
         self.loaded_stats['KC_n_c_t_correct'] = self.KeyCrush_num_contractions_typed_correctly
         self.loaded_stats['KC_n_c_t_incorrect'] = self.KeyCrush_num_contractions_typed_incorrectly
-        self.loaded_stats['KC_t_o_game'] = self.KeyCrush_time_on_game
+        self.loaded_stats['KeyCrush'] = self.KeyCrush_time_on_game
 
         self.loaded_stats['CS_n_l_t_correct'] = self.Cell_Spotter_num_letters_read_correctly
         self.loaded_stats['CS_n_l_t_incorrect'] = self.Cell_Spotter_num_letters_read_incorrectly
@@ -70,7 +70,7 @@ class player_stats:
         self.loaded_stats['CS_n_w_t_incorrect'] = self.Cell_Spotter_num_letters_read_incorrectly
         self.loaded_stats['CS_n_c_t_correct'] = self.Cell_Spotter_num_contractions_read_correctly
         self.loaded_stats['CS_n_c_t_incorrect'] = self.Cell_Spotter_num_contractions_read_incorrectly
-        self.loaded_stats['CS_t_o_game'] = self.Cell_Spotter_time_on_game
+        self.loaded_stats['Cell Spotter'] = self.Cell_Spotter_time_on_game
 
         pickle.dump(self.loaded_stats, open(filename, "wb"))
 
@@ -88,7 +88,7 @@ class player_stats:
 
     def update_time(self, time_dict):
 
-        self.loaded_stats[time_dict['time_game_name']] += time_dict['time_on_game']
+        self.loaded_stats[time_dict['game_name']] += time_dict['time_on_game']
         self.loaded_stats['total_time_on_game'] += time_dict['time_on_game']
 
 

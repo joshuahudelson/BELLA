@@ -285,9 +285,7 @@ class KeyCrush(Bella_Game):
             play response sound, and call for a new letter prompt.
         """
         self.update_dict = {'stat_type':'KC_n_l_t_correct',
-                            'stat_element':self.letter_prompt,
-                            'time_game_name':'KC_t_o_game',
-                            'time_on_game':10}
+                            'stat_element':self.letter_prompt}
 
         self.total_attempted_letters_answered += 1
         self.total_attempted_letters_answered_correctly += 1
@@ -322,6 +320,9 @@ class KeyCrush(Bella_Game):
         """ Update variables for an incorrectly-answered letter,
             play response sound, and possibly give a hint.
         """
+        self.update_dict = {'stat_type':'KC_n_l_t_incorrect',
+                            'stat_element':self.letter_prompt}
+
         self.play_sound('wrong_buzz', self.game_sounds)
 
         self.total_attempted_letters_answered += 1
@@ -340,6 +341,8 @@ class KeyCrush(Bella_Game):
         """ Update variables for a correctly-answered word,
             play response sound, and switch to testing letter.
         """
+        self.update_dict = {'stat_type':'KC_n_w_t_correct',
+                            'stat_element':self.letter_prompt}
         self.total_words_answered += 1
         self.words_answered_correctly += 1
         self.word_streak += 1
@@ -352,6 +355,8 @@ class KeyCrush(Bella_Game):
         """ Update variables for an incorrectly-answered word,
             play response sound, and switch to testing letter.
         """
+        self.update_dict = {'stat_type':'KC_n_w_t_incorrect',
+                            'stat_element':self.letter_prompt}
         self.total_words_answered += 1
         self.word_streak = 0
         self.play_sound('wrong_buzz', self.game_sounds)

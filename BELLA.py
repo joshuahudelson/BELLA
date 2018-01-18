@@ -66,25 +66,18 @@ input_control = None
 
 current_player_stats = player_stats()
 current_player_stats.load_stats('stats')
-
-counter = 0
-time_flag = False
-time_dict = {'time_on_game':time.time()}
-
+previous_time = time.time()
 
 while(True):
 
-    if counter >= 100:
-        time_flag = True
-        counter = 0
-        current_time = time.time()
-        time_dict['time_on_game'] = current_time - time_dict['time_on_game']
-    elif counter == 1:
+     current_time = time.time()
+     time_to_add = 0
+     if (time.time() - previous_time) > 10:
+         previous_time = current_time
+         current_player_stats.update_time({'game_name':game_choice,
+                                           'time_on_game': 1})
         current_player_stats.save_stats('stats')
-        counter += 1
-    else:
-        counter += 1
-
+        print("Ten seconds has elapsed.")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -127,14 +120,9 @@ while(True):
     if game_choice == "KeyCrush":
         if initialized[game_choice]:
             current_player_stats.update_stats(KeyCrush_game.iterate(input_dict))
-            if time_flag:
-                current_player_stats.update_time(time_dict)
-                print("Most recent time: " + str(time_dict['time_on_game']))
-                time_flag = False
             clock.tick(fps)
         else:
             KeyCrush_game = KeyCrush(gametools, display_data)
-            time_dict = {'time_game_name':'KC_t_o_game', 'time_on_game':time.time()}
             initialized[game_choice] = True
 
     if game_choice == "Whack-A-Dot":
