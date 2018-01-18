@@ -10,6 +10,8 @@ from keyboard import keyboard
 import pygame
 import sounds
 from sys import exit
+from player_stats import player_stats
+import time
 
 pygame.mixer.pre_init(22050, -16,  2, 512)
 
@@ -62,11 +64,27 @@ selection = None
 
 input_control = None
 
-player_stats = {'name':None,
-                'keys_correct': [0 for key in range(128)],
-                'keys_incorrect': [0 for key in range(128)]}
+current_player_stats = player_stats()
+current_player_stats.load_stats('stats')
+
+counter = 0
+time_flag = False
+time_dict = {'time_on_game':time.time()}
+
 
 while(True):
+
+    if counter >= 100:
+        time_flag = True
+        counter = 0
+        current_time = time.time()
+        time_dict['time_on_game'] = current_time - time_dict['time_on_game']
+    elif counter == 1:
+        current_player_stats.save_stats('stats')
+        counter += 1
+    else:
+        counter += 1
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -108,10 +126,15 @@ while(True):
 
     if game_choice == "KeyCrush":
         if initialized[game_choice]:
-            KeyCrush_game.iterate(input_dict)
+            current_player_stats.update_stats(KeyCrush_game.iterate(input_dict))
+            if time_flag:
+                current_player_stats.update_time(time_dict)
+                print("Most recent time: " + str(time_dict['time_on_game']))
+                time_flag = False
             clock.tick(fps)
         else:
             KeyCrush_game = KeyCrush(gametools, display_data)
+            time_dict = {'time_game_name':'KC_t_o_game', 'time_on_game':time.time()}
             initialized[game_choice] = True
 
     if game_choice == "Whack-A-Dot":

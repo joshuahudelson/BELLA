@@ -156,6 +156,8 @@ class KeyCrush(Bella_Game):
         self.using_card = False
         self.card_str = ''
 
+        self.update_dict = {}
+
 #---LOCAL GAME SOUNDS---
 
         self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
@@ -167,6 +169,8 @@ class KeyCrush(Bella_Game):
             Runs either introduction, test_letter,
             or test_word each time.
         """
+
+        self.update_dict.clear()
 
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
 
@@ -191,6 +195,7 @@ class KeyCrush(Bella_Game):
             self.test_word()
 
         self.pygame.display.update()
+        return(self.update_dict)
 
     def introduction(self):
         """ Populates the lists of words.
@@ -279,6 +284,10 @@ class KeyCrush(Bella_Game):
         """ Update variables for a correctly-answered letter,
             play response sound, and call for a new letter prompt.
         """
+        self.update_dict = {'stat_type':'KC_n_l_t_correct',
+                            'stat_element':self.letter_prompt,
+                            'time_game_name':'KC_t_o_game',
+                            'time_on_game':10}
 
         self.total_attempted_letters_answered += 1
         self.total_attempted_letters_answered_correctly += 1
