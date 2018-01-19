@@ -92,19 +92,10 @@ class player_stats:
         self.loaded_stats['total_time_on_game'] += time_dict['time_on_game']
 
 
-    def make_report_card(self):
-        pass
+    def make_report_card(self, filename):
+        report_card = open("report_card.txt", 'w')
 
-"""
-an_update = {'stat_type': 'CS_n_w_t_incorrect',
-             'stat_element':'abacadabra',
-             'time_game_name':'CS_t_o_game',
-             'time_on_game': 123}
-
-x = player_stats()
-x.save_stats("a_pickle")
-x.load_stats("a_pickle")
-x.update_stats(an_update)
-
-print(x.loaded_stats['total_time_on_game'])
-"""
+        report_card.write("This player has been playing for " + str(self.total_time_on_game) + " minutes, total.\n\n")
+        report_card.write("On KeyCrush:\n This player has been playing for " + str(self.KeyCrush_time_on_game) + " minutes.\n")
+        for key in self.loaded_stats:
+            report_card.write(str(key) + ": " + str(self.loaded_stats[key]) + "\n")

@@ -78,6 +78,7 @@ while(True):
                                            'time_on_game': 1})
         current_player_stats.save_stats('stats')
         print("Ten seconds has elapsed.")
+        current_player_stats.make_report_card('report_card.txt')
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
