@@ -6,7 +6,6 @@ class player_stats:
     def __init__(self):
 
         self.loaded_stats = {}
-        self.alphabet = "abcdefghijklmnopqrstuvwxyz"
 
     def load_stats(self, filename):
 
@@ -29,7 +28,6 @@ class player_stats:
                                  'CS_n_c_t_incorrect':{},
                                  'Cell Spotter':0
                                  }
-
 
     def save_stats(self, filename):
         pickle.dump(self.loaded_stats, open(filename, "wb"))

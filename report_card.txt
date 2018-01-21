@@ -1,15 +1,15 @@
-KC_n_c_t_correct: {}
-CS_n_l_t_incorrect: {}
-total_time_on_game: 20
-CS_n_l_t_correct: {}
 KC_n_l_t_incorrect: {}
-KeyCrush: 0
-CS_n_c_t_correct: {}
-CS_n_c_t_incorrect: {}
-KC_n_w_t_correct: {}
-KC_n_w_t_incorrect: {}
-KC_n_l_t_correct: {}
+CS_n_w_t_incorrect: {}
+CS_n_w_t_correct: {}
+CS_n_l_t_correct: {}
 KC_n_c_t_incorrect: {}
-CS_n_w_t_incorrect: {'b': 7}
-Cell Spotter: 20
-CS_n_w_t_correct: {'k': 3, 'g': 2}
+KC_n_c_t_correct: {}
+total_time_on_game: 30
+KC_n_w_t_incorrect: {}
+CS_n_c_t_incorrect: {}
+KC_n_w_t_correct: {'cab': 1}
+CS_n_l_t_incorrect: {}
+KeyCrush: 30
+CS_n_c_t_correct: {}
+Cell Spotter: 0
+KC_n_l_t_correct: {'b': 1, 'a': 1, 'c': 2}
