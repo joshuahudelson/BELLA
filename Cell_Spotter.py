@@ -46,9 +46,13 @@ class Cell_Spotter(Bella_Game):
                            'l': 'game_play_letters',
                            'w': 'game_play_words'}
 
+        self.update_dict = {}
+
 #---CENTRAL FUNCTIONS---
 
     def iterate(self, input_dict):
+        self.update_dict.clear()
+
         self.gameDisplay.fill(self.display_states[self.display_names[self.current_display_state]]['background'])
         self.current_input = input_dict['cursor_key']
         self.letter_control = input_dict['standard']
@@ -70,6 +74,7 @@ class Cell_Spotter(Bella_Game):
         elif self.game_state == 'game_play_mccarthy_level_4':
             self.game_play_words()
         self.pygame.display.update()
+        return(self.update_dict)
 
     def introduction(self, input_dict):
         """ Prompt user to insert a card.  If the card has a code, change the
@@ -148,8 +153,12 @@ class Cell_Spotter(Bella_Game):
                 if (self.current_input in self.found_pos):
                     self.play_sound('double', self.standard_sfx)
                     self.play_sound('already_found', self.standard_voice)
+                    self.update_dict = {'stat_type':'CS_n_l_t_incorrect',
+                                    'stat_element':self.letter_prompt}
                 else:
                     self.play_sound('wrong', self.standard_sfx)
+                    self.update_dict = {'stat_type':'CS_n_l_t_incorrect',
+                                    'stat_element':self.letter_prompt}
 
         self.display_letter_prompt()
 
@@ -165,8 +174,13 @@ class Cell_Spotter(Bella_Game):
                 if self.current_input in self.found_pos_word[word_index]:
                     self.play_sound('double', self.standard_sfx)
                     self.play_sound('already_found', self.standard_voice)
+                    self.update_dict = {'stat_type':'CS_n_w_t_incorrect',
+                                        'stat_element':self.word_prompt}
                     return
             self.play_sound('wrong', self.standard_sfx)
+            self.update_dict = {'stat_type':'CS_n_w_t_incorrect',
+                                'stat_element':self.word_prompt}
+                                
         self.display_word_prompt()
 
     def get_search_letters(self):
@@ -222,6 +236,8 @@ class Cell_Spotter(Bella_Game):
         print("Word search positions: " + str(self.hidden_pos_word))
 
     def correct_choice(self):
+        self.update_dict = {'stat_type':'CS_n_l_t_correct',
+                            'stat_element':self.letter_prompt}
         self.hidden_pos.remove(self.current_input)
         self.found_pos.append(self.current_input)
         if len(self.hidden_pos)<= 0:
@@ -239,6 +255,8 @@ class Cell_Spotter(Bella_Game):
             self.play_sound('correct', self.standard_sfx)
 
     def correct_choice_word(self, word_index):
+        self.update_dict = {'stat_type':'CS_n_w_t_correct',
+                            'stat_element':self.word_prompt}
         self.found_pos_word.append(self.hidden_pos_word[word_index])
         self.hidden_pos_word.remove(self.hidden_pos_word[word_index])
         if len(self.hidden_pos_word) <= 0:

@@ -342,7 +342,7 @@ class KeyCrush(Bella_Game):
             play response sound, and switch to testing letter.
         """
         self.update_dict = {'stat_type':'KC_n_w_t_correct',
-                            'stat_element':self.letter_prompt}
+                            'stat_element':self.word_prompt}
         self.total_words_answered += 1
         self.words_answered_correctly += 1
         self.word_streak += 1
@@ -356,7 +356,7 @@ class KeyCrush(Bella_Game):
             play response sound, and switch to testing letter.
         """
         self.update_dict = {'stat_type':'KC_n_w_t_incorrect',
-                            'stat_element':self.letter_prompt}
+                            'stat_element':self.word_prompt}
         self.total_words_answered += 1
         self.word_streak = 0
         self.play_sound('wrong_buzz', self.game_sounds)

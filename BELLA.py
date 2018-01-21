@@ -70,12 +70,11 @@ previous_time = time.time()
 
 while(True):
 
-     current_time = time.time()
-     time_to_add = 0
-     if (time.time() - previous_time) > 10:
-         previous_time = current_time
-         current_player_stats.update_time({'game_name':game_choice,
-                                           'time_on_game': 1})
+    current_time = time.time()
+    time_to_add = 0
+    if (time.time() - previous_time) > 10:
+        previous_time = current_time
+        current_player_stats.update_time({'game_name':game_choice, 'time_on_game': 10})
         current_player_stats.save_stats('stats')
         print("Ten seconds has elapsed.")
         current_player_stats.make_report_card('report_card.txt')
@@ -136,7 +135,7 @@ while(True):
 
     if game_choice == "Cell Spotter":
         if initialized[game_choice]:
-            Cell_Spotter_game.iterate(input_dict)
+            current_player_stats.update_stats(Cell_Spotter_game.iterate(input_dict))
             clock.tick(fps)
         else:
             Cell_Spotter_game = Cell_Spotter(gametools, display_data)
@@ -165,19 +164,3 @@ while(True):
         else:
             Load_Player_game = Load_Player(gametools, display_data)
             initialized[game_choice] = True
-
-
-"""
-    Load_Profile, New_Profile, Delete_Profile
-    if game_choice == ""
-
-    game starts updating dictionary, and BELLA.py saves the dict every... 10 seconds or so to a file?
-
-
-- every typed letter of alphabet: num right, wrong, (num right of most recent 10?)
-- every read cell of braille: num right, wrong, (num right of most recent 10)
-- record each time a game starts and as long as it's not 0: how long played for, score
-- then: total time playing each game, high score for each.
--
-
-"""
