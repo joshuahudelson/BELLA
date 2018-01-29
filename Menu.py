@@ -13,7 +13,7 @@ class Menu(Bella_Game):
 
         self.pygame.display.set_caption('BELLA: Braille Early Learning & Literacy Arcade')
 
-        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale']
+        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Contraction Action', 'Alphabet Cards', 'Braille Tale']
         self.card_codes = {'a':'Alphabet Cards', 'b':'Braille Tale', 'k':'KeyCrush',
                            'w':'Whack-A-Dot', 'm':'Menu', 'c':'Cell Spotter'}
         self.option_tracker = 0

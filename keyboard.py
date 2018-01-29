@@ -95,7 +95,7 @@ class keyboard:
             }
 
         self.chord_to_unicode = {
-            '000000': u'\u2800', '000001': u'\u2801', '000010': u'\u2802', '000011': u'\u2803',
+            '000000': None, '000001': u'\u2801', '000010': u'\u2802', '000011': u'\u2803',
             '000100': u'\u2804', '000101': u'\u2805', '000110': u'\u2806', '000111': u'\u2807',
             '001000': u'\u2808', '001001': u'\u2809', '001010': u'\u280A', '001011': u'\u280B',
             '001100': u'\u280C', '001101': u'\u280D', '001110': u'\u280E', '001111': u'\u280F',
@@ -247,6 +247,7 @@ class keyboard:
                 self.standard = None
 
             self.braille_unicode = self.chord_to_unicode[self.chord]
+
 
         return {
                 'raw':self.raw,

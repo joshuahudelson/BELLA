@@ -2,9 +2,9 @@ from Menu import Menu
 from KeyCrush import KeyCrush
 from Whack_A_Dot import Whack_A_Dot
 from Cell_Spotter import Cell_Spotter
+from Contraction_Action import Contraction_Action
 from Alphabet_Cards import Alphabet_Cards
 from Braille_Tale import Braille_Tale
-from Load_Player import Load_Player
 import numpy
 from keyboard import keyboard
 import pygame
@@ -60,7 +60,8 @@ gametools = {'pygame':pygame,
 game_choice = "Menu"
 
 initialized = {'KeyCrush':False, 'Menu':False, 'Whack-A-Dot':False,
-               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False}
+               'Cell Spotter':False, 'Contraction Action':False,
+               'Alphabet Cards':False, 'Braille Tale':False}
 
 selection = None
 
@@ -157,6 +158,14 @@ while(True):
             clock.tick(fps)
         else:
             Cell_Spotter_game = Cell_Spotter(gametools, display_data)
+            initialized[game_choice] = True
+
+    if game_choice == "Contraction Action":
+        if initialized[game_choice]:
+            current_player_stats.update_stats(Contraction_Action_game.iterate(input_dict))
+            clock.tick(fps)
+        else:
+            Contraction_Action_game = Contraction_Action(gametools, display_data)
             initialized[game_choice] = True
 
     if game_choice == "Alphabet Cards":

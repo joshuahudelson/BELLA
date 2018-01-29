@@ -30,7 +30,8 @@ class player_stats:
                                  'Menu':0,
                                  'Alphabet Cards':0,
                                  'Whack-A-Dot':0,
-                                 'Braille Tale':0
+                                 'Braille Tale':0,
+                                 'Contraction Action':0
                                  }
 
     def save_stats(self, filename):

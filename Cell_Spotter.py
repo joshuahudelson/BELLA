@@ -48,8 +48,6 @@ class Cell_Spotter(Bella_Game):
                            'l': 'game_play_letters',
                            'w': 'game_play_words'}
 
-        self.update_dict = {}
-
 
 #---LOCAL GAME SOUNDS---
 

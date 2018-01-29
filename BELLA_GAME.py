@@ -19,6 +19,8 @@ class Bella_Game:
         self.sound_object = self.sounds.sounds()
         self.channel = gametools['channel']
 
+        self.update_dict = {}
+
 #---DISPLAY---
 
         self.SCREEN_WIDTH = display_data['screen_width']
@@ -74,10 +76,13 @@ class Bella_Game:
         """ Plays a sound.  If wait is True, the game loop pauses
             until the sound has finished playing.
         """
-        self.channel.play(dictionary[sound]['sound'])
-        #dictionary[sound]['sound'].play()
-        if wait:
-            self.pygame.time.wait(dictionary[sound]['length'])
+        try:
+            self.channel.play(dictionary[sound]['sound'])
+            #dictionary[sound]['sound'].play()
+            if wait:
+                self.pygame.time.wait(dictionary[sound]['length'])
+        except(KeyError):
+            pass
 
 
     def play_pos_feedback(self, wait, probability):

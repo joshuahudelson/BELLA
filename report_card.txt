@@ -1,19 +1,20 @@
-Braille Tale: 0
-Cell Spotter: 50
-KC_n_l_t_correct: {}
-CS_n_c_t_incorrect: {}
 CS_n_w_t_incorrect: {}
-KC_n_w_t_incorrect: {}
-CS_n_c_t_correct: {}
-KC_n_c_t_correct: {}
-KC_n_w_t_correct: {}
-CS_n_w_t_correct: {}
-Alphabet Cards: 0
-total_time_on_game: 50
-KC_n_c_t_incorrect: {}
-KeyCrush: 0
-CS_n_l_t_correct: {'c': 5, 'a': 5}
-Whack-A-Dot: 0
-CS_n_l_t_incorrect: {'c': 2, 'a': 11}
+CS_n_l_t_correct: {}
 KC_n_l_t_incorrect: {}
-Menu: 0
+CS_n_l_t_incorrect: {}
+Alphabet Cards: 0
+KC_n_c_t_incorrect: {}
+Contraction Action: 70
+CS_n_c_t_correct: {}
+total_time_on_game: 80
+KC_n_l_t_correct: {}
+Menu: 10
+Cell Spotter: 0
+KC_n_w_t_correct: {}
+Braille Tale: 0
+KeyCrush: 0
+CS_n_c_t_incorrect: {}
+Whack-A-Dot: 0
+KC_n_c_t_correct: {}
+KC_n_w_t_incorrect: {}
+CS_n_w_t_correct: {}
