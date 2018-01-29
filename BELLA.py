@@ -13,7 +13,7 @@ from sys import exit
 from player_stats import player_stats
 import time
 
-pygame.mixer.pre_init(22050, -16,  2, 512)
+pygame.mixer.pre_init(22050, -16,  1, 512)
 
 pygame.init()
 pygame.mixer.init()
@@ -46,19 +46,21 @@ fps = 100
 
 BELLA_start_up = True
 
+channel0 = pygame.mixer.Channel(0)
+
 gametools = {'pygame':pygame,
              'numpy':numpy,
              'sounds':sounds,
              'keyboard':braille_keyboard,
              'display':gameDisplay,
              'fps':fps,
-             'serial_delay_factor':serial_delay_factor}
+             'serial_delay_factor':serial_delay_factor,
+             'channel':channel0}
 
 game_choice = "Menu"
 
 initialized = {'KeyCrush':False, 'Menu':False, 'Whack-A-Dot':False,
-               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False,
-               'Load Player': False}
+               'Cell Spotter':False, 'Alphabet Cards':False, 'Braille Tale':False}
 
 selection = None
 
@@ -67,6 +69,9 @@ input_control = None
 current_player_stats = player_stats()
 current_player_stats.load_stats('stats')
 previous_time = time.time()
+
+volume = 1.0
+
 
 while(True):
 
@@ -89,6 +94,7 @@ while(True):
                 exit()
 
     input_dict = braille_keyboard.update_keyboard()
+    input_dict['volume'] = volume
 
     input_control = input_dict['standard']
 
@@ -96,6 +102,18 @@ while(True):
     if input_control == 'display':
         current_display_state = (current_display_state + 1) % len(display_names)
         display_data = {'screen_width':SCREEN_WIDTH, 'screen_height':SCREEN_HEIGHT, 'current_display_state':current_display_state}
+
+    if input_control == 'volume_up':
+        if volume < 1.0:
+            volume += .1
+            channel0.set_volume(volume)
+            print(volume)
+
+    if input_control == 'volume_down':
+        if volume > 0.01:
+            volume -= 0.1
+            channel0.set_volume(volume)
+            print(volume)
 
     if input_control == 'quit':
         print("Quit!!")
@@ -155,12 +173,4 @@ while(True):
             clock.tick(fps)
         else:
             Braille_Tale_game = Braille_Tale(gametools, display_data)
-            initialized[game_choice] = True
-
-    if game_choice == "Load Player":
-        if initialized[game_choice]:
-            Load_Player_game.iterate(input_dict)
-            clock.tick(fps)
-        else:
-            Load_Player_game = Load_Player(gametools, display_data)
             initialized[game_choice] = True

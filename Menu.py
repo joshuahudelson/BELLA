@@ -13,7 +13,7 @@ class Menu(Bella_Game):
 
         self.pygame.display.set_caption('BELLA: Braille Early Learning & Literacy Arcade')
 
-        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale', 'Load Player']
+        self.options_list = ['KeyCrush', 'Whack-A-Dot', 'Cell Spotter', 'Alphabet Cards', 'Braille Tale']
         self.card_codes = {'a':'Alphabet Cards', 'b':'Braille Tale', 'k':'KeyCrush',
                            'w':'Whack-A-Dot', 'm':'Menu', 'c':'Cell Spotter'}
         self.option_tracker = 0
@@ -58,8 +58,8 @@ class Menu(Bella_Game):
             self.pygame.mixer.stop()
 #            self.play_sound('press_main_menu', self.game_sounds, True)
 #            self.play_sound('display', self.game_sounds, True)
-            self.play_sound('playing', self.game_sounds, wait = True)
-            self.play_sound(self.options_list[self.selection], self.game_sounds, wait = True)
+            self.play_sound('letsplay_'+self.options_list[self.selection], self.game_sounds, wait = True)
+            #self.play_sound(self.options_list[self.selection], self.game_sounds, wait = True)
             return self.options_list[self.selection]
         else:
             return None

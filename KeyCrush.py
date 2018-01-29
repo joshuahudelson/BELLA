@@ -97,10 +97,12 @@ class KeyCrush(Bella_Game):
         self.alphabet_length = len(self.alphabet)
 
         self.words_by_letters = []
+
         for i in range(self.alphabet_length):
             self.words_by_letters.append([])
 
-        self.sort_words() # populates self.words_by_letters.
+        self.sort_words2()
+        #self.sort_words() # populates self.words_by_letters.
 
         self.game_state = 'introduction'
         self.level = starting_level
@@ -109,7 +111,7 @@ class KeyCrush(Bella_Game):
         self.max_correct = 1000
         self.max_incorrect = 1000
 
-        self.zero_level_letters = 3
+        self.zero_level_letters = 4
         self.level_letter_increment = 1
 
         self.num_letters_in_play = self.zero_level_letters;
@@ -240,7 +242,7 @@ class KeyCrush(Bella_Game):
             if self.word_has_been_said:
                 self.update_and_check_word()
             else:
-                #self.play_sound(self.word_prompt, self.game_sounds) - Need text-to-speech or recordings.
+                self.play_sound(self.word_prompt, self.standard_words)
                 self.word_has_been_said = True
 
         self.display_word_prompt()
@@ -304,7 +306,8 @@ class KeyCrush(Bella_Game):
         if self.letter_streak % 5 == 0:
             self.play_streak_sound()
         else:
-            self.play_sound('correct_coins', self.game_sounds)
+            self.play_sound('correct_coins', self.game_sounds, True)
+            self.play_pos_feedback(True, 0.5)
 
         self.check_level()
 
@@ -323,7 +326,8 @@ class KeyCrush(Bella_Game):
         self.update_dict = {'stat_type':'KC_n_l_t_incorrect',
                             'stat_element':self.letter_prompt}
 
-        self.play_sound('wrong_buzz', self.game_sounds)
+        self.play_sound('wrong_buzz', self.game_sounds, True)
+        self.play_neg_feedback(True, 0.5)
 
         self.total_attempted_letters_answered += 1
         self.letter_streak = 0
@@ -347,7 +351,8 @@ class KeyCrush(Bella_Game):
         self.words_answered_correctly += 1
         self.word_streak += 1
         self.total_points += self.points_to_be_awarded
-        self.play_sound('hang_of_it', self.game_sounds, wait=True)
+        self.play_sound('word_correct', self.game_sounds, True)
+        self.play_pos_feedback(True, 1)
 
         self.switch_to_letter()
 
@@ -359,7 +364,9 @@ class KeyCrush(Bella_Game):
                             'stat_element':self.word_prompt}
         self.total_words_answered += 1
         self.word_streak = 0
-        self.play_sound('wrong_buzz', self.game_sounds)
+        self.play_sound('wrong_buzz', self.game_sounds, True)
+        self.play_neg_feedback(True, 0.5)
+
         self.switch_to_letter()
 
     def update_letter_tracking(self, boolean):
@@ -507,6 +514,41 @@ class KeyCrush(Bella_Game):
         for i in range(num_lines):
 
             current_word = f.readline().rstrip()
+
+            if (len(current_word) > 1):
+
+                temp_highest = 0
+                temp_add_flag = True
+
+                for letter in current_word:
+                    try:
+                        if letter not in self.alphabet:
+                            temp_add_flag = False
+
+                        if self.alphabet.index(letter) > temp_highest:
+                            temp_highest = self.alphabet.index(letter)
+
+                    except ValueError:
+                        temp_add_flag = False
+                        print(str(letter) + " not found in alphabet.")
+
+                if temp_add_flag:
+                    print(current_word)
+                    self.words_by_letters[temp_highest].append(current_word)
+
+        for index, container in enumerate(self.words_by_letters):
+            print(self.alphabet[index])
+            print(len(container))
+
+    def sort_words2(self):
+        """ Go through a long list of words and sort them
+            by the highest letter in each.  Print how many
+            words there are for each letter.
+        """
+
+        for current_word in self.words_file:
+
+            current_word = current_word[0:-4]
 
             if (len(current_word) > 1):
 

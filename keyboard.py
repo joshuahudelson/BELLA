@@ -233,6 +233,12 @@ class keyboard:
                 self.standard = 'newline'
             elif (self.raw[1] == '1'):
                 self.standard = 'backspace'
+            elif (self.raw[17] == '1'):
+                self.standard = 'volume_up'
+            elif (self.raw[18] == '1'):
+                self.standard = 'volume_down'
+            elif (self.raw[19] == '1'):
+                self.standard = 'help'
             elif self.letter:
                 self.standard = self.letter
             elif self.cursor_key:

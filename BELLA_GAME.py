@@ -1,4 +1,5 @@
-from random import choice, randint
+from random import choice, randint, random
+import os
 
 class Bella_Game:
 
@@ -16,6 +17,7 @@ class Bella_Game:
         self.braille_keyboard = gametools['keyboard']
         self.fps = gametools['fps']
         self.sound_object = self.sounds.sounds()
+        self.channel = gametools['channel']
 
 #---DISPLAY---
 
@@ -45,14 +47,26 @@ class Bella_Game:
         standard_alphabet_dir= self.sounds.join('standardsounds', 'Alphabet')
         standard_sfx_dir = self.sounds.join('standardsounds', 'Sfx')
         standard_voice_dir = self.sounds.join('standardsounds', 'Voice')
-
+        standard_posfeed_dir = self.sounds.join('standardsounds', 'Posfeed')
+        standard_negfeed_dir = self.sounds.join('standardsounds', 'Negfeed')
+        standard_words_dir = self.sounds.join('standardsounds', 'Words')
 
         self.standard_alphabet = self.sound_object.make_sound_dictionary(standard_alphabet_dir, self.pygame)
         self.standard_sfx = self.sound_object.make_sound_dictionary(standard_sfx_dir, self.pygame)
         self.standard_voice = self.sound_object.make_sound_dictionary(standard_voice_dir, self.pygame)
+        self.standard_posfeed = self.sound_object.make_sound_dictionary(standard_posfeed_dir, self.pygame)
+        self.standard_negfeed = self.sound_object.make_sound_dictionary(standard_negfeed_dir, self.pygame)
+        self.standard_words = self.sound_object.make_sound_dictionary(standard_words_dir, self.pygame)
 
         self.standard_alphabet[' '] = {'sound':self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')),
                                      'length':int(self.pygame.mixer.Sound(self.sounds.join(standard_alphabet_dir, 'space.wav')).get_length() * 1000)}
+
+        self.posfeed_files = os.listdir('./standardsounds/Posfeed')
+        self.negfeed_files = os.listdir('./standardsounds/Negfeed')
+        self.words_file = os.listdir('./standardsounds/Words')
+
+        print("self.standard_posfeed: ")
+        print(self.standard_posfeed)
 
 #---SOUND FUNCTIONS---
 
@@ -60,10 +74,27 @@ class Bella_Game:
         """ Plays a sound.  If wait is True, the game loop pauses
             until the sound has finished playing.
         """
-        dictionary[sound]['sound'].play()
+        self.channel.play(dictionary[sound]['sound'])
+        #dictionary[sound]['sound'].play()
         if wait:
             self.pygame.time.wait(dictionary[sound]['length'])
 
+
+    def play_pos_feedback(self, wait, probability):
+        if random() < probability:
+            temp_file_name = choice(self.posfeed_files)
+            temp_file_name = temp_file_name[0:-4]
+            self.channel.play(self.standard_posfeed[temp_file_name]['sound'])
+            if wait:
+                self.pygame.time.wait(self.standard_posfeed[temp_file_name]['length'])
+
+    def play_neg_feedback(self, wait, probability):
+        if random() < probability:
+            temp_file_name = choice(self.negfeed_files)
+            temp_file_name = temp_file_name[0:-4]
+            self.channel.play(self.standard_negfeed[temp_file_name]['sound'])
+            if wait:
+                self.pygame.time.wait(self.standard_negfeed[temp_file_name]['length'])
 
 #---DISPLAY FUNCTIONS---
 

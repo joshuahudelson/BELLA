@@ -39,7 +39,7 @@ class Braille_Tale(Bella_Game):
 
         self.card_str = None
         self.card_words = None
-
+        self.game_name = 'Braille_Tale'
         self.game_state = starting_game_state
 
         self.sequence_count = 0

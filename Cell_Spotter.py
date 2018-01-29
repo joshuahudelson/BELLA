@@ -16,7 +16,7 @@ class Cell_Spotter(Bella_Game):
 
 #---GAME VARIABLES---
 
-        self.game_name = 'Cell Spotter'
+        self.game_name = 'Cell_Spotter'
         self.game_state = 'introduction' # others: game_play_letters, game_play_words, game_play_contractionsz
         self.current_input = None
         self.letter_prompt = ''
@@ -39,6 +39,8 @@ class Cell_Spotter(Bella_Game):
         self.card_ID = None
         self.word_histogram = None
 
+        self.word_sf_list = [word[0:-4] for word in self.words_file]
+
         self.card_codes = {'1': 'game_play_mccarthy_level_1',
                            '2': 'game_play_mccarthy_level_2',
                            '3': 'game_play_mccarthy_level_3',
@@ -47,6 +49,11 @@ class Cell_Spotter(Bella_Game):
                            'w': 'game_play_words'}
 
         self.update_dict = {}
+
+
+#---LOCAL GAME SOUNDS---
+
+        self.game_sounds = self.sound_object.make_sound_dictionary(self.game_name + '_sounds', self.pygame)
 
 #---CENTRAL FUNCTIONS---
 
@@ -117,7 +124,7 @@ class Cell_Spotter(Bella_Game):
         elif (self.game_state == 'game_play_mccarthy_level_1'):
             self.get_search_letters()
             if len(self.search_list) < 2:
-                # card won't work for this game
+                self.play_sound('sorrythatcardisntforthisgame', self.game_sounds)
                 self.intro_played = False
             else:
                 self.search_list = self.search_list[-2]                         # only search for the second-most-frequent letter.
@@ -127,7 +134,7 @@ class Cell_Spotter(Bella_Game):
         elif (self.game_state == 'game_play_mccarthy_level_2'):
             self.get_search_letters()
             if len(self.search_list) < 2:
-                # card won't work for this game
+                self.play_sound('sorrythatcardisntforthisgame', self.game_sounds)
                 self.intro_played = False
             else:
                 self.search_list = self.search_list[-1]                         # search only for most frequent letter
@@ -137,7 +144,7 @@ class Cell_Spotter(Bella_Game):
         elif (self.game_state == 'game_play_mccarthy_level_3'):
             self.get_search_words()
             if len(self.search_list_words) < 2:
-                # card won't work for this game
+                self.play_sound('sorrythatcardisntforthisgame', self.game_sounds)
                 self.intro_played = False
             else:
                 self.search_list_words = self.search_list_words[0]
@@ -180,7 +187,7 @@ class Cell_Spotter(Bella_Game):
             self.play_sound('wrong', self.standard_sfx)
             self.update_dict = {'stat_type':'CS_n_w_t_incorrect',
                                 'stat_element':self.word_prompt}
-                                
+
         self.display_word_prompt()
 
     def get_search_letters(self):
@@ -197,6 +204,10 @@ class Cell_Spotter(Bella_Game):
             del self.freq_dict['_']
         except KeyError:
             pass
+        try:
+            del self.freq_dict['\r']
+        except KeyError:
+            pass
         self.search_list = sorted(self.freq_dict,key=self.freq_dict.get)
         print(self.search_list)
 
@@ -206,15 +217,15 @@ class Cell_Spotter(Bella_Game):
         self.found_pos = []
 
         if (self.game_state == 'game_play_letters'):
-            self.play_sound('find_all_the', self.standard_voice, True)
+            self.play_sound('findalloftheletter', self.game_sounds, True)
             self.play_sound(self.letter_prompt, self.standard_alphabet, True)
-            self.play_sound('_s', self.standard_voice, True)
+            #self.play_sound('_s', self.standard_voice, True)
         elif (self.game_state == 'game_play_mccarthy'):
             try:
                 self.play_sound('find_the_one_thats_different', self.standard_voice, True)
                 print("Exception handled!")
             except:
-                self.play_sound('find_all_the', self.standard_voice, True)
+                self.play_sound('findtheonethatsdifferent', self.game_sounds, True)
                 self.play_sound(self.letter_prompt, self.standard_alphabet, True)
                 self.play_sound('_s', self.standard_voice, True)
 
@@ -234,6 +245,10 @@ class Cell_Spotter(Bella_Game):
         print("This is the TEMP START INDEX: " + str(temp_start_index))          # THIS IS RETURNING NONE RIGHT NOW.
         self.hidden_pos_word = [[index + letter for letter in range(len(word))] for index in temp_start_index]
         print("Word search positions: " + str(self.hidden_pos_word))
+        self.play_sound('findtheword', self.game_sounds, True)
+        if self.word_prompt in self.word_sf_list:
+            self.play_sound(self.word_prompt, self.standard_words)
+
 
     def correct_choice(self):
         self.update_dict = {'stat_type':'CS_n_l_t_correct',
@@ -248,7 +263,7 @@ class Cell_Spotter(Bella_Game):
                 self.reset_game()
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
-                self.play_sound('nice_work', self.standard_voice, wait=True)
+                self.play_pos_feedback(True, 1)
                 self.letter_prompt = self.search_list[self.search_letter_num]
                 self.get_search_positions(self.letter_prompt)
         else:

@@ -26,7 +26,11 @@ class player_stats:
                                  'CS_n_w_t_incorrect':{},
                                  'CS_n_c_t_correct':{},
                                  'CS_n_c_t_incorrect':{},
-                                 'Cell Spotter':0
+                                 'Cell Spotter':0,
+                                 'Menu':0,
+                                 'Alphabet Cards':0,
+                                 'Whack-A-Dot':0,
+                                 'Braille Tale':0
                                  }
 
     def save_stats(self, filename):
