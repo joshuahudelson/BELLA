@@ -97,6 +97,7 @@ class Cell_Spotter(Bella_Game):
                 self.game_state = self.card_codes[self.card_ID]
             except KeyError:
                 self.game_state = 'game_play_letters'
+            self.play_sound('instructions', self.game_sounds, True)
             self.initialize_game()
             return
         elif self.intro_played == False:
@@ -129,6 +130,7 @@ class Cell_Spotter(Bella_Game):
                 self.search_letter_num = 0                                      # start with whatever the not-most-frequent letter is.
                 self.letter_prompt = self.search_list[self.search_letter_num]   # set search letter to next-most-common letter.
                 self.get_search_positions(self.letter_prompt)
+                self.play_sound('findtheletterthatsdifferent', self.game_sounds)
         elif (self.game_state == 'game_play_mccarthy_level_2'):
             self.get_search_letters()
             if len(self.search_list) < 2:
@@ -157,7 +159,7 @@ class Cell_Spotter(Bella_Game):
             else:
                 if (self.current_input in self.found_pos):
                     self.play_sound('double', self.standard_sfx)
-                    self.play_sound('already_found', self.standard_voice)
+                    self.play_sound('already_found', self.game_sounds)
                     self.update_dict = {'stat_type':'CS_n_l_t_incorrect',
                                     'stat_element':self.letter_prompt}
                 else:
@@ -178,7 +180,7 @@ class Cell_Spotter(Bella_Game):
             for word_index in range(len(self.found_pos_word)):
                 if self.current_input in self.found_pos_word[word_index]:
                     self.play_sound('double', self.standard_sfx)
-                    self.play_sound('already_found', self.standard_voice)
+                    self.play_sound('already_found', self.game_sounds)
                     self.update_dict = {'stat_type':'CS_n_w_t_incorrect',
                                         'stat_element':self.word_prompt}
                     return
@@ -257,7 +259,7 @@ class Cell_Spotter(Bella_Game):
             self.search_letter_num +=1
             if self.search_letter_num >= len(self.search_list):  # you finished searching the whole card
                 self.play_sound('win', self.standard_sfx, True)
-                self.play_sound('great_job', self.standard_voice, wait=True)
+                self.play_pos_feedback(True, 1)
                 self.reset_game()
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
@@ -276,12 +278,12 @@ class Cell_Spotter(Bella_Game):
             self.search_word_num +=1
             if self.search_word_num >= len(self.search_list_words):  # you finished searching the whole card
                 self.play_sound('win', self.standard_sfx, True)
-                self.play_sound('great_job', self.standard_voice, wait=True)
+                self.play_pos_feedback(True, 1)
                 self.reset_game()
 
             else:
                 self.play_sound('level_up', self.standard_sfx, True)
-                self.play_sound('nice_work', self.standard_voice, wait=True)
+                self.play_pos_feedback(True, 1)
                 self.word_prompt = self.search_list_words[self.search_word_num]
                 self.get_search_positions_for_word(self.word_prompt)
         else:
