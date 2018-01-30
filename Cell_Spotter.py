@@ -41,13 +41,12 @@ class Cell_Spotter(Bella_Game):
 
         self.word_sf_list = [word[0:-4] for word in self.words_file]
 
-        self.card_codes = {'1': 'game_play_mccarthy_level_1',
+        self.card_codes = {'c': 'game_play_mccarthy_level_1',
                            '2': 'game_play_mccarthy_level_2',
                            '3': 'game_play_mccarthy_level_3',
                            '4': 'game_play_mccarthy_level_4',
                            'l': 'game_play_letters',
                            'w': 'game_play_words'}
-
 
 #---LOCAL GAME SOUNDS---
 
@@ -93,6 +92,7 @@ class Cell_Spotter(Bella_Game):
         elif (input_dict['card_state'] == True) & (self.new_card == True):
             self.play_sound('cardinserted', self.standard_sfx, wait=True)
             self.card_str = input_dict['card_str']
+            self.card_str.replace('\r', ' ')
             try:
                 self.game_state = self.card_codes[self.card_ID]
             except KeyError:
@@ -106,6 +106,7 @@ class Cell_Spotter(Bella_Game):
         self.word_prompt = "Insert a card."
         self.display_word_prompt()                                               # Why is this here?
 
+
     def initialize_game(self):
         """
         """
@@ -114,12 +115,14 @@ class Cell_Spotter(Bella_Game):
             self.search_letter_num = 0
             self.letter_prompt = self.search_list[self.search_letter_num]
             self.get_search_positions(self.letter_prompt)
+
         elif (self.game_state == 'game_play_words'):
             self.get_search_words()
             self.search_word_num = 0
             self.word_prompt = self.search_list_words[self.search_word_num]
             print("THIS IS THE WORD PROMPT: " + str(self.word_prompt))
             self.get_search_positions_for_word(self.word_prompt)
+
         elif (self.game_state == 'game_play_mccarthy_level_1'):
             self.get_search_letters()
             if len(self.search_list) < 2:
@@ -130,7 +133,7 @@ class Cell_Spotter(Bella_Game):
                 self.search_letter_num = 0                                      # start with whatever the not-most-frequent letter is.
                 self.letter_prompt = self.search_list[self.search_letter_num]   # set search letter to next-most-common letter.
                 self.get_search_positions(self.letter_prompt)
-                self.play_sound('findtheletterthatsdifferent', self.game_sounds)
+
         elif (self.game_state == 'game_play_mccarthy_level_2'):
             self.get_search_letters()
             if len(self.search_list) < 2:
@@ -141,16 +144,17 @@ class Cell_Spotter(Bella_Game):
                 search_letter_num = 0
                 self.letter_prompt = self.search_list[self.search_letter_num]
                 self.get_search_positions(self.letter_prompt)
+
         elif (self.game_state == 'game_play_mccarthy_level_3'):
             self.get_search_words()
             if len(self.search_list_words) < 2:
                 self.play_sound('sorrythatcardisntforthisgame', self.game_sounds)
                 self.intro_played = False
             else:
-                self.search_list_words = self.search_list_words[0]
                 self.search_word_num = 0
                 self.word_prompt = self.search_list_words[self.search_word_num]
                 self.get_search_positions_for_word(self.word_prompt)
+
 
     def game_play_letters(self):
         if self.current_input != None:
@@ -220,17 +224,18 @@ class Cell_Spotter(Bella_Game):
             self.play_sound('findalloftheletter', self.game_sounds, True)
             self.play_sound(self.letter_prompt, self.standard_alphabet, True)
             #self.play_sound('_s', self.standard_voice, True)
-        elif (self.game_state == 'game_play_mccarthy'):
+        elif (self.game_state == 'game_play_mccarthy_level_1'):
             try:
-                self.play_sound('find_the_one_thats_different', self.standard_voice, True)
-                print("Exception handled!")
+                self.play_sound('findtheletterthatsdifferent', self.game_sounds, True)
             except:
-                self.play_sound('findtheonethatsdifferent', self.game_sounds, True)
                 self.play_sound(self.letter_prompt, self.standard_alphabet, True)
                 self.play_sound('_s', self.standard_voice, True)
 
     def get_search_words(self):
         self.search_list_words = self.card_str.split(' ')
+        for index, word in enumerate(self.search_list_words):
+            if '\r' in word:
+                del self.search_list_words[index]
         self.search_list_words = set(self.search_list_words)
         self.search_list_words = list(self.search_list_words)                   # Now contains only unique words.
         temp_nothing = ''

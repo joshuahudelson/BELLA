@@ -53,5 +53,93 @@ class player_stats:
 
     def make_report_card(self, filename):
         report_card = open("report_card.txt", 'w')
-        for key in self.loaded_stats:
-            report_card.write(str(key) + ": " + str(self.loaded_stats[key]) + "\n")
+        report_card.write("REPORT CARD:\n")
+        report_card.write("-----------\n")
+        temp_seconds = self.loaded_stats['total_time_on_game']
+        temp_minutes = int(temp_seconds/60)
+        temp_seconds_remainder = temp_seconds % 60
+        report_card.write("Total time spent on BELLA: " + str(temp_minutes) + " minutes and " + str(temp_seconds) + " seconds.\n")
+
+        report_card.write("-----------\n")
+        temp_Menu_seconds = self.loaded_stats['Menu']
+        temp_Menu_minutes = int(temp_seconds/60)
+        temp_Menu_seconds_remainder = temp_seconds % 60
+        report_card.write("Menu: " + str(temp_Menu_minutes) + " minutes and " + str(temp_Menu_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("-----------\n")
+        temp_AC_seconds = self.loaded_stats['Alphabet Cards']
+        temp_AC_minutes = int(temp_seconds/60)
+        temp_AC_seconds_remainder = temp_seconds % 60
+        report_card.write("Alphabet Cards: " + str(temp_AC_minutes) + " minutes and " + str(temp_AC_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("-----------\n")
+        temp_WD_seconds = self.loaded_stats['Whack-A-Dot']
+        temp_WD_minutes = int(temp_seconds/60)
+        temp_WD_seconds_remainder = temp_seconds % 60
+        report_card.write("Whack-A-Dot: " + str(temp_WD_minutes) + " minutes and " + str(temp_WD_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("-----------\n")
+        temp_BT_seconds = self.loaded_stats['Braille Tale']
+        temp_BT_minutes = int(temp_seconds/60)
+        temp_BT_seconds_remainder = temp_seconds % 60
+        report_card.write("Braille Tale: " + str(temp_BT_minutes) + " minutes and " + str(temp_BT_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("-----------\n")
+        temp_CA_seconds = self.loaded_stats['Contraction Action']
+        temp_CA_minutes = int(temp_seconds/60)
+        temp_CA_seconds_remainder = temp_seconds % 60
+        report_card.write("Contraction Action: " + str(temp_CA_minutes) + " minutes and " + str(temp_CA_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("-----------\n")
+        temp_KC_seconds = self.loaded_stats['KeyCrush']
+        temp_KC_minutes = int(temp_seconds/60)
+        temp_KC_seconds_remainder = temp_seconds % 60
+        report_card.write("KeyCrush: " + str(temp_KC_minutes) + " minutes and " + str(temp_KC_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("Letters typed correctedly:\n")
+        for key in self.loaded_stats['KC_n_l_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_l_t_correct'][key]) + " times.\n")
+        report_card.write("Letters typed incorrectedly:\n")
+        for key in self.loaded_stats['KC_n_l_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_l_t_incorrect'][key]) + " times.\n")
+
+        report_card.write("Words typed correctedly:\n")
+        for key in self.loaded_stats['KC_n_w_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_w_t_correct'][key]) + " times.\n")
+        report_card.write("Words typed incorrectedly:\n")
+        for key in self.loaded_stats['KC_n_w_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_w_t_incorrect'][key]) + " times.\n")
+
+        report_card.write("Contractions typed correctedly:\n")
+        for key in self.loaded_stats['KC_n_c_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_c_t_correct'][key]) + " times.\n")
+        report_card.write("Contractions typed correctedly:\n")
+        for key in self.loaded_stats['KC_n_c_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['KC_n_c_t_incorrect'][key]) + " times.\n")
+
+        temp_CS_seconds = self.loaded_stats['Cell Spotter']
+        temp_CS_minutes = int(temp_seconds/60)
+        temp_CS_seconds_remainder = temp_seconds % 60
+        report_card.write("-----------\n")
+        report_card.write("Cell Spotter: " + str(temp_CS_minutes) + " minutes and " + str(temp_CS_seconds_remainder) + " seconds.\n" )
+
+        report_card.write("Letters read correctedly:\n")
+        for key in self.loaded_stats['CS_n_l_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_l_t_correct'][key]) + " times.\n")
+        report_card.write("Letters read incorrectedly:\n")
+        for key in self.loaded_stats['CS_n_l_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_l_t_incorrect'][key]) + " times.\n")
+
+        report_card.write("Words read correctedly:\n")
+        for key in self.loaded_stats['CS_n_w_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_w_t_correct'][key]) + " times.\n")
+        report_card.write("Words read incorrectedly:\n")
+        for key in self.loaded_stats['CS_n_w_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_w_t_incorrect'][key]) + " times.\n")
+
+        report_card.write("Contractions read correctedly:\n")
+        for key in self.loaded_stats['CS_n_c_t_correct']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_c_t_correct'][key]) + " times.\n")
+        report_card.write("Contractions read incorrectedly:\n")
+        for key in self.loaded_stats['CS_n_c_t_incorrect']:
+            report_card.write(key + ": " + str(self.loaded_stats['CS_n_c_t_incorrect'][key]) + " times.\n")

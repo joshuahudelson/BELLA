@@ -77,7 +77,6 @@ volume = 1.0
 while(True):
 
     current_time = time.time()
-    time_to_add = 0
     if (time.time() - previous_time) > 10:
         previous_time = current_time
         current_player_stats.update_time({'game_name':game_choice, 'time_on_game': 10})

@@ -1,20 +1,31 @@
-CS_n_l_t_incorrect: {}
-CS_n_c_t_correct: {}
-Cell Spotter: 60
-KC_n_w_t_incorrect: {}
-Contraction Action: 0
-CS_n_w_t_correct: {'k': 3}
-Whack-A-Dot: 0
-KC_n_c_t_incorrect: {}
-KC_n_c_t_correct: {}
-CS_n_l_t_correct: {}
-CS_n_w_t_incorrect: {}
-total_time_on_game: 70
-KC_n_l_t_incorrect: {}
-Braille Tale: 0
-KC_n_l_t_correct: {}
-Alphabet Cards: 0
-Menu: 10
-CS_n_c_t_incorrect: {}
-KC_n_w_t_correct: {}
-KeyCrush: 0
+REPORT CARD:
+-----------
+Total time spent on BELLA: 0 minutes and 20 seconds.
+-----------
+Menu: 0 minutes and 20 seconds.
+-----------
+Alphabet Cards: 0 minutes and 20 seconds.
+-----------
+Whack-A-Dot: 0 minutes and 20 seconds.
+-----------
+Braille Tale: 0 minutes and 20 seconds.
+-----------
+Contraction Action: 0 minutes and 20 seconds.
+-----------
+KeyCrush: 0 minutes and 20 seconds.
+Letters typed correctedly:
+Letters typed incorrectedly:
+Words typed correctedly:
+Words typed incorrectedly:
+Contractions typed correctedly:
+Contractions typed correctedly:
+-----------
+Cell Spotter: 0 minutes and 20 seconds.
+Letters read correctedly:
+b: 1 times.
+Letters read incorrectedly:
+b: 3 times.
+Words read correctedly:
+Words read incorrectedly:
+Contractions read correctedly:
+Contractions read incorrectedly:
