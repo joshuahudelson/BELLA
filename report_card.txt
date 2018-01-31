@@ -1,18 +1,18 @@
 REPORT CARD:
 -----------
-Total time spent on BELLA: 0 minutes and 20 seconds.
+Total time spent on BELLA: 7 minutes and 430 seconds.
 -----------
-Menu: 0 minutes and 20 seconds.
+Menu: 7 minutes and 10 seconds.
 -----------
-Alphabet Cards: 0 minutes and 20 seconds.
+Alphabet Cards: 7 minutes and 10 seconds.
 -----------
-Whack-A-Dot: 0 minutes and 20 seconds.
+Whack-A-Dot: 7 minutes and 10 seconds.
 -----------
-Braille Tale: 0 minutes and 20 seconds.
+Braille Tale: 7 minutes and 10 seconds.
 -----------
-Contraction Action: 0 minutes and 20 seconds.
+Contraction Action: 7 minutes and 10 seconds.
 -----------
-KeyCrush: 0 minutes and 20 seconds.
+KeyCrush: 7 minutes and 10 seconds.
 Letters typed correctedly:
 Letters typed incorrectedly:
 Words typed correctedly:
@@ -20,11 +20,9 @@ Words typed incorrectedly:
 Contractions typed correctedly:
 Contractions typed correctedly:
 -----------
-Cell Spotter: 0 minutes and 20 seconds.
+Cell Spotter: 7 minutes and 10 seconds.
 Letters read correctedly:
-b: 1 times.
 Letters read incorrectedly:
-b: 3 times.
 Words read correctedly:
 Words read incorrectedly:
 Contractions read correctedly:

@@ -61,6 +61,9 @@ class Cell_Spotter(Bella_Game):
         self.current_input = input_dict['cursor_key']
         self.letter_control = input_dict['standard']
         self.card_ID = input_dict['card_ID']
+
+        if self.letter_control == 'backspace':
+            self.play_sound('instructions', self.game_sounds)
         if self.letter_control == 'display':
             self.change_display_state()
         if self.game_state == 'introduction':

@@ -180,6 +180,10 @@ class KeyCrush(Bella_Game):
         self.input_braille = input_dictionary['braille_unicode']
         self.input_control = input_dictionary['standard']
 
+        if self.input_control == 'help':
+            self.play_sound('help1', self.game_sounds, True)
+            self.play_sound('help2', self.game_sounds, True)
+
         if (self.input_control == 'display'):
             self.change_display_state()
 
@@ -493,6 +497,7 @@ class KeyCrush(Bella_Game):
         if temp_flag:
             self.play_sound('level_up_sfx', self.game_sounds, True)
             self.play_sound('level_up', self.game_sounds, True)
+            self.play_sound('letsaddanewletter', self.game_sounds, True)
             self.level += 1
             self.num_letters_in_play = self.zero_level_letters + (self.level * self.level_letter_increment)
             print("Level up!")
