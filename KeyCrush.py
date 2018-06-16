@@ -269,6 +269,10 @@ class KeyCrush(Bella_Game):
             if (character in self.alphabet) & (character not in self.card_str):
                 self.card_str += character
         self.letters_correct = self.np.ones(len(self.card_str))
+        try:
+            self.sort_words2()
+        except:
+            print("Couldn't sort words.")
         self.switch_to_letter()
 
     def update_and_check_word(self):

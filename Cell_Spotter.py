@@ -41,7 +41,7 @@ class Cell_Spotter(Bella_Game):
 
         self.word_sf_list = [word[0:-4] for word in self.words_file]
 
-        self.card_codes = {'c': 'game_play_mccarthy_level_1',
+        self.card_codes = {'1': 'game_play_mccarthy_level_1',
                            '2': 'game_play_mccarthy_level_2',
                            '3': 'game_play_mccarthy_level_3',
                            '4': 'game_play_mccarthy_level_4',
@@ -118,6 +118,7 @@ class Cell_Spotter(Bella_Game):
             self.search_letter_num = 0
             self.letter_prompt = self.search_list[self.search_letter_num]
             self.get_search_positions(self.letter_prompt)
+            self.play_sound(self.letter_prompt, self.standard_alphabet)
 
         elif (self.game_state == 'game_play_words'):
             self.get_search_words()
@@ -147,6 +148,8 @@ class Cell_Spotter(Bella_Game):
                 search_letter_num = 0
                 self.letter_prompt = self.search_list[self.search_letter_num]
                 self.get_search_positions(self.letter_prompt)
+                self.play_sound(self.letter_prompt, self.standard_alphabet)
+
 
         elif (self.game_state == 'game_play_mccarthy_level_3'):
             self.get_search_words()
