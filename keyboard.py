@@ -49,7 +49,7 @@ class keyboard:
         self.chord = None
         self.letter = None
         self.cursor_key = None
-        self.cursor_key_list = None
+        self.cursor_keys_list = None
         self.standard = None
 
         self.card_state = None
@@ -60,6 +60,8 @@ class keyboard:
 
         self.last_chord = None
         self.last_letter = None
+        self.key = None
+        self.braille_unicode = None
 
         self.comport = None
 
@@ -156,7 +158,7 @@ class keyboard:
         if len(port_numbers) > 0:
             for port in port_numbers: # don't use i
                 print("testing {}".format(port))
-                self.ser = serial.Serial(port,baudrate=9600,timeout=0)
+                self.ser = serial.Serial(port,baudrate=38400,timeout=0)
                 time.sleep(.5)
                 self.ser.write(b"i")
                 time.sleep(.5)
