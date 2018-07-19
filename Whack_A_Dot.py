@@ -82,6 +82,8 @@ class Whack_A_Dot(Bella_Game):
 
         self.frames_passed = 0
 
+        self.update_dict = {}
+
 
 #---LOCAL GAME SOUNDS---
 
@@ -119,6 +121,8 @@ class Whack_A_Dot(Bella_Game):
         self.draw_buttons(self.current_prompt)
 
         self.pygame.display.update()
+
+        return(self.update_dict)
 
 
     def introduction(self):

@@ -180,9 +180,7 @@ class KeyCrush(Bella_Game):
         self.input_braille = input_dictionary['braille_unicode']
         self.input_control = input_dictionary['standard']
 
-        if self.input_control == 'help':
-            self.play_sound('help1', self.game_sounds, True)
-            self.play_sound('help2', self.game_sounds, True)
+        self.get_help(self.input_control, 'Success ok that was good nice')
 
         if (self.input_control == 'display'):
             self.change_display_state()
@@ -403,7 +401,7 @@ class KeyCrush(Bella_Game):
     def compute_letters_ratio(self):
         for i in range(self.num_letters_in_play):
             self.letters_ratio[i] = self.letters_incorrect[i] / self.letters_correct[i]
-        print(self.letters_ratio)
+        #print(self.letters_ratio)
 
     def give_hint(self, prompt):
         """ Play response sound, show correct buttons.
@@ -506,7 +504,7 @@ class KeyCrush(Bella_Game):
             self.num_letters_in_play = self.zero_level_letters + (self.level * self.level_letter_increment)
             print("Level up!")
 
-        print(self.letters_correct[:self.num_letters_in_play])
+        #print(self.letters_correct[:self.num_letters_in_play])
 
 
     def sort_words(self):
@@ -546,8 +544,9 @@ class KeyCrush(Bella_Game):
                     self.words_by_letters[temp_highest].append(current_word)
 
         for index, container in enumerate(self.words_by_letters):
-            print(self.alphabet[index])
-            print(len(container))
+            #print(self.alphabet[index])
+            #print(len(container))
+            pass
 
     def sort_words2(self):
         """ Go through a long list of words and sort them
@@ -581,8 +580,9 @@ class KeyCrush(Bella_Game):
                     self.words_by_letters[temp_highest].append(current_word)
 
         for index, container in enumerate(self.words_by_letters):
-            print(self.alphabet[index])
-            print(len(container))
+            #print(self.alphabet[index])
+            #print(len(container))
+            pass
 
     @property
     def score(self):

@@ -1,5 +1,6 @@
 from random import choice, randint, random
 import os
+from espeak import espeak
 
 class Bella_Game:
 
@@ -67,9 +68,6 @@ class Bella_Game:
         self.negfeed_files = os.listdir('./standardsounds/Negfeed')
         self.words_file = os.listdir('./standardsounds/Words')
 
-        print("self.standard_posfeed: ")
-        print(self.standard_posfeed)
-
 #---SOUND FUNCTIONS---
 
     def play_sound(self, sound, dictionary, wait=False):
@@ -84,6 +82,12 @@ class Bella_Game:
         except(KeyError):
             pass
 
+    def get_help(self, input, soundstring):
+        if input == 'help':
+            espeak.synth(soundstring)
+
+    def say_with_espeak(self, soundstring):
+        espeak.synth(soundstring)
 
     def play_pos_feedback(self, wait, probability):
         if random() < probability:

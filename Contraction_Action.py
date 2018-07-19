@@ -1,6 +1,7 @@
 from BELLA_GAME import Bella_Game
 import louis
 from espeak import espeak
+import os
 
 class Contraction_Action(Bella_Game):
 
@@ -44,7 +45,11 @@ class Contraction_Action(Bella_Game):
     def read_word_string(self):
         try:
             self.word_string = louis.backTranslateString(['en-us-g2.ctb'], self.braille_string)
-            espeak.synth(self.word_string)
+            #espeak.synth(self.word_string)
+            os.system('espeak {0} -w temp.wav'.format(self.word_string))
+            self.display_word_prompt(self.word_string)
+            new_sound = self.pygame.mixer.Sound('temp.wav')
+            self.channel.play(new_sound)
             self.display_word_prompt(self.word_string)
             self.pygame.display.update()
             self.pygame.time.wait(1000)

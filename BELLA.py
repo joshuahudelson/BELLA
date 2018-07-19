@@ -73,6 +73,13 @@ previous_time = time.time()
 
 volume = 1.0
 
+volsound = pygame.mixer.Sound('j.wav')
+
+def play_sound2():
+    """ Plays the volume sound.
+    """
+    gametools['channel'].play(volsound)
+
 
 while(True):
 
@@ -95,7 +102,6 @@ while(True):
 
     input_dict = braille_keyboard.update_keyboard()
     input_dict['volume'] = volume
-
     input_control = input_dict['standard']
 
 
@@ -107,12 +113,14 @@ while(True):
         if volume < 1.0:
             volume += .1
             channel0.set_volume(volume)
+            play_sound2()
             print(volume)
 
     if input_control == 'volume_down':
         if volume > 0.01:
             volume -= 0.1
             channel0.set_volume(volume)
+            play_sound2()
             print(volume)
 
     if input_control == 'quit':
@@ -145,7 +153,7 @@ while(True):
 
     if game_choice == "Whack-A-Dot":
         if initialized[game_choice]:
-            Whack_A_Dot_game.iterate(input_dict)
+            current_player_stats.update_stats(Whack_A_Dot_game.iterate(input_dict))
             clock.tick(fps)
         else:
             Whack_A_Dot_game = Whack_A_Dot(gametools, display_data)

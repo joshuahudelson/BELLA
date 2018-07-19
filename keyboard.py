@@ -192,7 +192,11 @@ class keyboard:
 
         if self.ser.inWaiting() > 0:
 
-            self.raw = format(int.from_bytes(self.ser.readline(),'little'),'032b')
+            temp_readline = self.ser.readline()
+            print("This is temp_readline: " + str(temp_readline))
+            self.raw = format(int.from_bytes(temp_readline,'little'),'032b')
+            self.raw = self.raw[0:32]
+            print("This is self.raw after formatting: " + self.raw)
 
             self.card_trigger = False
 
@@ -202,13 +206,16 @@ class keyboard:
                 self.card_trigger = True
 
                 self.raw = '00000000000000000000000000000000'
+                print("This is self.raw after 1111...: " + self.raw)
 
             if self.raw == '10101010101010101010101010101010':
                 self.card_state = False
                 self.card_str = '                    '
                 self.card_ID = None
+                print("This is self.raw after 101010: " + self.raw)
 
                 self.raw = '00000000000000000000000000000000'
+                print("This is self.raw after 00000...: " + self.raw)
 
             self.chord = self.raw[2:8]  # chord = combination of the 6 keys
             self.letter = self.get_letter(self.chord) # its translation to letter
@@ -226,30 +233,42 @@ class keyboard:
 
             if ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
                 self.standard = 'quit'
+                print("quit tripped")
             elif self.raw[8] == '1':
                 self.standard = 'space'
                 self.letter = 'space' # is this right? space is higher priority than a letter?
+                print("space tripped")
             elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
                 self.standard = 'display'
+                print("display tripped")
             elif (self.raw[0] == '1'):
                 self.standard = 'newline'
+                print("newline tripped")
             elif (self.raw[1] == '1'):
                 self.standard = 'backspace'
-            elif (self.raw[17] == '1'):
+                print("backspace tripped")
+            elif (self.raw[9] == '1'):
                 self.standard = 'volume_up'
-            elif (self.raw[18] == '1'):
+                print("volume up tripped")
+            elif (self.raw[10] == '1'):
                 self.standard = 'volume_down'
-            elif (self.raw[19] == '1'):
+                print("volume down tripped")
+            elif (self.raw[11] == '1'):
                 self.standard = 'help'
+                print("help tripped")
             elif self.letter:
                 self.standard = self.letter
+                print("self standard set equal to letter")
             elif self.cursor_key:
                 self.standard = self.cursor_key
+                print("self standard set equal to cursor key")
             else:
                 self.standard = None
+                print("self standard set equal to none")
 
             self.braille_unicode = self.chord_to_unicode[self.chord]
 
+        print("Card Trigger: " + str(self.card_trigger))
 
         return {
                 'raw':self.raw,

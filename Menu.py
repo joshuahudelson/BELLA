@@ -55,6 +55,7 @@ class Menu(Bella_Game):
             self.play_sound(self.options_list[self.selection], self.game_sounds)
             return None
         elif self.input_control == 'space':
+            print("MENU DID SPACE!")
             self.pygame.mixer.stop()
 #            self.play_sound('press_main_menu', self.game_sounds, True)
 #            self.play_sound('display', self.game_sounds, True)
