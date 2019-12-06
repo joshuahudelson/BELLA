@@ -3,6 +3,7 @@ import serial
 import serial.tools.list_ports
 import struct
 import codecs
+import pygame
 
 
 class keyboard:
@@ -12,7 +13,7 @@ class keyboard:
 
     def __init__(self):
         """
-            self.Ser: a serial object for transmitting the keyboard state.
+            self.ser: a serial object for transmitting the keyboard state.
 
             self.raw: a 32-bit number representing the entire state of the
                       keyboard ("1" == key down).
@@ -64,6 +65,10 @@ class keyboard:
         self.braille_unicode = None
 
         self.comport = None
+
+        self.keyboard_flag = None
+
+        self.temp_readline = None
 
 
         self.chord_to_letter = {
@@ -156,7 +161,7 @@ class keyboard:
         port_numbers = self.list_coms()
 
         if len(port_numbers) > 0:
-            for port in port_numbers: # don't use i
+            for port in port_numbers:
                 print("testing {}".format(port))
                 self.ser = serial.Serial(port,baudrate=38400,timeout=0)
                 time.sleep(.5)
@@ -175,9 +180,12 @@ class keyboard:
                     self.com_port = port
                     break # does this need to be a return?
 
+                self.keyboard_flag = 1
                 self.ser.close
-
-        print("No comports found")
+        else:
+            print("No comports found.")
+            print("Using computer keyboard.")
+            self.keyboard_flag = 0
 
 
     def update_keyboard(self):
@@ -187,86 +195,127 @@ class keyboard:
 
         """
 
-        self.ser.write(b'b')
-        time.sleep(.1)
+        if keyboard_flag == 1:
 
-        if self.ser.inWaiting() > 0:
+            self.ser.write(b'b')
+            time.sleep(.1)
 
-            temp_readline = self.ser.readline()
-            print("This is temp_readline: " + str(temp_readline))
-            self.raw = format(int.from_bytes(temp_readline,'little'),'032b')
-            self.raw = self.raw[0:32]
-            print("This is self.raw after formatting: " + self.raw)
+            if self.ser.inWaiting() > 0:
 
-            self.card_trigger = False
-
-            if self.raw == '11111111111111111111111111111111':
-
-                self.request_card()
-                self.card_trigger = True
-
-                self.raw = '00000000000000000000000000000000'
-                print("This is self.raw after 1111...: " + self.raw)
-
-            if self.raw == '10101010101010101010101010101010':
-                self.card_state = False
-                self.card_str = '                    '
-                self.card_ID = None
-                print("This is self.raw after 101010: " + self.raw)
-
-                self.raw = '00000000000000000000000000000000'
-                print("This is self.raw after 00000...: " + self.raw)
-
-            self.chord = self.raw[2:8]  # chord = combination of the 6 keys
-            self.letter = self.get_letter(self.chord) # its translation to letter
-            self.key = self.get_key(self.chord) # if just a single key is pressed
-
-            # See if any cursor keys are pressed (only returns leftmost one)
-            try:
-                self.cursor_key = 19 - self.raw[12:32].index('1')
-            except:
-                self.cursor_key = None
-
-            # Returns the full list of pressed cursor keys
-            self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == '1']
+                self.temp_readline = self.ser.readline()
+                self.parse_keys_pressed()
 
 
-            if ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
-                self.standard = 'quit'
-                print("quit tripped")
-            elif self.raw[8] == '1':
-                self.standard = 'space'
-                self.letter = 'space' # is this right? space is higher priority than a letter?
-                print("space tripped")
-            elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
-                self.standard = 'display'
-                print("display tripped")
-            elif (self.raw[0] == '1'):
-                self.standard = 'newline'
-                print("newline tripped")
-            elif (self.raw[1] == '1'):
-                self.standard = 'backspace'
-                print("backspace tripped")
-            elif (self.raw[9] == '1'):
-                self.standard = 'volume_up'
-                print("volume up tripped")
-            elif (self.raw[10] == '1'):
-                self.standard = 'volume_down'
-                print("volume down tripped")
-            elif (self.raw[11] == '1'):
-                self.standard = 'help'
-                print("help tripped")
-            elif self.letter:
-                self.standard = self.letter
-                print("self standard set equal to letter")
-            elif self.cursor_key:
-                self.standard = self.cursor_key
-                print("self standard set equal to cursor key")
+        else:   # self.keyboard_flag == 0
+
+            if self.comp_keyboard_counter > self.COMP_KEYBOARD_COUNTER_ITERATIONS:
+                self.comp_keyboard_counter = 0
+                temp_key_combo_value = 0
+                for entry in self.comp_keyboard_key_list:
+                    if entry[K_SPACE]:
+                        self.temp_readline = '00000000100000000000000000000000'
+                        break
+                    if entry[K_LSHIFT]:
+                        self.temp_readline = '10000000000000000000000000000000'
+                        break
+                    if entry[K_RSHIFT]:
+                        self.temp_readline = '01000000000000000000000000000000'
+                        break
+                    if entry[K_j]:
+                        temp_key_combo_value | 0b000001
+                    if entry[K_k]:
+                        temp_key_combo_value | 0b000010
+                    if entry[K_l]:
+                        temp_key_combo_value | 0b000100
+                    if entry[K_j]:
+                        temp_key_combo_value | 0b001000
+                    if entry[K_k]:
+                        temp_key_combo_value | 0b010000
+                    if entry[K_l]:
+                        temp_key_combo_value | 0b100000
+                self.temp_readline = '00' + str(bin(temp_key_combo_value)[2:0]) + '000000000000000000000000'
+                self.parse_keys_pressed()
             else:
-                self.standard = None
-                print("self standard set equal to none")
+                self.comp_keyboard_counter += 1
+                self.comp_keyboard_key_list.append(pygame.key.get_pressed())
 
-            self.braille_unicode = self.chord_to_unicode[self.chord]
+
+    def parse_keys_pressed(self):
+
+        print("This is temp_readline: " + str(self.temp_readline))
+        self.raw = format(int.from_bytes(self.temp_readline,'little'),'032b')
+        self.raw = self.raw[0:32]
+        print("This is self.raw after formatting: " + self.raw)
+
+        self.card_trigger = False
+
+        if self.raw == '11111111111111111111111111111111':
+
+            self.request_card()
+            self.card_trigger = True
+
+            self.raw = '00000000000000000000000000000000'
+            print("This is self.raw after 1111...: " + self.raw)
+
+        if self.raw == '10101010101010101010101010101010':
+            self.card_state = False
+            self.card_str = '                    '
+            self.card_ID = None
+            print("This is self.raw after 101010: " + self.raw)
+
+            self.raw = '00000000000000000000000000000000'
+            print("This is self.raw after 00000...: " + self.raw)
+
+        self.chord = self.raw[2:8]  # chord = combination of the 6 keys
+        self.letter = self.get_letter(self.chord) # its translation to letter
+        self.key = self.get_key(self.chord) # if just a single key is pressed
+
+        # See if any cursor keys are pressed (only returns leftmost one)
+        try:
+            self.cursor_key = 19 - self.raw[12:32].index('1')
+        except:
+            self.cursor_key = None
+
+        # Returns the full list of pressed cursor keys
+        self.cursor_keys_list = [(19 - pos) for pos,char in enumerate(self.raw[12:32]) if char == '1']
+
+
+        if ((self.raw[0] == '1') & (self.raw[1] == '1') & (self.raw[8] == '1')):
+            self.standard = 'quit'
+            print("quit tripped")
+        elif self.raw[8] == '1':
+            self.standard = 'space'
+            self.letter = 'space' # is this right? space is higher priority than a letter?
+            print("space tripped")
+        elif ((self.raw[0] == '1') & (self.raw[1] == '1')):
+            self.standard = 'display'
+            print("display tripped")
+        elif (self.raw[0] == '1'):
+            self.standard = 'newline'
+            print("newline tripped")
+        elif (self.raw[1] == '1'):
+            self.standard = 'backspace'
+            print("backspace tripped")
+        elif (self.raw[9] == '1'):
+            self.standard = 'volume_up'
+            print("volume up tripped")
+        elif (self.raw[10] == '1'):
+            self.standard = 'volume_down'
+            print("volume down tripped")
+        elif (self.raw[11] == '1'):
+            self.standard = 'help'
+            print("help tripped")
+        elif self.letter:
+            self.standard = self.letter
+            print("self standard set equal to letter")
+        elif self.cursor_key:
+            self.standard = self.cursor_key
+            print("self standard set equal to cursor key")
+        else:
+            self.standard = None
+            print("self standard set equal to none")
+
+        self.braille_unicode = self.chord_to_unicode[self.chord]
 
         print("Card Trigger: " + str(self.card_trigger))
 
@@ -284,7 +333,6 @@ class keyboard:
                 'card_ID':self.card_ID,
                 'braille_unicode': self.braille_unicode
                 }
-
 
     def get_letter(self, chord):
         """ Get a letter from a chord.
@@ -391,3 +439,8 @@ class keyboard:
                     time.sleep(.05)
                     self.ser.reset_input_buffer()
                 counter += 1
+
+
+if __name__ == "__main__":
+    this_keyboard = keyboard()
+    this_keyboard.test_coms()
