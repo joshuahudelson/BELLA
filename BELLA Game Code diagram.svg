@@ -1,0 +1,960 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="11in"
+   height="8.5in"
+   viewBox="0 0 279.40001 215.90002"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (394de47547, 2021-03-26)"
+   sodipodi:docname="BELLA Game Code diagram.svg">
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="marker1299"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1297" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1127"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1125" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3666"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3664" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3554"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3552" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3448"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3446" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3400"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3398" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3340"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3338" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3234"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path3232" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker2489"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2487" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1911"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1909" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path968" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1775"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow2Lend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path1773" />
+    </marker>
+    <rect
+       x="86.679756"
+       y="51.119083"
+       width="22.121141"
+       height="30.507326"
+       id="rect1615" />
+    <marker
+       style="overflow:visible"
+       id="Arrow1Send"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path974" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow2Lend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow2Lend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path980" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path962" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleInL"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleInL"
+       inkscape:isstock="true">
+      <path
+         transform="scale(-0.8)"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path1092" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1911-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1909-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker2579-3"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path2577-7" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.69495453"
+     inkscape:cx="343.05953"
+     inkscape:cy="356.3462"
+     inkscape:document-units="in"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     units="in"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-nodes="false" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="3.2055187"
+       y="130.07713"
+       id="text889"><tspan
+         sodipodi:role="line"
+         id="tspan887"
+         x="3.2055187"
+         y="130.07713"
+         style="font-size:4.58611px;stroke-width:0.264583">standardsounds (folder)</tspan></text>
+    <path
+       id="rect837-7"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.659001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 76.885947,14.624096 c -0.253356,0 -0.458161,0.09265 -0.458161,0.20813 v 82.257163 c 0,0.11548 0.204805,0.208128 0.458161,0.208128 H 198.66509 c 0.25336,0 0.45815,-0.09263 0.45815,-0.208128 V 14.832226 c 0,-0.115479 -0.20468,-0.20813 -0.45815,-0.20813 z" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.659001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect835"
+       width="130.60638"
+       height="95.132271"
+       x="69.122887"
+       y="114.76737"
+       ry="0.25965565" />
+    <path
+       id="rect837"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.659002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 202.06357,12.153083 c -0.15586,0 -0.28185,0.06651 -0.28185,0.149412 v 59.050623 c 0,0.0829 0.12599,0.14941 0.28185,0.14941 h 74.91628 c 0.15587,0 0.28185,-0.0665 0.28185,-0.14941 V 12.302495 c 0,-0.0829 -0.12591,-0.149412 -0.28185,-0.149412 z" />
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="94.791153"
+       y="12.781178"
+       id="text843"><tspan
+         sodipodi:role="line"
+         id="tspan841"
+         x="94.791153"
+         y="12.781178"
+         style="font-size:7.76111px;stroke-width:0.264583">BELLA.py</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="69.604332"
+       y="111.62666"
+       id="text847"><tspan
+         sodipodi:role="line"
+         id="tspan845"
+         x="69.604332"
+         y="111.62666"
+         style="font-size:7.76111px;stroke-width:0.264583">BELLA_GAME.py</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.658998;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect851"
+       width="53.426872"
+       height="28.316051"
+       x="132.15282"
+       y="138.6725"
+       ry="0.097039081" />
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="130.83902"
+       y="137.10474"
+       id="text861"><tspan
+         sodipodi:role="line"
+         id="tspan859"
+         x="130.83902"
+         y="137.10474"
+         style="font-size:7.76111px;stroke-width:0.264583">&quot;some game&quot;.py</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="201.04889"
+       y="10.310169"
+       id="text865"><tspan
+         sodipodi:role="line"
+         id="tspan863"
+         x="201.04889"
+         y="10.310169"
+         style="font-size:7.76111px;stroke-width:0.264583">keyboard.py</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="201.91249"
+       y="161.72942"
+       id="text895"><tspan
+         sodipodi:role="line"
+         id="tspan893"
+         x="201.91249"
+         y="161.72942"
+         style="font-size:4.93889px;stroke-width:0.264583">game sounds (folder)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';stroke-width:0.264583"
+       x="2.7114725"
+       y="32.734005"
+       id="text901"><tspan
+         sodipodi:role="line"
+         id="tspan899"
+         x="2.7114725"
+         y="32.734005"
+         style="font-size:7.76111px;stroke-width:0.264583">player_stats.py</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.659;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect897"
+       width="67.65345"
+       height="24.192104"
+       x="3.2039557"
+       y="35.598568"
+       ry="0.5833205" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="204.63562"
+       y="24.493729"
+       id="text858"><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="24.493729"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan860">'raw':self.raw,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="28.021503"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan862">'card_trigger':self.card_trigger,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="31.549278"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan864">'chord':self.chord,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="35.077053"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan866">'letter':self.letter,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="38.604828"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan868">'cursor_key':self.cursor_key,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="42.132603"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan870">'cursor_keys_list':self.cursor_keys_list,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="45.660378"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan872">'standard':self.standard,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="49.188156"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan874">'card_state':self.card_state,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="52.715931"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan876">'card_str':self.card_str,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="56.243706"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan878">'key':self.key,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="59.771481"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan880">'card_ID':self.card_ID,</tspan><tspan
+         sodipodi:role="line"
+         x="204.63562"
+         y="63.299255"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan884">'braille_unicode': self.braille_unicode</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="205.18454"
+       y="19.834242"
+       id="text896"><tspan
+         sodipodi:role="line"
+         id="tspan894"
+         x="205.18454"
+         y="19.834242"
+         style="font-size:4.23333px;stroke-width:0.264583">parse_keys_pressed</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="24.612642"
+       y="18.413836"
+       id="text900"><tspan
+         sodipodi:role="line"
+         id="tspan898"
+         x="24.612642"
+         y="18.413836"
+         style="stroke-width:0.264583" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="170.80319"
+       y="61.05555"
+       id="text896-3"><tspan
+         sodipodi:role="line"
+         id="tspan894-6"
+         x="170.80319"
+         y="61.05555"
+         style="font-size:4.23333px;stroke-width:0.264583">input_dict</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#Arrow1Send)"
+       d="M 204.19677,40.33148 186.5468,55.770116"
+       id="path957"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="79.690498"
+       y="19.503647"
+       id="text1527"><tspan
+         sodipodi:role="line"
+         id="tspan1525"
+         x="79.690498"
+         y="19.503647"
+         style="font-size:2.82222px;stroke-width:0.264583">braille_keyboard = keyboard()</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="23.031422"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1529">braille_keyboard.test_coms()</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="26.559196"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1531">clock = pygame.time.Clock()</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="30.086971"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1533">SCREEN_WIDTH = 1000</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="33.614746"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1535">SCREEN_HEIGHT = 800</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="37.142521"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1537">current_display_state = 0</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="40.670296"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1609">fps = 100</tspan><tspan
+         sodipodi:role="line"
+         x="79.690498"
+         y="44.198074"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1611" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="167.72516"
+       y="22.240702"
+       id="text1527-5"><tspan
+         sodipodi:role="line"
+         x="167.72516"
+         y="22.240702"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1537-1">volume_up</tspan><tspan
+         sodipodi:role="line"
+         x="167.72516"
+         y="25.768476"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1603">volume _down</tspan><tspan
+         sodipodi:role="line"
+         x="167.72516"
+         y="29.296251"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1605">quit</tspan><tspan
+         sodipodi:role="line"
+         x="167.72516"
+         y="32.824028"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1607" /></text>
+    <text
+       xml:space="preserve"
+       id="text1613"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;white-space:pre;shape-inside:url(#rect1615);" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="80.191055"
+       y="47.432064"
+       id="text1621"><tspan
+         sodipodi:role="line"
+         id="tspan1619"
+         x="80.191055"
+         y="47.432064"
+         style="font-size:2.82222px;stroke-width:0.264583">gametools = {'pygame':pygame,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="50.959839"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1623">             'numpy':numpy,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="54.487614"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1625">             'sounds':sounds,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="58.015388"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1627">             'keyboard':braille_keyboard,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="61.543163"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1629">             'display':gameDisplay,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="65.070938"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1631">             'fps':fps,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="68.598717"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1633">             'serial_delay_factor':serial_delay_factor,</tspan><tspan
+         sodipodi:role="line"
+         x="80.191055"
+         y="72.126488"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan1635">             'channel':channel0}</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker3448)"
+       d="m 48.589001,133.52714 25.927816,-0.0676"
+       id="path957-0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="160.63577"
+       y="148.26703"
+       id="text1901"><tspan
+         sodipodi:role="line"
+         id="tspan1899"
+         x="160.63577"
+         y="148.26703"
+         style="font-size:4.23333px;stroke-width:0.264583">iterate()</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="136.98344"
+       y="165.07658"
+       id="text1901-9"><tspan
+         sodipodi:role="line"
+         id="tspan1899-3"
+         x="136.98344"
+         y="165.07658"
+         style="font-size:4.23333px;stroke-width:0.264583">self.game_sounds</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker3400)"
+       d="m 214.50234,164.53179 -34.46841,-0.0676"
+       id="path957-6"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="77.389099"
+       y="123.25749"
+       id="text2199"><tspan
+         sodipodi:role="line"
+         id="tspan2197"
+         x="77.389099"
+         y="123.25749"
+         style="font-size:2.82222px;stroke-width:0.264583">self.standard_alphabet</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="126.78527"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2201">self.standard_sfx</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="130.31305"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2203">self.standard_voice</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="133.84082"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2205">self.standard_posfeed</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="137.36859"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2207">self.standard_negfeed</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="140.89636"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2209">self.standard_words</tspan><tspan
+         sodipodi:role="line"
+         x="77.389099"
+         y="144.42415"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2211">self.standard_alphabet</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="76.229637"
+       y="172.35532"
+       id="text2239"><tspan
+         sodipodi:role="line"
+         id="tspan2237"
+         x="76.229637"
+         y="172.35532"
+         style="font-size:2.82222px;stroke-width:0.264583">def play_sound(self, sound, dictionary, wait=False):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="175.88309"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2241">def get_help(self, input, soundstring):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="179.41087"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2243">def say_with_espeak(self, soundstring):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="182.93864"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2245">def play_pos_feedback(self, wait, probability):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="186.46642"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2247">def play_neg_feedback(self, wait, probability):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="189.99419"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2249" /><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="193.52197"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2251">def display_letter_prompt(self, letter=None):</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="197.04974"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2253">def display_word_prompt(self, word=None)</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="200.57751"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2255">def display_status_box(self)</tspan><tspan
+         sodipodi:role="line"
+         x="76.229637"
+         y="204.10529"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2257">def display_sub_word_prompt(self, word=None)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="55.460506"
+       y="49.487503"
+       id="text2273"><tspan
+         sodipodi:role="line"
+         id="tspan2271"
+         x="55.460506"
+         y="49.487503"
+         style="stroke-width:0.264583" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="3.8049867"
+       y="66.922935"
+       id="text896-3-2"><tspan
+         sodipodi:role="line"
+         id="tspan894-6-6"
+         x="3.8049867"
+         y="66.922935"
+         style="font-size:4.23333px;stroke-width:0.264583">report_card.txt</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="43.466526"
+       y="72.091827"
+       id="text896-3-2-1"><tspan
+         sodipodi:role="line"
+         id="tspan894-6-6-8"
+         x="43.466526"
+         y="72.091827"
+         style="font-size:4.23333px;stroke-width:0.264583">_pickle</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker2489)"
+       d="m 51.427954,54.881845 v 11.61155"
+       id="path2479" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker3666)"
+       d="m 17.991998,55.389879 v 7.258598"
+       id="path2569" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.82222px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="6.6936669"
+       y="39.707729"
+       id="text2667"><tspan
+         sodipodi:role="line"
+         x="6.6936669"
+         y="39.707729"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2673">def save_stats(self, filename)</tspan><tspan
+         sodipodi:role="line"
+         x="6.6936669"
+         y="43.235504"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2684">def update_stats(self, update_dict)</tspan><tspan
+         sodipodi:role="line"
+         x="6.6936669"
+         y="46.763279"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2686">def update_time(self, time_dict)</tspan><tspan
+         sodipodi:role="line"
+         x="6.6936669"
+         y="50.291054"
+         style="font-size:2.82222px;stroke-width:0.264583"
+         id="tspan2688">def make_report_card(self, filename)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="89.103531"
+       y="80.605209"
+       id="text896-3-0"><tspan
+         sodipodi:role="line"
+         id="tspan894-6-2"
+         x="89.103531"
+         y="80.605209"
+         style="font-size:4.23333px;stroke-width:0.264583">current_player_stats</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker3554)"
+       d="m 65.749072,56.451792 27.26352,18.078251"
+       id="path2732"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:2.93181px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="87.12838"
+       y="86.726234"
+       id="text2836"
+       transform="scale(0.92340614,1.0829471)"><tspan
+         sodipodi:role="line"
+         id="tspan2834"
+         x="87.12838"
+         y="86.726234"
+         style="font-size:2.93181px;stroke-width:0.264583">current_player_stats.update_stats(&quot;some_game&quot;_game.iterate(input_dict))</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker2579-3)"
+       d="m 114.17242,82.531378 v 7.258598"
+       id="path2569-5" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker3340)"
+       d="m 184.05874,65.511266 -4.26263,30.693358 m -0.78463,5.649816 -4.17899,30.18919 m -0.81616,5.77873 -0.96212,6.92778"
+       id="path3224"
+       sodipodi:nodetypes="cccccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="131.92393"
+       y="39.142426"
+       id="text1093"><tspan
+         sodipodi:role="line"
+         id="tspan1091"
+         x="131.92393"
+         y="39.142426"
+         style="font-size:4.23333px;stroke-width:0.264583">game_tools, display_data</tspan></text>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.6604"
+       d="M 158.03234,42.08599 V 65.391698"
+       id="path1113" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.6604"
+       d="M 158.53876,71.113281 V 90.531699"
+       id="path1115" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker1127)"
+       d="m 158.71668,95.559278 0.0573,23.498722"
+       id="path1117" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="129.18027"
+       y="123.41331"
+       id="text1093-3"><tspan
+         sodipodi:role="line"
+         id="tspan1091-6"
+         x="129.18027"
+         y="123.41331"
+         style="font-size:4.23333px;stroke-width:0.264583">gametools, display_data</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.5833px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="223.07892"
+       y="117.693"
+       id="text1275"><tspan
+         sodipodi:role="line"
+         id="tspan1273"
+         x="223.07892"
+         y="117.693"
+         style="stroke-width:0.264583" /></text>
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.6604;stroke-miterlimit:4;stroke-dasharray:none;marker-end:url(#marker1299)"
+       d="m 158.60881,125.65143 -7.23897,22.73913"
+       id="path1289"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.25;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';letter-spacing:0px;stroke-width:0.264583"
+       x="134.1855"
+       y="152.33612"
+       id="text1093-3-7"><tspan
+         sodipodi:role="line"
+         id="tspan1091-6-5"
+         x="134.1855"
+         y="152.33612"
+         style="font-size:4.23333px;stroke-width:0.264583">gametools</tspan><tspan
+         sodipodi:role="line"
+         x="134.1855"
+         y="157.62778"
+         style="font-size:4.23333px;stroke-width:0.264583"
+         id="tspan1445">display_data</tspan></text>
+  </g>
+</svg>

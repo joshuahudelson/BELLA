@@ -13,6 +13,9 @@ from sys import exit
 from player_stats import player_stats
 import time
 
+import os
+os.environ['SDL_AUDIODRIVER'] = 'alsa'
+
 pygame.mixer.pre_init(22050, -16,  1, 512)
 
 pygame.init()
